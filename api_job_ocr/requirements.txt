@@ -1,0 +1,14 @@
+python
+fastapi
+pandas
+numpy
+scikit-learn
+elasticsearch
+scikit-learn
+tika
+cv2
+re
+json
+fastapi
+uvicorn
+
