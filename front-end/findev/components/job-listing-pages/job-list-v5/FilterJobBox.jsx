@@ -131,7 +131,7 @@ const FilterJobBox = () => {
                             <ul className="job-info">
                                 <li>
                                     <span className="icon flaticon-briefcase"></span>
-                                    {item.position}
+                                    {item.employer_profile.company_profile.name.length > 12 ? item.employer_profile.company_profile.name.slice(0, 12) + "..." : item.employer_profile.company_profile.name}
                                 </li>
                                 <li>
                                     <span className="icon flaticon-map-locator"></span>
@@ -139,7 +139,7 @@ const FilterJobBox = () => {
                                         and get text before ':' using split
                                     */}
                                     {/* {item.location[0].split(":")[0]} */}
-                                    {item.job_locations.slice(0, 1)[0].location.split(":")[0]}
+                                    {item.location.split(":")[0]}
                                 </li>
                                 <li>
                                     <span className="icon flaticon-clock-3"></span> {item.deadline}

@@ -43,10 +43,10 @@ const ProfileBtn = ({textColor}) => {
            // <DashboardCandidatesHeader />
            <>
            <div className="outer-box">
-                        {/* <button className="menu-btn">
-                            <span className="count">1</span>
-                            <span className="icon la la-heart-o"></span>
-                        </button> */}
+                        <button className="menu-btn">
+                            {/* <span className="count">1</span> */}
+                                <span className="flaticon-bookmark"></span>
+                        </button>
                         {/* wishlisted menu */}
 
                         {/* <button className="menu-btn">

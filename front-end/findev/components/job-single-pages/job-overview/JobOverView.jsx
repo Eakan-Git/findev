@@ -25,21 +25,21 @@ const JobOverView = ({job}) => {
           <i className="icon icon-location"></i>
           <h5>Địa điểm làm việc:</h5>
           <span>
-          {job?.job_locations.slice(0, 1)[0].location}
+          {job?.location}
           </span>
         </li>
         <li>
           <i className="icon icon-user-2"></i>
           <h5>Vị trí:</h5>
           <span>
-            {job.job_types.slice(0, 1)[0].type}
+            {job.position}
           </span>
         </li>
         <li>
           <i className="icon icon-clock"></i>
           <h5>Hình thức làm việc:</h5>
           <span>
-            {job.position}
+            {job.type}
           </span>
         </li>
         {/* <li>

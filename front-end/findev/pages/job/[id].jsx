@@ -92,7 +92,7 @@ const JobSingleDynamicV1 = () => {
                           {/* compnay info */}
                           <li>
                             <span className="icon flaticon-map-locator"></span>
-                            {job?.job_locations.slice(0, 1)[0].location}
+                            {job?.location || "Chưa cập nhật"}
                           </li>
                           {/* location info */}
                           <li>
