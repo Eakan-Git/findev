@@ -4,9 +4,7 @@ import { isActiveLink } from "../../utils/linkActiveChecker";
 import Image from "next/image"
 import Link from "next/link";
 import { useRouter } from "next/router";
-import logout from "../../app/actions/SignOut";
 import { useDispatch } from "react-redux";
-import { logoutUser } from "../../features/user/userSlice";
 const ProfileBtn = ({textColor}) => {
     const { user } = useSelector((state) => state.user);
     const router = useRouter();
@@ -14,7 +12,7 @@ const ProfileBtn = ({textColor}) => {
     const dispatch = useDispatch();
     // handle signout
     const handleSignOut = () => {
-        dispatch(logoutUser());
+        // dispatch(LOGOUT());
         router.push("/");
     };
     return (
@@ -43,10 +41,10 @@ const ProfileBtn = ({textColor}) => {
            // <DashboardCandidatesHeader />
            <>
            <div className="outer-box">
-                        <button className="menu-btn">
-                            {/* <span className="count">1</span> */}
+                        {/* <button className="menu-btn">
+                            <span className="count">1</span>
                                 <span className="flaticon-bookmark"></span>
-                        </button>
+                        </button> */}
                         {/* wishlisted menu */}
 
                         {/* <button className="menu-btn">
@@ -89,7 +87,7 @@ const ProfileBtn = ({textColor}) => {
                                         {item.routePath === "/signout" ? (
                                             // add onClick event to handle signout
                                             <a
-                                                onClick={handleSignOut}
+                                                onClick={handleSignOut()}
                                             >
                                                 <i
                                                     className={`la ${item.icon}`}

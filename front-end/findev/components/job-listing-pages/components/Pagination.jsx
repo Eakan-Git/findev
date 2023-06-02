@@ -1,4 +1,4 @@
-const Pagination = () => {
+const Pagination = ({jobs}) => {
   return (
     <nav className="ls-pagination">
       <ul>

@@ -162,15 +162,25 @@ const FilterJobBox = () => {
                                 </li>
                             </ul>
                             <ul className="job-other-info">
-                                {item?.jobType?.map((val, i) => (
-                                    <li key={i} className={`${val.styleClass}`}>
-                                        {val.type}
-                                    </li>
-                                ))}
+                                <li className="time">{item.type}</li>
+                                <li className="required">Số lượng: {item.recruit_num}</li>
+                                <li className="yoe">
+                                {/* if item.min_yoe == item.max_yoe -> min_yoe
+                                    if item.min_yoe == item.max_yoe -> min_yoe == 0 -> Không yêu cầu kinh nghiệm
+                                    if item.min_yoe == item.max_yoe -> min_yoe != 0 -> Kinh nghiệm từ min_yoe năm
+                                    if item.min_yoe != item.max_yoe -> Kinh nghiệm từ min_yoe đến max_yoe năm
+                                */}
+                                {item.min_yoe === item.max_yoe
+                                ? item.min_yoe === 0
+                                    ? "Không yêu cầu kinh nghiệm"
+                                    : `Kinh nghiệm từ ${item.min_yoe} năm`
+                                : `Kinh nghiệm từ ${item.min_yoe} - ${item.max_yoe}
+                                    năm`}
+                                </li>
                             </ul>
-                            <button className="bookmark-btn">
+                            {/* <button className="bookmark-btn">
                                 <span className="flaticon-bookmark"></span>
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>
@@ -253,7 +263,7 @@ const FilterJobBox = () => {
 
             <div className="row">{content}</div>
 
-            <Pagination />
+            <Pagination jobs={jobs}/>
         </>
     );
 };

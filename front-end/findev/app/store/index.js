@@ -16,7 +16,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([loginApi.middleware]),
+  getDefaultMiddleware().concat([loginApi.middleware]),
   devTools: true,
 });
 setupListeners(store.dispatch);

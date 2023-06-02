@@ -44,11 +44,23 @@ const RelatedJobs = () => {
                   </li>
                 ))}
               </ul>
+              {/* <ul className="job-other-info">
+                <li className="time">{item.type}</li>
+                <li className="required">Số lượng: {item.recruit_num}</li>
+                <li className="yoe">
+                {item.min_yoe === item.max_yoe
+                  ? item.min_yoe === 0
+                    ? "Không yêu cầu kinh nghiệm"
+                    : `Kinh nghiệm từ ${item.min_yoe} năm`
+                  : `Kinh nghiệm từ ${item.min_yoe} - ${item.max_yoe}
+                    năm`}
+                </li>
+              </ul> */}
               {/* End .job-other-info */}
 
-              <button className="bookmark-btn">
+              {/* <button className="bookmark-btn">
                 <span className="flaticon-bookmark"></span>
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
