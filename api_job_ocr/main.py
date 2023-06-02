@@ -16,6 +16,7 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 import os
 import shutil
+import requests
 warnings.simplefilter('ignore')
 
 app = FastAPI()
@@ -27,9 +28,29 @@ es = Elasticsearch()
 cnx = mysql.connector.connect(user='root', database='recommend', password="123456")
 cursor = cnx.cursor()
 
+# Đường dẫn đến tệp trên Google Drive
+file_url = "https://drive.google.com/uc?id=1AQrnIFnqzPQbXXbYRADj5yh1I3_E_YMt"
+
+# Tên biến toàn cục để lưu trữ nội dung của tệp
+stopwords_vn = None
+
+def load_stopwords():
+    global stopwords_vn
+
+    if stopwords_vn is None:
+        # Tải tệp từ URL nếu chưa được tải
+        response = requests.get(file_url)
+        stopwords_vn = response.text.splitlines()
+
+    return stopwords_vn
+
+
+# Gọi hàm load_stopwords() để đảm bảo tệp đã được tải trước khi sử dụng
+stop_words = load_stopwords()
+
 # Define the SQL query for jobs
 jobs_query = """
-SELECT
+    SELECT
     j.id AS job_id,
     j.title,
     j.description,
@@ -37,14 +58,17 @@ SELECT
     j.max_salary,
     j.recruit_num,
     j.position,
-    j.year_of_experience,
+    j.type,
+    j.min_yoe,
+    j.max_yoe,
     j.benefit,
+    DATE_FORMAT(j.deadline, '%d-%m-%Y') AS deadline,
     j.requirement,
     GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills
-FROM
+    FROM
     jobs j
     LEFT JOIN job_skills s ON j.id = s.job_id
-GROUP BY
+    GROUP BY
     j.id,
     j.title,
     j.description,
@@ -52,10 +76,13 @@ GROUP BY
     j.max_salary,
     j.recruit_num,
     j.position,
-    j.year_of_experience,
+    j.type,
+    j.min_yoe,
+    j.max_yoe,
     j.benefit,
+    j.deadline,
     j.requirement
-"""
+    """
 
 # Execute the jobs query and fetch the results
 cursor.execute(jobs_query)
@@ -103,6 +130,49 @@ user_columns = [desc[0] for desc in cursor.description]
 
 # Create a DataFrame for users
 users_CV = pd.DataFrame(user_results, columns=user_columns)
+users_CV['experiences'] = users_CV['experiences'].str.replace(r'\s+', ' ', regex=True)
+users_CV['about_me'] = users_CV['about_me'].str.replace(r'\s+', ' ', regex=True)
+
+# Define the SQL query for users
+users_query = """
+SELECT
+  up.id,
+  up.full_name,
+  up.about_me,
+  up.good_at_position,
+  up.gender,
+  up.address,
+  up.year_of_experience,
+  GROUP_CONCAT(DISTINCT us.skill) AS skills,
+  GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences
+FROM
+  user_profiles up
+LEFT JOIN user_educations ued ON up.id = ued.user_id
+LEFT JOIN user_skills us ON up.id = us.user_id
+LEFT JOIN (
+  SELECT
+    user_id,
+    GROUP_CONCAT(description ORDER BY user_id SEPARATOR '; ') AS description
+  FROM
+    user_experiences
+  GROUP BY
+    user_id
+) ue ON up.id = ue.user_id
+GROUP BY
+  up.id, up.full_name, up.about_me, up.good_at_position, up.gender;
+"""
+
+# Execute the users query and fetch the results
+cursor.execute(users_query)
+user_results = cursor.fetchall()
+
+# Get the column names for users
+user_columns = [desc[0] for desc in cursor.description]
+
+# Create a DataFrame for users
+candidate_df = pd.DataFrame(user_results, columns=user_columns)
+candidate_df['experiences'] = candidate_df['experiences'].str.replace(r'\s+', ' ', regex=True)
+candidate_df['about_me'] = candidate_df['about_me'].str.replace(r'\s+', ' ', regex=True)
 
 # Define the SQL query for user_history
 user_history_query = """
@@ -125,16 +195,12 @@ user_history_columns = [desc[0] for desc in cursor.description]
 # Create a DataFrame for user_history
 users_CV_history = pd.DataFrame(user_history_results, columns=user_history_columns)
 
-# Close the cursor and database connection
-cursor.close()
-cnx.close()
-
 users_CV['good_at_position'] = users_CV['good_at_position'].fillna('')
 users_CV['skills'] = users_CV['skills'].fillna('')
 users_CV['about_me'] = users_CV['about_me'].fillna('')
 users_CV['experiences'] = users_CV['experiences'].fillna('')
 users_CV['good_at_position'] = users_CV['good_at_position'] + users_CV['skills'] + users_CV['about_me'] + users_CV['experiences']
-tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 5), min_df=0, stop_words='english')
+tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 5), min_df=0, stop_words=stop_words)
 tfidf_matrix = tf.fit_transform(users_CV['good_at_position'])
 cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 users_CV = users_CV.reset_index()
@@ -148,7 +214,6 @@ def get_recommendations_userwise(userid):
     user_indices = [i[0] for i in sim_scores]
     return user_indices[0:10]
 
-
 def get_job_id(usrid_list):
     sorted_df = users_CV_history.sort_values(by=["times"], ascending=False)
     jobs_userwise = sorted_df['user_id'].isin(usrid_list)
@@ -157,12 +222,103 @@ def get_job_id(usrid_list):
     Job_list = job_TOPCV['job_id'].isin(joblist)
     df_temp = pd.DataFrame(data=job_TOPCV[Job_list],
                            columns=['job_id', 'title', 'description', 'min_salary', 'max_salary',
-                                    'recruit_num', 'position', 'skills', 'year_of_experience', 'benefit', 'requirement'])
+                                    'recruit_num', 'position', 'skills', 'min_yoe', 'max_yoe', 'benefit', 'requirement'])
 
     # Merge
     merged_df = pd.merge(df_temp, df1, on="job_id")
     sorted_df = merged_df.sort_values(by=["times"], ascending=False)
     return sorted_df
+
+@app.on_event("startup")
+def startup_event():
+    # Execute SQL query to retrieve job data
+    cursor = cnx.cursor()
+    query = """
+    SELECT
+    j.id AS job_id,
+    j.title,
+    j.description,
+    j.min_salary,
+    j.max_salary,
+    j.recruit_num,
+    j.position,
+    j.type,
+    j.min_yoe,
+    j.max_yoe,
+    j.benefit,
+    DATE_FORMAT(j.deadline, '%d-%m-%Y') AS deadline,
+    j.requirement,
+    GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills
+    FROM
+    jobs j
+    LEFT JOIN job_skills s ON j.id = s.job_id
+    GROUP BY
+    j.id,
+    j.title,
+    j.description,
+    j.min_salary,
+    j.max_salary,
+    j.recruit_num,
+    j.position,
+    j.type,
+    j.min_yoe,
+    j.max_yoe,
+    j.benefit,
+    j.deadline,
+    j.requirement
+    """
+    cursor.execute(query)
+    results = cursor.fetchall()
+    cursor.close()
+
+    # Create DataFrame from the SQL results
+    columns = ['job_id', 'title', 'description', 'min_salary', 'max_salary', 'recruit_num', 'position', 'type',
+               'min_yoe', 'max_yoe', 'benefit', 'deadline', 'requirement', 'skills']
+    df = pd.DataFrame(results, columns=columns)
+
+    # Xoá toàn bộ index và dữ liệu trong Elasticsearch
+    def delete_all_data():
+        response = es.indices.delete(index="_all")
+        return response
+
+    delete_all_data()
+
+    index_name = "jobs_index"
+    if es.indices.exists(index=index_name):
+        es.indices.delete(index=index_name)
+
+    # Create or update Elasticsearch index
+    index_name = "jobs_index"
+    index_mapping = {
+        "mappings": {
+            "properties": {
+                "job_id": {"type": "integer"},
+                "title": {"type": "text"},
+                "description": {"type": "text"},
+                "min_salary": {"type": "integer"},
+                "max_salary": {"type": "integer"},
+                "recruit_num": {"type": "integer"},
+                "position": {"type": "keyword"},
+                "min_yoe": {"type": "integer"},
+                "max_yoe": {"type": "integer"},
+                "benefit": {"type": "text"},
+                 "deadline": {"type": "date", "format": "dd-MM-yyyy"},
+                "requirement": {"type": "text"},
+                "skills": {"type": "text"}
+            }
+        }
+    }
+    if not es.indices.exists(index=index_name):
+        es.indices.create(index=index_name, body=index_mapping)
+    else:
+        es.indices.put_mapping(index=index_name, body=index_mapping['mappings'])
+
+    # Index job data into Elasticsearch
+    for _, row in df.iterrows():
+        job_data = row.to_dict()
+        # Convert skills to a list
+        job_data['skills'] = [skill.strip() for skill in job_data['skills'].split(",")]
+        es.index(index=index_name, body=job_data)
 
 #Recommend base on profile user
 @app.get("/recommend/{user_id}")
@@ -170,7 +326,6 @@ def recommend_jobs(user_id: int):
     job_recommendations = get_job_id(get_recommendations_userwise(user_id))
     return JSONResponse(content=job_recommendations.to_dict(orient="records"))
 
-#Searching by Elasticsearch
 @app.get("/jobs/{keyword}")
 def search_jobs(keyword: str):
     # Search for jobs in Elasticsearch
@@ -179,16 +334,22 @@ def search_jobs(keyword: str):
         "query": {
             "multi_match": {
                 "query": keyword,
-                "fields": ["title", "description", "position", "benefit", "requirement", "skills"]
+                "fields": ["*"]
             }
         }
     }
 
     result = es.search(index="jobs_index", body=body)
-    jobs = [hit["_source"] for hit in result["hits"]["hits"]]
+    hits = result["hits"]["hits"]
+
+    jobs = []
+    for hit in hits:
+        job_info = hit["_source"]
+        jobs.append(job_info)
 
     return jobs
 
+# Hoang
 # Write json
 def JsonFile(key, value):
     data_dict = dict(zip(key, value))
