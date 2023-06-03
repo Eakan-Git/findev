@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
+import { logoutUser } from "../../features/user/userSlice";
 const ProfileBtn = ({textColor}) => {
     const { user } = useSelector((state) => state.user);
     const router = useRouter();
@@ -12,7 +13,7 @@ const ProfileBtn = ({textColor}) => {
     const dispatch = useDispatch();
     // handle signout
     const handleSignOut = () => {
-        // dispatch(LOGOUT());
+        dispatch(logoutUser());
         router.push("/");
     };
     return (

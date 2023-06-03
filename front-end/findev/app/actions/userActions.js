@@ -1,3 +1,3 @@
 const SIGNOUT_ACTION = {
-  type: "SIGNOUT"
+  type: SIGNOUT
 }

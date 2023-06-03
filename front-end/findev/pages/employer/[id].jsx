@@ -172,11 +172,22 @@ const EmployersSingleV3 = ({}) => {
                 {/* <!-- Related Jobs --> */}
                 <div className="related-jobs">
                   <div className="title-box">
-                    <h3>{hiringJobs.total} vị trí đang tuyển</h3>
+                    <h3>Vị trí đang tuyển</h3>
+                    {hiringJobs.total > 0 ? (
+                      <span className="color-text-2">
+                        {hiringJobs.total} vị trí
+                      </span>
+                    ) : () => null}
                   </div>
                   {/* End .title-box */}
 
-                  <RelatedJobs jobs={hiringJobs}/>
+                  {hiringJobs.total > 0 ? (
+                    <RelatedJobs jobs={hiringJobs}/>
+                  ) : (
+                    <div className="alert alert-warning" role="alert">
+                      Không có vị trí tuyển dụng nào
+                      </div>
+                      )}
                   {/* End RelatedJobs */}
                 </div>
                 {/* <!-- Related Jobs --> */}

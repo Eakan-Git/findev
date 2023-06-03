@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 const RelatedJobs = ({jobs}) => {
   return (
     <>
@@ -19,10 +18,15 @@ const RelatedJobs = ({jobs}) => {
               <ul className="job-info">
                 <li>
                   <span className="icon flaticon-briefcase"></span>
+                  <Link href="#"
+                  alt={item.employer_profile.company_profile.name}
+                  title={item.employer_profile.company_profile.name}
+                  >
                   {item.employer_profile.company_profile.name.length > 12 ?
                     item.employer_profile.company_profile.name.slice(0, 12) + "..." :
                     item.employer_profile.company_profile.name
                   }
+                  </Link>
                 </li>
                 {/* compnay info */}
                 <li>

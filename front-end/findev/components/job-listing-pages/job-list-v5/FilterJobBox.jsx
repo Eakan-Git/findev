@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { use, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     addCategory,
@@ -14,25 +15,64 @@ import {
 } from "../../../features/filter/filterSlice";
 import Pagination from "../components/Pagination";
 import JobSelect from "../components/JobSelect";
+import { localUrl } from "../../../utils/path";
 
 const FilterJobBox = () => {
     const [jobs, setJobs] = useState(null);
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const [jobsPerPage, setJobsPerPage] = useState(10);
+    const router = useRouter();
+    // handle url query params
+    useEffect(() => {
+        const { query } = router;
+        if (query.page) {
+            setCurrentPage(parseInt(query.page));
+        }
+        if (query.count_per_page) {
+            setJobsPerPage(parseInt(query.count_per_page));
+        }
+    }, [router]);
     useEffect(() => {
         const getJobs = async () => {
             try {
-                const res = await fetch("http://localhost:8000/api/jobs?page=1&count_per_page=10");
+                let url = `${localUrl}/jobs`;
+                let queryParams = [];
+                if(currentPage !== 1) {
+                    queryParams.push(`page=${currentPage}`);
+                }
+                if(jobsPerPage !== 10) {
+                    queryParams.push(`count_per_page=${jobsPerPage}`);
+                }
+                if(queryParams.length > 0) {
+                    url += `?${queryParams.join("&")}`;
+                }
+                const res = await fetch(url);
                 const resData = await res.json();
                 setJobs(resData.data.jobs);
-                console.log(resData);
+                // console.log(resData);
+                const updatedUrl = `/find-jobs${
+                    queryParams.length > 0 ? `?${queryParams.join("&")}` : ""
+                  }`;
+                  router.push(updatedUrl, undefined, { shallow: true });
             } catch (err) {
                 console.log(err);
             }
         };
 
         getJobs();
-    }, []);
-
+    }, [currentPage, jobsPerPage]);
+    const handlePageChange = (page) => {
+        // check page is a number
+        if (!isNaN(page)) {
+        setCurrentPage(page);
+        }
+        else if (page === "&laquo; Previous" && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+        }
+        else if (page === "Next &raquo;" && currentPage < jobs.last_page) {
+        setCurrentPage(currentPage + 1);
+        }
+    };
     const { jobList, jobSort } = useSelector((state) => state.filter);
     const {
         keyword,
@@ -131,7 +171,12 @@ const FilterJobBox = () => {
                             <ul className="job-info">
                                 <li>
                                     <span className="icon flaticon-briefcase"></span>
+                                    <Link href={`/employer/${item.employer_id}`}
+                                    alt={item.employer_profile.company_profile.name}
+                                    title={item.employer_profile.company_profile.name}
+                                    >
                                     {item.employer_profile.company_profile.name.length > 12 ? item.employer_profile.company_profile.name.slice(0, 12) + "..." : item.employer_profile.company_profile.name}
+                                    </Link>
                                 </li>
                                 <li>
                                     <span className="icon flaticon-map-locator"></span>
@@ -157,8 +202,8 @@ const FilterJobBox = () => {
                                         : item.min_salary === 0 && item.max_salary === 0
                                         ? "Không lương"
                                         : item.min_salary === 0 && item.max_salary > 0
-                                        ? `Lên đến ${item.max_salary} triệu`
-                                        : `${item.min_salary} - ${item.max_salary} triệu`}
+                                        ? `Lên đến ${item.max_salary}tr`
+                                        : `${item.min_salary} - ${item.max_salary}tr`}
                                 </li>
                             </ul>
                             <ul className="job-other-info">
@@ -198,18 +243,24 @@ const FilterJobBox = () => {
     const perPageHandler = (e) => {
         const pageData = JSON.parse(e.target.value);
         dispatch(addPerPage(pageData));
+        // console.log(pageData);
+        setJobsPerPage(pageData.end - pageData.start);
+        setCurrentPage(1);
     };
 
     const clearAll = () => {
-        dispatch(addKeyword(""));
-        dispatch(addLocation(""));
-        dispatch(addCategory(""));
-        dispatch(addJobTypeSelect(""));
-        dispatch(addDatePosted(""));
-        dispatch(addExperienceSelect(""));
-        dispatch(addSalary({ min: 0, max: 20000 }));
-        dispatch(addSort(""));
-        dispatch(addPerPage({ start: 0, end: 0 }));
+        // dispatch(addKeyword(""));
+        // dispatch(addLocation(""));
+        // dispatch(addCategory(""));
+        // dispatch(addJobTypeSelect("")); 
+        // dispatch(addDatePosted(""));
+        // dispatch(addExperienceSelect(""));
+        // dispatch(addSalary({ min: 0, max: 20000 }));
+        // dispatch(addSort(""));
+        dispatch(addPerPage({ count_per_page: 10 }));
+        setJobsPerPage(10);
+        setCurrentPage(1);
+        dispatch(addPerPage({start: 0, end: 10}));
     };
 
     return (
@@ -218,23 +269,23 @@ const FilterJobBox = () => {
                 <JobSelect />
 
                 <div className="sort-by">
-                    {keyword !== "" ||
-                    location !== "" ||
-                    category !== "" ||
-                    jobTypeSelect !== "" ||
-                    datePosted !== "" ||
-                    experienceSelect !== "" ||
-                    salary?.min !== 0 ||
-                    salary?.max !== 20000 ||
-                    sort !== "" ||
-                    perPage.start !== 0 ||
-                    perPage.end !== 0 ? (
+                    {
+                        // keyword !== "" ||
+                        // location !== "" ||
+                        // category !== "" ||
+                        // jobTypeSelect !== "" ||
+                        // datePosted !== "" ||
+                        // experienceSelect !== "" ||
+                        // salary?.min !== 0 ||
+                        // salary?.max !== 20000 ||
+                        // sort !== "" ||
+                    perPage.end !== 10 ? (
                         <button
                             onClick={clearAll}
                             className="btn btn-danger text-nowrap me-2"
                             style={{ minHeight: "45px", marginBottom: "15px" }}
                         >
-                            Clear All
+                            Về mặc định
                         </button>
                     ) : null}
 
@@ -253,17 +304,17 @@ const FilterJobBox = () => {
                         className="chosen-single form-select ms-3 "
                         value={JSON.stringify(perPage)}
                     >
-                        <option value={JSON.stringify({ start: 0, end: 0 })}>Tất cả</option>
                         <option value={JSON.stringify({ start: 0, end: 10 })}>10 mỗi trang</option>
                         <option value={JSON.stringify({ start: 0, end: 20 })}>20 mỗi trang</option>
                         <option value={JSON.stringify({ start: 0, end: 30 })}>30 mỗi trang</option>
+                        <option value={JSON.stringify({ start: 0, end: 50 })}>50 mỗi trang</option>
                     </select>
                 </div>
             </div>
 
             <div className="row">{content}</div>
 
-            <Pagination jobs={jobs}/>
+            <Pagination jobs={jobs} handlePageChange={handlePageChange}/>
         </>
     );
 };
