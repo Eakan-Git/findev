@@ -19,18 +19,21 @@ const EmployersSingleV3 = ({}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const id = router.query.id;
-
+  const [hiringJobs, setHiringJobs] = useState([]);
   useEffect(() => {
-    const getEployer = async () => {
+    const getEmployer = async () => {
       try {
         const res = await fetch(`http://localhost:8000/api/company-profiles/${id}`);
-        if (res.error) {
-          throw new Error("Failed to fetch job");
+        const resJobs = await fetch(`http://localhost:8000/api/jobs?company_id=${id}`);
+        if (res.error || resJobs.error) {
+          throw new Error("Failed to fetch employer");
         }
         const resData = await res.json();
+        const resJobsData = await resJobs.json();
         const fetchedCompany = resData?.data?.company_profile;
         // console.log(fetchedCompany);
         setEmployersInfo(fetchedCompany || null);
+        setHiringJobs(resJobsData?.data?.jobs || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -38,7 +41,7 @@ const EmployersSingleV3 = ({}) => {
       }
     };
     if (id) {
-        getEployer();
+      getEmployer();
     }
   }, [id]);
 
@@ -79,7 +82,7 @@ const EmployersSingleV3 = ({}) => {
                   <h4>{employer?.name}</h4>
 
                   <ul className="job-other-info">
-                    <li className="time">Số vị trí đang tuyển – {employer?.jobNumber || 2}</li>
+                    <li className="time">Số vị trí đang tuyển – {hiringJobs.total}</li>
                   </ul>
                   {/* End .job-other-info */}
                 </div>
@@ -169,11 +172,22 @@ const EmployersSingleV3 = ({}) => {
                 {/* <!-- Related Jobs --> */}
                 <div className="related-jobs">
                   <div className="title-box">
-                    <h3>3 vị trí đang tuyển</h3>
+                    <h3>Vị trí đang tuyển</h3>
+                    {hiringJobs.total > 0 ? (
+                      <span className="color-text-2">
+                        {hiringJobs.total} vị trí
+                      </span>
+                    ) : () => null}
                   </div>
                   {/* End .title-box */}
 
-                  <RelatedJobs />
+                  {hiringJobs.total > 0 ? (
+                    <RelatedJobs jobs={hiringJobs}/>
+                  ) : (
+                    <div className="alert alert-warning" role="alert">
+                      Không có vị trí tuyển dụng nào
+                      </div>
+                      )}
                   {/* End RelatedJobs */}
                 </div>
                 {/* <!-- Related Jobs --> */}

@@ -5,7 +5,7 @@ import MyResume from "../../../components/dashboard-pages/candidates-dashboard/m
 const index = () => {
   return (
     <>
-      <Seo pageTitle="My Resume" />
+      <Seo pageTitle="Mẫu Đơn Ứng Tuyển" />
       <MyResume />
     </>
   );

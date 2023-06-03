@@ -5,7 +5,7 @@ import ShortListedJobs from "../../../components/dashboard-pages/candidates-dash
 const index = () => {
   return (
     <>
-      <Seo pageTitle="Short ListedJobs" />
+      <Seo pageTitle="Công việc đã lưu" />
       <ShortListedJobs />
     </>
   );

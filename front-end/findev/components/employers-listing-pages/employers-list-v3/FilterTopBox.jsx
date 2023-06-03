@@ -92,12 +92,12 @@ const FilterTopBox = () => {
                 key={company.id}
             >
                 <div className="inner-box">
-                    <button className="bookmark-btn">
+                    {/* <button className="bookmark-btn">
                         <span className="flaticon-bookmark"></span>
-                    </button>
+                    </button> */}
 
                     <div className="content-inner">
-                        <span className="featured">Đã xác thực</span>
+                        {/* <span className="featured">Đã xác thực</span> */}
                         <span className="company-logo">
                             <img src="https://via.placeholder.com/90" alt="company brand" />
                         </span>
@@ -109,7 +109,7 @@ const FilterTopBox = () => {
                         <ul className="job-info flex-column">
                             <li className="me-0">
                                 <span className="icon flaticon-map-locator"></span>
-                                {company.address}
+                                {company.address.split(",").pop().trim()}
                             </li>
                             <li className="me-0">
                                 <span className="icon flaticon-briefcase"></span>

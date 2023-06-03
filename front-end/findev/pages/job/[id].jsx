@@ -144,9 +144,9 @@ const JobSingleDynamicV1 = () => {
                 </div>
                 {/* End .job-block-outer */}
 
-                <figure className="image">
+                {/* <figure className="image">
                   <img src="/images/resource/job-post-img.jpg" alt="resource" />
-                </figure>
+                </figure> */}
                 <JobDetailsDescriptions job={job}/>
                 {/* End jobdetails content */}
 
@@ -184,9 +184,16 @@ const JobSingleDynamicV1 = () => {
                     >
                       Ứng tuyển ngay
                     </a>
-                    <button className="bookmark-btn">
+                    {job.is_saved ? (
+                      <button className="bookmark-btn" style={{background:"var(--primary-color)", color:"white"}}>
                       <i className="flaticon-bookmark"></i>
                     </button>
+                    ): (
+                      <button className="bookmark-btn">
+                      <i className="flaticon-bookmark"></i>
+                    </button>
+                    )
+                      }
                   </div>
                   {/* End apply for job btn */}
 
@@ -272,10 +279,10 @@ const JobSingleDynamicV1 = () => {
                       <div className="btn-box">
                         <a
                           className="theme-btn btn-style-three"
+                          href={`/employer/${job?.employer_profile?.company_id}`}
                         >
-                          <Link href="#">
+                         {/* Link to employer/id page */}
                             Xem trang công ty
-                          </Link>
                         </a>
                       </div>
                       {/* End btn-box */}
