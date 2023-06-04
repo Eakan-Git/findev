@@ -265,7 +265,7 @@ const JobSingleDynamicV1 = () => {
                     <div className="widget-content">
                       <div className="company-title">
                         <div className="company-logo">
-                          <img src="https://via.placeholder.com/90" alt="resource" />
+                          <img src={job.employer_profile.company_profile.logo} alt="resource" />
                         </div>
                         <h5 className="company-name">{job?.employer_profile?.company_profile?.name}</h5>
                         {/* <a href="#" className="profile-link">

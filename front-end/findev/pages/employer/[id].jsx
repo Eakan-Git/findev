@@ -77,12 +77,12 @@ const EmployersSingleV3 = ({}) => {
               <div className="inner-box">
                 <div className="content">
                   <span className="company-logo">
-                    <img src={"https://via.placeholder.com/90"} alt={employer.name} title={employer.name}/>
+                    <img src={employer.logo} alt={employer.name} title={employer.name}/>
                   </span>
                   <h4>{employer?.name}</h4>
 
                   <ul className="job-other-info">
-                    <li className="time">Số vị trí đang tuyển – {hiringJobs.total}</li>
+                    <li className="time">Số vị trí đang tuyển – {hiringJobs.total > 0 ? hiringJobs.total : 0}</li>
                   </ul>
                   {/* End .job-other-info */}
                 </div>

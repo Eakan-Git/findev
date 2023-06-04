@@ -8,8 +8,8 @@ const RelatedJobs = ({jobs}) => {
             <div className="content">
               <span className="company-logo">
                 <img src={
-                  // item?.employer_profile?.company_profile?.logo || 
-                  "https://via.placeholder.com/90"} alt="resource" />
+                  item?.employer_profile?.company_profile?.logo
+                  } alt="logo" />
               </span>
               <h4>
                 <Link href={`/job/${item.id}`}>{item.title}</Link>

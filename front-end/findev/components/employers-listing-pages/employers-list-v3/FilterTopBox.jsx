@@ -99,7 +99,7 @@ const FilterTopBox = () => {
                     <div className="content-inner">
                         {/* <span className="featured">Đã xác thực</span> */}
                         <span className="company-logo">
-                            <img src="https://via.placeholder.com/90" alt="company brand" />
+                            <img src={company.logo} alt="company brand" />
                         </span>
                         <h4>
                             <Link href={`employer/${company.id}`}>

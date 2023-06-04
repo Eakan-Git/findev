@@ -149,7 +149,7 @@ const FilterJobBox = () => {
                         <div className="content">
                             <span className="company-logo">
                                 <Link href={`/job/${item.id}`}>
-                                <img src="https://via.placeholder.com/90" 
+                                <img src={item.employer_profile.company_profile.logo}
                                 title={item.employer_profile.company_profile.name} 
                                 alt={item.employer_profile.company_profile.name}
                                 />
@@ -171,7 +171,7 @@ const FilterJobBox = () => {
                             <ul className="job-info">
                                 <li>
                                     <span className="icon flaticon-briefcase"></span>
-                                    <Link href={`/employer/${item.employer_id}`}
+                                    <Link href={`/employer/${item.employer_profile.company_profile.id}`}
                                     alt={item.employer_profile.company_profile.name}
                                     title={item.employer_profile.company_profile.name}
                                     >
