@@ -2,8 +2,10 @@ import MobileMenu from "../../../header/MobileMenu";
 import LoginPopup from "../../../common/form/login/LoginPopup";
 import DashboardCandidatesSidebar from "../../../header/DashboardCandidatesSidebar";
 import BreadCrumb from "../../BreadCrumb";
+import MyProfile from "./components/my-profile";
+import SocialNetworkBox from "./components/SocialNetworkBox";
+import ContactInfoBox from "./components/ContactInfoBox";
 import CopyrightFooter from "../../CopyrightFooter";
-import JobFavouriteTable from "./components/JobFavouriteTable";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
 import { useSelector } from "react-redux";
@@ -18,6 +20,7 @@ const index = () => {
     router.push("/");
     return null;
   }
+  // console.log(user.token);
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
@@ -38,7 +41,7 @@ const index = () => {
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
-          <BreadCrumb title="Công Việc Đã Lưu" />
+          <BreadCrumb title="Thông tin cá nhân" />
           {/* breadCrumb */}
 
           <MenuToggler />
@@ -46,10 +49,41 @@ const index = () => {
 
           <div className="row">
             <div className="col-lg-12">
-              {/* <!-- Ls widget --> */}
               <div className="ls-widget">
-                <JobFavouriteTable />
+                <div className="tabs-box">
+                  <div className="widget-title">
+                    <h4>Hồ sơ của bạn</h4>
+                  </div>
+                  <MyProfile />
+                </div>
               </div>
+              {/* <!-- Ls widget --> */}
+
+              {/* <div className="ls-widget">
+                <div className="tabs-box">
+                  <div className="widget-title">
+                    <h4>Social Network</h4>
+                  </div> */}
+                  {/* End widget-title */}
+
+                  {/* <div className="widget-content">
+                    <SocialNetworkBox />
+                  </div>
+                </div>
+              </div> */}
+              {/* <!-- Ls widget --> */}
+
+              {/* <div className="ls-widget">
+                <div className="tabs-box">
+                  <div className="widget-title">
+                    <h4>Contact Information</h4>
+                  </div>
+                  <div className="widget-content">
+                    <ContactInfoBox />
+                  </div>
+                </div>
+              </div> */}
+              {/* <!-- Ls widget --> */}
             </div>
           </div>
           {/* End .row */}

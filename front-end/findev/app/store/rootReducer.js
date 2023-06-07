@@ -10,8 +10,9 @@ import shopSlice from "../../features/shop/shopSlice";
 import userSlice from "../../features/user/userSlice";
 
 import { loginApi } from "../service/auth";
-
-export default combineReducers({
+import { USER_LOGOUT } from "../actions/userActions";
+import { profileApi } from "../service/profile";
+const appReducer = combineReducers({
   job: jobSlice,
   toggle: toggleSlice,
   filter: filterSlice,
@@ -22,4 +23,15 @@ export default combineReducers({
   shop: shopSlice,
   user: userSlice,
   [loginApi.reducerPath]: loginApi.reducer,
+  [profileApi.reducerPath]: profileApi.reducer,
 });
+
+const rootReducer = (state, action) => {
+  if (action.type === USER_LOGOUT) {
+    state = undefined; // Reset the state to its initial value
+  }
+
+  return appReducer(state, action);
+};
+
+export default rootReducer;

@@ -6,8 +6,18 @@ import CopyrightFooter from "../../CopyrightFooter";
 import Form from "./components/Form";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
-
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 const index = () => {
+  const { user } = useSelector((state) => state.user);
+  const router = useRouter();
+
+  if (!user) {
+    // show notification that user must login first
+    alert("Bạn cần đăng nhập để xem thông tin cá nhân");
+    router.push("/");
+    return null;
+  }
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>

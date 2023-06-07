@@ -11,6 +11,7 @@ export const userSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
+    // Use the logoutUser action to set the user state to null
     logoutUser: (state) => {
       state.user = null;
     },

@@ -5,20 +5,30 @@ import Image from "next/image"
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-import { logoutUser } from "../../features/user/userSlice";
+import { logoutUser } from "../../app/actions/userActions";
 const ProfileBtn = ({textColor}) => {
     const { user } = useSelector((state) => state.user);
+    // console.log(user);
     const router = useRouter();
     // handle signout
     const dispatch = useDispatch();
     // handle signout
     const handleSignOut = () => {
-        dispatch(logoutUser());
-        router.push("/");
+        //show confirm dialog to confirm sign out
+        if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+            dispatch(logoutUser());
+            router.push("/");
+        }
+        // console.log("sign out");
+      };
+    const handleBtnClick = (id) => {
+        if(id === 8){
+            handleSignOut();
+        }
     };
     return (
         <>
-        {user === null ? (
+        {user === null || user === undefined ? (
             <div className="outer-box">
               <div className="d-flex align-items-center btn-box2">
                 <a
@@ -72,39 +82,20 @@ const ProfileBtn = ({textColor}) => {
                             </a>
 
                             <ul className="dropdown-menu">
-                                {candidatesMenuData.slice(0, -1).map((item) => (
-                                    <li
-                                        className={`${
-                                            isActiveLink(
-                                                item.routePath,
-                                                router.asPath
-                                            )
-                                                ? "active"
-                                                : ""
-                                        } mb-1`}
-                                        key={item.id}
-                                    >
-                                        {/* check if routePath is signout to handle */}
-                                        {item.routePath === "/signout" ? (
-                                            // add onClick event to handle signout
-                                            <a
-                                                onClick={handleSignOut()}
-                                            >
-                                                <i
-                                                    className={`la ${item.icon}`}
-                                                ></i>{" "}
-                                                {item.name}
-                                            </a>
-                                        ) : (
-                                            <Link href={item.routePath}>
-                                            <i
-                                                className={`la ${item.icon}`}
-                                            ></i>{" "}
-                                            {item.name}
-                                        </Link>
-                                        )}
-                                    </li>
+                            {candidatesMenuData.slice(0, -1).map((item) => (
+                                <li
+                                    onClick={() => handleBtnClick(item.id)}
+                                    className={`${
+                                    isActiveLink(item.routePath, router.asPath) ? "active" : ""
+                                    } mb-1`}
+                                    key={item.id}
+                                >
+                                    <Link href={item.routePath}>
+                                        <i className={`la ${item.icon}`}></i> {item.name}
+                                    </Link>
+                                </li>
                                 ))}
+
                             </ul>
                         </div>
                         {/* End dropdown */}

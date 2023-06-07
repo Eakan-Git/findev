@@ -108,16 +108,16 @@ const EmployersSingleV3 = ({}) => {
                           Ngành: <span>Công nghệ</span>
                         </li> */}
                         <li>
-                          Số lượng nhân viên: <span>{employer.size}</span>
+                          Số lượng nhân viên: <span>{employer?.size || "Chưa cập nhật"}</span>
                         </li>
                         <li>
                           Số điện thoại: <span>{employer?.phone || "123 456 7890"}</span>
                         </li>
                         <li>
-                          Email: <span>{employer?.email || "abc@gmail.com"}</span>
+                          Email: <span>{employer?.email || "placeholder@gmail.com"}</span>
                         </li>
                         <li>
-                          Địa chỉ: <span>{employer?.address}</span>
+                          Địa chỉ: <span>{employer?.address || "Chưa cập nhật"}</span>
                         </li>
                         {/* <li>
                           Social media:
@@ -128,7 +128,7 @@ const EmployersSingleV3 = ({}) => {
 
                       <div className="btn-box">
                         <a
-                          href={employer?.site}
+                          href={employer?.site || null}
                           target="_blank"
                           className="theme-btn btn-style-three"
                         >
