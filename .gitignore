@@ -6,4 +6,5 @@ node_modules
 .DS_Store
 front-end/findev/package.json
 front-end/findev/yarn.lock
-Front-end/findev/.next
+Front-end/findev/.next/*
+*.pack
