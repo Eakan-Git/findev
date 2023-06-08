@@ -31,3 +31,6 @@ dist-ssr
 *.sw?
 
 .env
+*.pack
+front-end/findev/.next/server/middleware-manifest.json
+front-end/findev/.next/server/pages-manifest.json
