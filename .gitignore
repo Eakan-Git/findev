@@ -9,3 +9,5 @@ front-end/findev/yarn.lock
 Front-end/findev/.next/*
 *.pack
 front-end/findev/.next/cache/
+front-end/findev/.next/server/
+front-end/findev/.next/static/
