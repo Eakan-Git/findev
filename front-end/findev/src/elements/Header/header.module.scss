@@ -1,0 +1,111 @@
+.headerWrapper {
+  @include z-index(100);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  padding: 0 50px;
+  background: $white;
+  border-bottom: 1px solid #ecedf2;
+  box-shadow: 0px 6px 15px #404f680d;
+
+  .header {
+    @include display(flex, space-between, center);
+    height: 100%;
+
+    h1 {
+      font-size: 1.2rem;
+    }
+
+    span,
+    .menu li {
+      font-size: 0.75rem;
+    }
+
+    .userInfo {
+      position: relative;
+
+      .userInfoButton {
+        text-transform: initial;
+      }
+
+      .avatar {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 1px #0000001a;
+      }
+    }
+  }
+
+  @include desktop-screen-1440 {
+    height: 80px;
+    padding: 0 60px;
+
+    .header {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      span,
+      .menu li {
+        font-size: 1rem;
+      }
+
+      .userInfo {
+        .avatar {
+          width: 40px;
+          height: 40px;
+        }
+      }
+    }
+  }
+
+  @include desktop-screen-1920 {
+    height: 100px;
+
+    .header {
+      h1 {
+        font-size: 2rem;
+      }
+
+      span,
+      .menu li {
+        font-size: 1.25rem;
+      }
+
+      .userInfo {
+        .avatar {
+          width: 50px;
+          height: 50px;
+          margin-right: 16px;
+        }
+      }
+    }
+  }
+
+  @include desktop-screen-2560 {
+    height: 120px;
+
+    .header {
+      h1 {
+        font-size: 2.875rem;
+      }
+
+      span,
+      .menu li {
+        font-size: 1.75rem;
+      }
+
+      .userInfo {
+        .avatar {
+          width: 70px;
+          height: 70px;
+          margin-right: 24px;
+        }
+      }
+    }
+  }
+}

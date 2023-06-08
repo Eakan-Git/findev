@@ -1,0 +1,116 @@
+.Toastify__toast div,
+.MuiButtonBase-root.MuiMenuItem-root.MuiMenuItem-gutters.MuiMenuItem-root.MuiMenuItem-gutters {
+  font-size: 0.875rem;
+}
+
+@media (min-width: 1440px) {
+  .Toastify__toast div,
+  .MuiButtonBase-root.MuiMenuItem-root.MuiMenuItem-gutters.MuiMenuItem-root.MuiMenuItem-gutters {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .MuiButtonBase-root.MuiMenuItem-root.MuiMenuItem-gutters.MuiMenuItem-root.MuiMenuItem-gutters {
+    padding: 10px 20px;
+    font-size: 1.25rem;
+  }
+
+  .Toastify__toast div {
+    font-size: 1.25rem;
+  }
+
+  .MuiDataGrid-columnHeaders {
+    height: 60px;
+    min-height: 60px !important;
+    max-height: 60px !important;
+
+    div {
+      display: flex;
+      align-items: center;
+      height: 60px;
+      min-height: 60px !important;
+      max-height: 60px !important;
+    }
+  }
+
+  .MuiDataGrid-row {
+    align-items: center;
+    height: 60px;
+    min-height: 60px !important;
+    max-height: 60px !important;
+
+    div {
+      display: flex;
+      align-items: center;
+      height: 60px;
+      min-height: 60px !important;
+      max-height: 60px !important;
+    }
+  }
+
+  .MuiTablePagination-root {
+    p {
+      font-size: 1.25rem !important;
+    }
+  }
+
+  .MuiTablePagination-actions {
+    button svg {
+      font-size: 2rem !important;
+    }
+  }
+}
+
+@media (min-width: 2560px) {
+  .MuiButtonBase-root.MuiMenuItem-root.MuiMenuItem-gutters.MuiMenuItem-root.MuiMenuItem-gutters {
+    padding: 15px 30px;
+    font-size: 1.75rem;
+  }
+  .Toastify__toast {
+    padding: 15px 10px;
+
+    > div {
+      div:nth-child(2) {
+        font-size: 1.75rem;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  .MuiDataGrid-columnHeaders {
+    height: 80px;
+    min-height: 80px !important;
+    max-height: 80px !important;
+
+    div {
+      height: 80px;
+      min-height: 80px !important;
+      max-height: 80px !important;
+    }
+  }
+
+  .MuiDataGrid-row {
+    height: 80px;
+    min-height: 80px !important;
+    max-height: 80px !important;
+
+    div {
+      height: 80px;
+      min-height: 80px !important;
+      max-height: 80px !important;
+    }
+  }
+
+  .MuiTablePagination-root {
+    p {
+      font-size: 1.5rem !important;
+    }
+  }
+
+  .MuiTablePagination-actions {
+    button svg {
+      font-size: 2.5rem !important;
+    }
+  }
+}

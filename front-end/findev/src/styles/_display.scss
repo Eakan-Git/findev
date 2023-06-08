@@ -1,0 +1,6 @@
+@mixin display($displayType, $justify: center, $align: center, $direction: row) {
+  display: $displayType;
+  flex-direction: $direction;
+  align-items: $align;
+  justify-content: $justify;
+}

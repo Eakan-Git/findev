@@ -1,0 +1,15 @@
+.wrapper {
+  @include display(flex);
+  position: relative;
+
+  @include desktop-screen-1920 {
+    margin: 2rem;
+    transform-origin: top center;
+    scale: 1.5;
+  }
+
+  @include desktop-screen-2560 {
+    margin: 3rem;
+    scale: 2;
+  }
+}

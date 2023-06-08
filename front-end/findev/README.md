@@ -1,34 +1,103 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+A Site project using React, SCSS and MUI.
 
-## Getting Started
+## Run Locally
 
-First, run the development server:
+Clone the project
+
+Go to the project directory
 
 ```bash
-npm run dev
-# or
-yarn dev
+  cd front-end
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Install dependencies
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+```bash
+  yarn
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+Start the server
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```bash
+  yarn dev
+```
 
-## Learn More
+## Documentation
 
-To learn more about Next.js, take a look at the following resources:
+### Project Architecture
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Dependencies
+- react, react-dom, react-router-dom
+- typescript
+- sass
+- vite
+- zustand
+- mui
+- nanoid
+### React
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```
+src/
+├── assets/
+│   ├── images/
+│   ├── fonts/
+│   └── videos/
+├── elements/
+│   ├── button/
+│   │   ├── button.html
+│   │   ├── button.scss
+│   │   └── button.js
+│   ├── input/
+│   │   ├── input.html
+│   │   ├── input.scss
+│   │   └── input.js
+│   └── ...
+├── page/
+│   ├── home/
+│   │   ├── HomePage.tsx
+│   │   ├── homePage.module.scss
+│   │   ├── homePage.module.scss.d.ts
+│   │   └── components/
+│   │       ├── Carousel/
+│   │       │   ├── Carousel.tsx
+│   │       │   ├── carousel.module.scss
+│   │       │   └── carousel.module.scss.d.ts
+│   │       ├── About/
+│   │       └── ...
+│   │
+│   └── ...
+├── template/
+│   ├── HomeTemplate/
+│   │   ├── HomeTemplate.tsx
+│   │   ├── homeTemplate.module.scss
+│   │   └── homeTemplate.module.scss.d.ts
+│   └── ...
+├── main.tsx
+├── styles/
+├── @types/
+└── mocks/
+```
 
-## Deploy on Vercel
+- 1 component per file
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Use Separation of Concern if your component have too many logic
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Config or Data should be put in an immutable constant
+
+- Avoid empty html tag, use self-closing tag if you need one
+
+- Prefer named export over default export
+
+- Each component should be put inside separate folder
+
+- Each component folder should consist of index.ts and MyComponent.tsx
+
+- Context Providers should be put inside providers folder
+
+### Git
+
+- Commit message should be in format: <subject>: JIRA-TICKET <message>
+- Use imperative voice
+- Branch should be in format: <feature/bugfix/release/refactor/hotfix>/JIRA-TICKET-what-the-branch-for
+
+## Contributors

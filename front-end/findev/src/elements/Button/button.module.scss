@@ -1,0 +1,51 @@
+.button {
+  @include typography-style(0.75, $fontWeight: 400, $letterSpacing: 0);
+  position: relative;
+  padding: 13px 20px 10px 20px;
+  color: $white;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-align: center;
+  background-color: $primary;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: $primary-dark;
+  }
+
+  @include desktop-screen-1280 {
+    padding: 18px 35px 15px 35px;
+    font-size: 0.975rem;
+    border-radius: 8px;
+  }
+
+  @include desktop-screen-1920 {
+    padding: 18px 35px 15px 35px;
+    font-size: 1.125rem;
+    border-radius: 8px;
+  }
+
+  @include desktop-screen-2560 {
+    padding: 23px 40px 20px 40px;
+    font-size: 1.5rem;
+    border-radius: 8px;
+  }
+}
+
+.btnBlue {
+  @extend .button;
+}
+
+.btnWhite {
+  @extend .button;
+  color: $primary;
+  background-color: $primary-light;
+
+  &:hover {
+    color: $white;
+    background-color: $primary;
+  }
+}

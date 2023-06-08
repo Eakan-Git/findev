@@ -1,0 +1,19 @@
+.dashboardWrapper {
+  position: relative;
+
+  .statsList {
+    margin-top: 8px;
+
+    @include desktop-screen-1440 {
+      margin-top: 1rem;
+    }
+
+    @include desktop-screen-1920 {
+      margin-top: 2rem;
+    }
+
+    @include desktop-screen-2560 {
+      margin-top: 3rem;
+    }
+  }
+}

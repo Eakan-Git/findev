@@ -1,0 +1,18 @@
+@mixin typography-style($fontSize, $fontWeight: normal, $letterSpacing: 0, $lineHeight: 16) {
+  font-weight: $fontWeight;
+  font-size: $fontSize * 1rem;
+  line-height: $lineHeight * 1px;
+  letter-spacing: $letterSpacing;
+}
+
+%text-uppercase {
+  text-transform: uppercase;
+}
+
+%text-lowercase {
+  text-transform: lowercase;
+}
+
+%text-capitalize {
+  text-transform: capitalize;
+}

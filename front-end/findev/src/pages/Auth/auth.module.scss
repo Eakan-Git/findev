@@ -1,0 +1,43 @@
+.wrapper {
+  @include display(flex);
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)),
+    url("https://picsum.photos/1920/1080");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+
+  .paper {
+    width: 600px;
+    overflow: hidden;
+
+    .type {
+      display: flex;
+      width: 100%;
+
+      .typeItem:first-child {
+        width: 50%;
+        padding: 15px 0;
+      }
+
+      .active {
+        color: $white;
+        background: $primary;
+      }
+    }
+  }
+
+  @include desktop-screen-1920 {
+    .paper {
+      width: 700px;
+    }
+  }
+
+  @include desktop-screen-2560 {
+    .paper {
+      width: 800px;
+    }
+  }
+}
