@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
 import { localUrl } from "../../utils/path";
 export const loginApi = createApi({
   reducerPath: "loginApi",

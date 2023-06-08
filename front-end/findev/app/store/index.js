@@ -4,7 +4,6 @@ import storage from "redux-persist/lib/storage";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { persistReducer } from "redux-persist";
 import { loginApi } from "../service/auth";
-import { profileApi } from '../service/profile';
 const persistConfig = {
   key: "root",
   version: 1,
@@ -17,8 +16,7 @@ const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
   getDefaultMiddleware()
-    .concat([loginApi.middleware])
-    .concat([profileApi.middleware]),
+    .concat([loginApi.middleware]),
   devTools: true,
 });
 setupListeners(store.dispatch);

@@ -1,6 +1,25 @@
 import Select from "react-select";
 import ContactInfoBox from "../ContactInfoBox";
+// import {fetchProfile} from "../../../../../../app/service/profile";
+import {fetchProfile} from "./fetchProfile"
+import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+
 const FormInfoBox = () => {
+  // fetch user profile data with ID from state
+  const { user } = useSelector((state) => state.user);
+  // console.log(user);
+  const [profile, setProfile] = useState(null);
+
+  const fetchUser = async () => {
+    const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
+    setProfile(fetchedProfile);
+  };
+  
+  useEffect(() => {
+    fetchUser();
+  }, []);
+  console.log(profile);
   const catOptions = [
     { value: "Banking", label: "Banking" },
     { value: "Digital & Creative", label: "Digital & Creative" },

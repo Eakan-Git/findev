@@ -11,7 +11,7 @@ import userSlice from "../../features/user/userSlice";
 
 import { loginApi } from "../service/auth";
 import { USER_LOGOUT } from "../actions/userActions";
-import { profileApi } from "../service/profile";
+
 const appReducer = combineReducers({
   job: jobSlice,
   toggle: toggleSlice,
@@ -23,7 +23,6 @@ const appReducer = combineReducers({
   shop: shopSlice,
   user: userSlice,
   [loginApi.reducerPath]: loginApi.reducer,
-  [profileApi.reducerPath]: profileApi.reducer,
 });
 
 const rootReducer = (state, action) => {
