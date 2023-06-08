@@ -8,3 +8,4 @@ front-end/findev/package.json
 front-end/findev/yarn.lock
 Front-end/findev/.next/*
 *.pack
+front-end/findev/.next/cache/
