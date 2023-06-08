@@ -34,6 +34,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-front-end/findev/.next/cache/
-front-end/findev/.next/server/
-front-end/findev/.next/static/
+.next/cache/
+.next/server/
+.next/static/
+.next/
