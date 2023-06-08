@@ -3,6 +3,9 @@ import mysql.connector
 from elasticsearch import Elasticsearch
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from pymongo import MongoClient
+import mysql.connector
+import random
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel, cosine_similarity
@@ -23,6 +26,11 @@ app = FastAPI()
 
 # Define Elasticsearch connection
 es = Elasticsearch()
+
+# Connect to MongoDB
+client = MongoClient("mongodb+srv://tuansoi19127084:tuansoi19127084@cluster0.n8shx9d.mongodb.net/test?retryWrites=true&w=majority")
+db = client['BaseOnAL']
+collection = db['user_history']
 
 # Establish MySQL connection
 cnx = mysql.connector.connect(user='root', database='recommend', password="123456")
@@ -47,6 +55,47 @@ def load_stopwords():
 
 # Gọi hàm load_stopwords() để đảm bảo tệp đã được tải trước khi sử dụng
 stop_words = load_stopwords()
+
+
+
+def find_user_ids_by_job_title(job_title):
+    pipeline = [
+        {"$match": {"jobs.title": job_title}},
+        {"$project": {"_id": 0, "user_id": "$userid"}}
+    ]
+    
+    result = collection.aggregate(pipeline)
+    user_ids = list(set(doc["user_id"] for doc in result))
+    
+    return user_ids
+
+def get_user_profiles(job_title):
+    user_ids = find_user_ids_by_job_title(job_title)
+    if not user_ids:
+        return []
+
+    # Query to retrieve user profile information from MySQL
+    query = f"SELECT * FROM user_profiles WHERE id IN ({', '.join(str(id) for id in user_ids)})"
+    cursor = cnx.cursor()
+    cursor.execute(query)
+    results = cursor.fetchall()
+    cursor.close()
+
+    columns = [column[0] for column in cursor.description]
+    df = pd.DataFrame(results, columns=columns)
+
+    # Create a dictionary of user profiles in the order of user_ids
+    filtered_profiles_dict = []
+    for user_id in user_ids:
+        profile = df[df['id'] == user_id].to_dict('records')
+        if profile:
+            filtered_profiles_dict.extend(profile)
+
+    # Randomly select 10 user profiles if there are more than 10
+    if len(filtered_profiles_dict) > 10:
+        filtered_profiles_dict = random.sample(filtered_profiles_dict, 10)
+
+    return filtered_profiles_dict
 
 # Define the SQL query for jobs
 jobs_query = """
@@ -229,6 +278,7 @@ def get_job_id(usrid_list):
     sorted_df = merged_df.sort_values(by=["times"], ascending=False)
     return sorted_df
 
+
 @app.on_event("startup")
 def startup_event():
     # Execute SQL query to retrieve job data
@@ -319,6 +369,12 @@ def startup_event():
         # Convert skills to a list
         job_data['skills'] = [skill.strip() for skill in job_data['skills'].split(",")]
         es.index(index=index_name, body=job_data)
+
+#Recommend applicant
+@app.get("/user_profiles/{job_title}")
+def get_user_profiles_by_job_title(job_title: str):
+    user_profiles = get_user_profiles(job_title)
+    return {"user_profiles": user_profiles}
 
 #Recommend base on profile user
 @app.get("/recommend/{user_id}")
