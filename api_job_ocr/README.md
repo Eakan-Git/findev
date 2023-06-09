@@ -46,7 +46,9 @@ Kiểm tra kết quả cài đặt Elasticsearch bằng cách truy cập vào
 Là bạn đã cài thành công
 
 ## Hướng dẫn run FastAPI
-Mở Command Prompt hoặc PowerShell nhập lệnh
+Bước 1: Cài các thư việc trong requirements.txt
+
+Bước 2: Mở Command Prompt hoặc PowerShell nhập lệnh
     
     uvicorn main:app --reload
 
