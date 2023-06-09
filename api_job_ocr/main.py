@@ -25,7 +25,7 @@ warnings.simplefilter('ignore')
 app = FastAPI()
 
 # Define Elasticsearch connection
-es = Elasticsearch()
+es = Elasticsearch(['http://localhost:9201'])
 
 # Connect to MongoDB
 client = MongoClient("mongodb+srv://tuansoi19127084:tuansoi19127084@cluster0.n8shx9d.mongodb.net/test?retryWrites=true&w=majority")

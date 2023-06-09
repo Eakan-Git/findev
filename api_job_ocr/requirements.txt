@@ -9,6 +9,6 @@ tika
 cv2
 re
 json
-fastapi
 uvicorn
-
+pymongo
+mysql-connector-python
