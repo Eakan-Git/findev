@@ -17,6 +17,9 @@ import Contact from "../../components/job-single-pages/shared-components/Contact
 import JobDetailsDescriptions from "../../components/job-single-pages/shared-components/JobDetailsDescriptions";
 import ApplyJobModalContent from "../../components/job-single-pages/shared-components/ApplyJobModalContent";
 import Link from "next/link";
+import { localUrl } from "../../utils/path";
+import axios from "axios";
+import { useSelector } from "react-redux";
 const JobSingleDynamicV1 = () => {
   const router = useRouter();
   const [company, setCompany] = useState(null);
@@ -24,12 +27,12 @@ const JobSingleDynamicV1 = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const id = router.query.id;
-
+  const { user } = useSelector((state) => state.user);
   // console.log(id);
   useEffect(() => {
     const getJob = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/jobs/${id}`);
+        const res = await fetch(`${localUrl}/jobs/${id}`);
         if (res.error) {
           throw new Error("Failed to fetch job");
         }
@@ -55,6 +58,52 @@ const JobSingleDynamicV1 = () => {
   if (error) {
     return <div>Error: {error}</div>; // You can display a proper error message or retry option here
   }
+
+  const handleSaveJob = async () => {
+    if (job.is_saved) {
+      try {
+        await axios.post(
+          `${localUrl}/saved-jobs/`,
+          {
+            'user_id': user.userAccount.id ,
+            'job_id' : id
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': user.token
+            },
+          }
+        );
+      } catch (err) {
+        // Xử lý lỗi
+      }
+      console.log("Job removed from saved list");
+    } else {
+      console.log("job ne", job.is_saved)
+      console.log("jobid:", id)
+      console.log("user_id:", user.userAccount.id)
+      console.log("token:", user.token  )
+      try {
+        await axios.post(
+          `${localUrl}/saved-jobs/`,
+          {
+            'user_id': user.userAccount.id ,
+            'job_id' : id
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': user.token
+            },
+          }
+        );
+      } catch (err) {
+        // Xử lý lỗi
+      }
+      console.log("Job added to saved list");
+    }
+  };
 
   return (
     <>
@@ -185,15 +234,18 @@ const JobSingleDynamicV1 = () => {
                       Ứng tuyển ngay
                     </a>
                     {job.is_saved ? (
-                      <button className="bookmark-btn" style={{background:"var(--primary-color)", color:"white"}}>
-                      <i className="flaticon-bookmark"></i>
-                    </button>
-                    ): (
-                      <button className="bookmark-btn">
-                      <i className="flaticon-bookmark"></i>
-                    </button>
-                    )
-                      }
+                      <button
+                        className="bookmark-btn"
+                        style={{ background: "var(--primary-color)", color: "white" }}
+                        onClick={handleSaveJob}
+                      >
+                        <i className="flaticon-bookmark"></i>
+                      </button>
+                    ) : (
+                      <button className="bookmark-btn" onClick={handleSaveJob}>
+                        <i className="flaticon-bookmark"></i>
+                      </button>
+                    )}
                   </div>
                   {/* End apply for job btn */}
 
