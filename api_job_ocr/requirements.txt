@@ -12,3 +12,4 @@ json
 uvicorn
 pymongo
 mysql-connector-python
+requests
