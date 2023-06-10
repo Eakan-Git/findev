@@ -5,6 +5,7 @@ data preparation/scrape/webs/www.topcv.vn/companies_data.csv
 node_modules
 .DS_Store
 front-end/findev/yarn.lock
+front-end/findev/pakage-lock.json
 Front-end/findev/.next/*
 *.pack
 front-end/findev/.next/
