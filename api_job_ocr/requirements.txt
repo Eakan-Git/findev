@@ -1,4 +1,3 @@
-python
 fastapi
 pandas
 numpy
@@ -6,9 +5,8 @@ scikit-learn
 elasticsearch
 scikit-learn
 tika
-cv2
-re
-json
+opencv-python-headless
+regex
 uvicorn
 pymongo
 mysql-connector-python
