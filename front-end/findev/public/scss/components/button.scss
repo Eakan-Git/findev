@@ -78,6 +78,25 @@ Buttons Styles
   background-color: var(--primary-hover-bg-color);
 }
 
+.btn-style-cancel {
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  color: #ffffff;
+  background-color: #808080; /* Change to gray color */
+  font-size: 15px;
+  line-height: 20px;
+  border-radius: 8px;
+  font-weight: 400;
+  padding: 18px 35px 15px 35px;
+}
+
+.btn-style-cancel:hover {
+  color: #ffffff;
+  background-color: #666666; /* Change to a darker gray color on hover */
+}
+
+
 /* Btn Style Four */
 .btn-style-four {
   position: relative;

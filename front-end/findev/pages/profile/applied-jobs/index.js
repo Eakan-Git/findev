@@ -5,7 +5,7 @@ import AppliedJobs from "../../../components/dashboard-pages/candidates-dashboar
 const index = () => {
   return (
     <>
-      <Seo pageTitle="Applied Jobs" />
+      <Seo pageTitle="Quản lý đơn ứng tuyển" />
       <AppliedJobs />
     </>
   );
