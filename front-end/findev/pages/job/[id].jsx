@@ -24,33 +24,40 @@ const JobSingleDynamicV1 = () => {
   const router = useRouter();
   const [company, setCompany] = useState(null);
   const [job, setJob] = useState(null);
+  const [isSaved, setIsSaved] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const id = router.query.id;
   const { user } = useSelector((state) => state.user);
-  // console.log(id);
+  
   useEffect(() => {
     const getJob = async () => {
       try {
-        const res = await fetch(`${localUrl}/jobs/${id}`);
-        if (res.error) {
-          throw new Error("Failed to fetch job");
-        }
-        const resData = await res.json();
-        const fetchedJob = resData?.data?.job;
+        const res = await axios.get(`${localUrl}/jobs/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': user.token
+          }
+        });
+  
+        const fetchedJob = res.data?.data?.job;
         setJob(fetchedJob || null);
+        setCompany(fetchedJob?.employer_profile || null);
+        const isJobSaved = res.data?.data?.is_saved;
+        setIsSaved(isJobSaved);
       } catch (err) {
         setError(err.message);
       } finally {
         setIsLoading(false);
       }
     };
+  
     if (id) {
       getJob();
-      setCompany(job?.employer_profile || null);
     }
-  }, [id]);
-
+  }, [id, user.token]);
+  
+  
   if (isLoading) {
     return <div>Loading...</div>; // You can replace this with a loading spinner or skeleton UI component
   }
@@ -58,32 +65,27 @@ const JobSingleDynamicV1 = () => {
   if (error) {
     return <div>Error: {error}</div>; // You can display a proper error message or retry option here
   }
-
+  console.log(isSaved);
   const handleSaveJob = async () => {
-    if (job.is_saved) {
+    if (isSaved === true) {
       try {
-        await axios.post(
-          `${localUrl}/saved-jobs/`,
-          {
-            'user_id': user.userAccount.id ,
-            'job_id' : id
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': user.token
-            },
+        const params = new URLSearchParams();
+        params.append('user_id', user.userAccount.id);
+        params.append('job_id', id);
+    
+        const response = await axios.delete(`${localUrl}/saved-jobs/user-job`, {
+          data: params,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': user.token
           }
-        );
-      } catch (err) {
-        // Xử lý lỗi
+        })
+        // Xử lý phản hồi nếu cần
+      } catch (error) {
+        console.error('Failed to delete saved job:', error);
       }
       console.log("Job removed from saved list");
     } else {
-      console.log("job ne", job.is_saved)
-      console.log("jobid:", id)
-      console.log("user_id:", user.userAccount.id)
-      console.log("token:", user.token  )
       try {
         await axios.post(
           `${localUrl}/saved-jobs/`,
@@ -233,7 +235,7 @@ const JobSingleDynamicV1 = () => {
                     >
                       Ứng tuyển ngay
                     </a>
-                    {job.is_saved ? (
+                    {isSaved ? (
                       <button
                         className="bookmark-btn"
                         style={{ background: "var(--primary-color)", color: "white" }}
