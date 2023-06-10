@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 import pandas as pd
 import mysql.connector
 from elasticsearch import Elasticsearch
@@ -22,20 +24,29 @@ warnings.simplefilter('ignore')
 
 app = FastAPI()
 
+# Load environment variables from .env file
+load_dotenv()
+
+app = FastAPI()
+
 # Define Elasticsearch connection
-es = Elasticsearch(['http://localhost:9201'])
+es = Elasticsearch([os.environ.get("ELASTICSEARCH_HOST")])
 
 # Connect to MongoDB
-client = MongoClient("mongodb+srv://tuansoi19127084:tuansoi19127084@cluster0.n8shx9d.mongodb.net/test?retryWrites=true&w=majority")
+client = MongoClient(os.environ.get("MONGODB_CONNECTION_STRING"))
 db = client['BaseOnAL']
 collection = db['user_history']
 
 # Establish MySQL connection
-cnx = mysql.connector.connect(user='root', database='recommend', password="123456")
+cnx = mysql.connector.connect(
+    user=os.environ.get("MYSQL_USER"),
+    database=os.environ.get("MYSQL_DATABASE"),
+    password=os.environ.get("MYSQL_PASSWORD")
+)
 cursor = cnx.cursor()
 
 # Đường dẫn đến tệp trên Google Drive
-file_url = "https://drive.google.com/uc?id=1AQrnIFnqzPQbXXbYRADj5yh1I3_E_YMt"
+file_url = os.environ.get("GOOGLE_DRIVE_FILE_URL")
 
 # Tên biến toàn cục để lưu trữ nội dung của tệp
 stopwords_vn = None

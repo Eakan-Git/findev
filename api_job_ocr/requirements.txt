@@ -12,3 +12,4 @@ pymongo
 mysql-connector-python
 requests
 gensim
+python-dotenv
