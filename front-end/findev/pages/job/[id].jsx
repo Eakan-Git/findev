@@ -29,6 +29,10 @@ const JobSingleDynamicV1 = () => {
   const id = router.query.id;
   const { user } = useSelector((state) => state.user);
   // console.log(id);
+<<<<<<< Updated upstream
+=======
+  
+>>>>>>> Stashed changes
   useEffect(() => {
     const getJob = async () => {
       try {
@@ -38,6 +42,17 @@ const JobSingleDynamicV1 = () => {
         }
         const resData = await res.json();
         const fetchedJob = resData?.data?.job;
+<<<<<<< Updated upstream
+=======
+        const res = await axios.get(`${localUrl}/jobs/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': user.token
+          }
+        });
+  
+        const fetchedJob = res.data?.data?.job;
+>>>>>>> Stashed changes
         setJob(fetchedJob || null);
       } catch (err) {
         setError(err.message);
@@ -51,32 +66,41 @@ const JobSingleDynamicV1 = () => {
     }
   }, [id]);
 
+<<<<<<< Updated upstream
+=======
+  }, [id, user.token]);
+  
+  
+>>>>>>> Stashed changes
   if (isLoading) {
     return <div>Loading...</div>; // You can replace this with a loading spinner or skeleton UI component
   }
-
+@ -58,12 +65,12 @@ const JobSingleDynamicV1 = () => {
   if (error) {
     return <div>Error: {error}</div>; // You can display a proper error message or retry option here
   }
 
+<<<<<<< Updated upstream
   const handleSaveJob = async () => {
     if (job.is_saved) {
       try {
         await axios.post(
           `${localUrl}/saved-jobs/`,
+=======
+  console.log(isSaved);
+  const handleSaveJob = async () => {
+    if (job.is_saved) {
+    if (isSaved === true) {
+      try {
+        await axios.post(
+          `${localUrl}/saved-jobs/`,
+        await axios.delete(
+          `${localUrl}/saved-jobs/user-job`,
+>>>>>>> Stashed changes
           {
             'user_id': user.userAccount.id ,
             'job_id' : id
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': user.token
-            },
-          }
-        );
-      } catch (err) {
-        // Xử lý lỗi
+@ -80,10 +87,6 @@ const JobSingleDynamicV1 = () => {
       }
       console.log("Job removed from saved list");
     } else {
@@ -87,153 +111,15 @@ const JobSingleDynamicV1 = () => {
       try {
         await axios.post(
           `${localUrl}/saved-jobs/`,
-          {
-            'user_id': user.userAccount.id ,
-            'job_id' : id
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': user.token
-            },
-          }
-        );
-      } catch (err) {
-        // Xử lý lỗi
-      }
-      console.log("Job added to saved list");
-    }
-  };
-
-  return (
-    <>
-      <Seo pageTitle={job?.title} />
-
-      {/* <!-- Header Span --> */}
-      <span className="header-span"></span>
-
-      <LoginPopup />
-      {/* End Login Popup Modal */}
-
-      <DefaulHeader />
-      {/* <!--End Main Header --> */}
-
-      <MobileMenu />
-      {/* End MobileMenu */}
-
-      {/* <!-- Job Detail Section --> */}
-      <section className="job-detail-section style-two">
-        <div className="job-detail-outer">
-          <div className="auto-container">
-            <div className="row">
-              <div className="content-column col-lg-8 col-md-12 col-sm-12">
-                <div className="job-block-outer">
-                  <div className="job-block-seven style-two">
-                    <div className="inner-box">
-                      <div className="content">
-                        <h4>{job?.title}</h4>
-
-                        <ul className="job-info">
-                          <li>
-                            <span className="icon flaticon-briefcase"></span>
-                            {job?.employer_profile?.company_profile?.name || "Chưa cập nhật"}
-                          </li>
-                          {/* compnay info */}
-                          <li>
-                            <span className="icon flaticon-map-locator"></span>
-                            {job?.location || "Chưa cập nhật"}
-                          </li>
-                          {/* location info */}
-                          <li>
-                            <span className="icon flaticon-clock-3"></span>{" "}
-                            {job?.deadline}
-                          </li>
-                          {/* time info */}
-                          <li>
-                            <span className="icon flaticon-money"></span>{" "}
-                            {job?.min_salary === -1 && job.max_salary === -1
-                                        ? "Thỏa thuận"
-                                        : job.min_salary === 0 && job.max_salary === 0
-                                        ? "Không lương"
-                                        : job.min_salary === 0 && job.max_salary > 0
-                                        ? `Lên đến ${job.max_salary} triệu`
-                                        : `${job.min_salary} - ${job.max_salary} triệu`}
-                          </li>
-                          {/* salary info */}
-                        </ul>
-                        {/* End .job-info */}
-
-                        {/* <ul className="job-other-info"> */}
-                          {/* jobType: [
-                              {
-                                  styleClass: "time",
-                                  type: "Full Time",
-                              },
-                              {
-                                  styleClass: "privacy",
-                                  type: "Private",
-                              },
-                              {
-                                  styleClass: "required",
-                                  type: "Urgent",
-                              },
-                                ], */}
-                          {/* {company?.jobType?.map((val, i) => (
-                            <li key={i} className={`${val.styleClass}`}>
-                              {val.type}
-                            </li>
-                          ))}
-                        </ul> */}
-                        {/* End .job-other-info */}
-                      </div>
-                      {/* End .content */}
-                    </div>
-                  </div>
-                  {/* <!-- Job Block --> */}
-                </div>
-                {/* End .job-block-outer */}
-
-                {/* <figure className="image">
-                  <img src="/images/resource/job-post-img.jpg" alt="resource" />
-                </figure> */}
-                <JobDetailsDescriptions job={job}/>
-                {/* End jobdetails content */}
-
-                <div className="other-options">
-                  <div className="social-share">
-                    <h5>Chia sẻ công việc</h5>
-                    <SocialTwo />
-                  </div>
-                </div>
-                {/* <!-- Other Options --> */}
-
-                <div className="related-jobs">
-                  <div className="title-box">
-                    <h3>Công việc liên quan</h3>
-                    {/* <div className="text">
-                      2020 jobs live - 293 added today.
-                    </div> */}
-                  </div>
-                  {/* End title box */}
-
-                  <RelatedJobs />
-                </div>
-                {/* <!-- Related Jobs --> */}
-              </div>
-              {/* End .content-column */}
-
-              <div className="sidebar-column col-lg-4 col-md-12 col-sm-12">
-                <aside className="sidebar">
-                  <div className="btn-box">
-                    <a
-                      href="#"
-                      className="theme-btn btn-style-one"
-                      data-bs-toggle="modal"
-                      data-bs-target="#applyJobModal"
+@ -233,7 +236,7 @@ const JobSingleDynamicV1 = () => {
                     >
                       Ứng tuyển ngay
                     </a>
                     {job.is_saved ? (
+<<<<<<< Updated upstream
+=======
+                    {isSaved ? (
+>>>>>>> Stashed changes
                       <button
                         className="bookmark-btn"
                         style={{ background: "var(--primary-color)", color: "white" }}
