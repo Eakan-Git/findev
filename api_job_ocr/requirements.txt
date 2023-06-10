@@ -13,3 +13,4 @@ uvicorn
 pymongo
 mysql-connector-python
 requests
+gensim
