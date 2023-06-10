@@ -2,17 +2,15 @@ import pandas as pd
 import mysql.connector
 from elasticsearch import Elasticsearch
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
 from pymongo import MongoClient
-import mysql.connector
 import random
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel, cosine_similarity
+from gensim.models import Word2Vec
 import warnings
 from tika import parser
 import cv2
-import numpy as np
 import re
 import json
 from fastapi import FastAPI, UploadFile, File
@@ -52,11 +50,8 @@ def load_stopwords():
 
     return stopwords_vn
 
-
 # Gọi hàm load_stopwords() để đảm bảo tệp đã được tải trước khi sử dụng
 stop_words = load_stopwords()
-
-
 
 def find_user_ids_by_job_title(job_title):
     pipeline = [
@@ -96,6 +91,89 @@ def get_user_profiles(job_title):
         filtered_profiles_dict = random.sample(filtered_profiles_dict, 10)
 
     return filtered_profiles_dict
+
+# Define the SQL query for jobs
+query_jobs = """
+    SELECT
+        j.id AS job_id,
+        j.title,
+        j.description,
+        j.min_salary,
+        j.max_salary,
+        j.recruit_num,
+        j.position,
+        j.min_yoe,
+        j.max_yoe,
+        j.benefit,
+        j.deadline,
+        j.requirement,
+        GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills
+    FROM
+        jobs j
+        LEFT JOIN job_skills s ON j.id = s.job_id
+    GROUP BY
+        j.id,
+        j.title,
+        j.description,
+        j.min_salary,
+        j.max_salary,
+        j.recruit_num,
+        j.position,
+        j.min_yoe,
+        j.max_yoe,
+        j.benefit,
+        j.deadline,
+        j.requirement
+    """
+
+# Execute the jobs query and fetch the results
+cursor.execute(query_jobs)
+job_results = cursor.fetchall()
+
+# Get the column names for jobs
+job_columns = [desc[0] for desc in cursor.description]
+
+# Create a DataFrame for jobs
+df_job = pd.DataFrame(job_results, columns=job_columns)
+
+# Define the SQL query for users
+query_user = """
+SELECT
+  up.id,
+  up.full_name,
+  up.about_me,
+  up.good_at_position,
+  up.gender,
+  GROUP_CONCAT(DISTINCT us.skill) AS skills,
+  GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences,
+  GROUP_CONCAT(DISTINCT ue.title ORDER BY ue.user_id SEPARATOR '; ') AS experiences_title
+FROM
+  user_profiles up
+LEFT JOIN user_educations ued ON up.id = ued.user_id
+LEFT JOIN user_skills us ON up.id = us.user_id
+LEFT JOIN (
+  SELECT
+    user_id,
+    GROUP_CONCAT(description ORDER BY user_id SEPARATOR '; ') AS description,
+    GROUP_CONCAT(title ORDER BY user_id SEPARATOR '; ') AS title
+  FROM
+    user_experiences
+  GROUP BY
+    user_id
+) ue ON up.id = ue.user_id
+GROUP BY
+  up.id, up.full_name, up.about_me, up.good_at_position, up.gender;
+"""
+
+# Execute the users query and fetch the results
+cursor.execute(query_user)
+user_results = cursor.fetchall()
+
+# Get the column names for users
+user_columns = [desc[0] for desc in cursor.description]
+
+# Create a DataFrame for users
+df_user = pd.DataFrame(user_results, columns=user_columns)
 
 # Define the SQL query for jobs
 jobs_query = """
@@ -152,7 +230,8 @@ SELECT
   up.good_at_position,
   up.gender,
   GROUP_CONCAT(DISTINCT us.skill) AS skills,
-  GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences
+  GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences,
+  GROUP_CONCAT(DISTINCT ue.title ORDER BY ue.user_id SEPARATOR '; ') AS experiences_title
 FROM
   user_profiles up
 LEFT JOIN user_educations ued ON up.id = ued.user_id
@@ -160,7 +239,8 @@ LEFT JOIN user_skills us ON up.id = us.user_id
 LEFT JOIN (
   SELECT
     user_id,
-    GROUP_CONCAT(description ORDER BY user_id SEPARATOR '; ') AS description
+    GROUP_CONCAT(description ORDER BY user_id SEPARATOR '; ') AS description,
+    GROUP_CONCAT(title ORDER BY user_id SEPARATOR '; ') AS title
   FROM
     user_experiences
   GROUP BY
@@ -190,10 +270,9 @@ SELECT
   up.about_me,
   up.good_at_position,
   up.gender,
-  up.address,
-  up.year_of_experience,
   GROUP_CONCAT(DISTINCT us.skill) AS skills,
-  GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences
+  GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences,
+  GROUP_CONCAT(DISTINCT ue.title ORDER BY ue.user_id SEPARATOR '; ') AS experiences_title
 FROM
   user_profiles up
 LEFT JOIN user_educations ued ON up.id = ued.user_id
@@ -201,7 +280,8 @@ LEFT JOIN user_skills us ON up.id = us.user_id
 LEFT JOIN (
   SELECT
     user_id,
-    GROUP_CONCAT(description ORDER BY user_id SEPARATOR '; ') AS description
+    GROUP_CONCAT(description ORDER BY user_id SEPARATOR '; ') AS description,
+    GROUP_CONCAT(title ORDER BY user_id SEPARATOR '; ') AS title
   FROM
     user_experiences
   GROUP BY
@@ -404,6 +484,124 @@ def search_jobs(keyword: str):
         jobs.append(job_info)
 
     return jobs
+
+# Connect to MongoDB
+client = MongoClient("mongodb+srv://tuansoi19127084:tuansoi19127084@cluster0.n8shx9d.mongodb.net/test?retryWrites=true&w=majority")
+db = client['BaseOnAL']
+collection = db['job_add']
+
+# Read data from the collection
+data = collection.find()
+
+# Create a list of dictionaries
+documents = [document for document in data]
+
+# Create a DataFrame
+df = pd.DataFrame(documents)
+
+# Preprocess job descriptions, skills, and requirements
+df_job['description'] = df_job['description'].fillna('')
+df_job['skills'] = df_job['skills'].fillna('')
+df_job['requirement'] = df_job['requirement'].fillna('')
+
+# Preprocess user profiles
+df_user['about_me'] = df_user['about_me'].fillna('')
+df_user['skills'] = df_user['skills'].fillna('')
+df_user['experiences'] = df_user['experiences'].fillna('')
+
+# Preprocess job descriptions, requirements, and benefits from df
+df['Mô tả công việc'] = df['Mô tả công việc'].fillna('')
+df['Yêu cầu ứng viên'] = df['Yêu cầu ứng viên'].fillna('')
+df['Quyền lợi'] = df['Quyền lợi'].fillna('')
+
+# Train Word2Vec model
+corpus = (
+    df_job['description'].fillna('').astype(str) + ' ' +
+    df_job['skills'].fillna('').astype(str) + ' ' +
+    df_job['requirement'].fillna('').astype(str) + ' ' +
+    df_user['about_me'].fillna('').astype(str) + ' ' +
+    df_user['skills'].fillna('').astype(str) + ' ' +
+    df['Mô tả công việc'].fillna('').astype(str) + ' ' +
+    df['Yêu cầu ứng viên'].fillna('').astype(str) + ' ' +
+    df['Quyền lợi'].fillna('').astype(str) + ' ' +
+    df_user['experiences'].fillna('').astype(str)
+)
+
+corpus_tokens = []
+for sentence in corpus:
+    try:
+        tokens = sentence.split()
+        corpus_tokens.append(tokens)
+    except AttributeError:
+        continue
+
+model = Word2Vec(corpus_tokens, vector_size=100, window=5, min_count=1, workers=4)
+
+def calculate_job_similarity(user_description, user_skills, user_requirements, job_description, job_skills, job_requirements):
+    # Tokenize user information and job information
+    user_info_tokens = user_description.split() + user_skills.split() + user_requirements.split()
+    job_info_tokens = job_description.split() + job_skills.split() + job_requirements.split()
+
+    # Generate Word2Vec embeddings for user information and job information
+    user_info_embeddings = np.array([model.wv[word] for word in user_info_tokens if word in model.wv.key_to_index])
+    job_info_embeddings = np.array([model.wv[word] for word in job_info_tokens if word in model.wv.key_to_index])
+
+    # Calculate the cosine similarity between user information and job information
+    similarity_scores = cosine_similarity(user_info_embeddings, job_info_embeddings)
+
+    # Return the average cosine similarity score
+    return np.mean(similarity_scores)
+
+def recommend_jobs_for_user(user_id):
+    # Retrieve the user information based on user_id
+    user = df_user.loc[df_user['id'] == user_id]
+    user_description = user['about_me'].values[0]
+    user_skills = user['skills'].values[0]
+    user_requirements = ""
+
+    # Calculate the similarity between the user and each job
+    job_similarity_scores = []
+    for index, job in df_job.iterrows():
+        job_description = job['description']
+        job_skills = job['skills']
+        job_requirements = job['requirement']
+        similarity_score = calculate_job_similarity(user_description, user_skills, user_requirements, job_description, job_skills, job_requirements)
+        job_similarity_scores.append((job['job_id'], job['title'], similarity_score))
+
+    # Remove None values from similarity scores
+    job_similarity_scores = [score for score in job_similarity_scores if score[2] is not None]
+
+    # Sort the jobs based on similarity score in descending order
+    job_similarity_scores.sort(key=lambda x: np.mean(x[2]) if np.iterable(x[2]) else x[2], reverse=True)
+
+    # Create a list to store the detailed job information
+    detailed_jobs_info = []
+
+    # Get detailed information for all recommended jobs
+    for job in job_similarity_scores:
+        job_id = job[0]
+        job_title = job[1]
+        similarity_score = job[2]
+
+        # Retrieve detailed job information from the DataFrame
+        job_info = df_job.loc[df_job['job_id'] == job_id].iloc[0].to_dict()
+
+        # Add similarity score to the job information
+        job_info['similarity_score'] = similarity_score
+
+        # Append the job information to the list
+        detailed_jobs_info.append(job_info)
+
+    # Create a DataFrame from the detailed job information list
+    detailed_jobs_df = pd.DataFrame(detailed_jobs_info)
+
+    # Print the detailed job information
+    return detailed_jobs_df
+
+@app.get("/recommend_jobs/{user_id}")
+def get_recommended_jobs(user_id: int):
+    recommended_jobs = recommend_jobs_for_user(user_id)
+    return recommended_jobs.to_dict(orient='records')
 
 # Hoang
 # Write json
