@@ -10,10 +10,6 @@ import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader
 import MenuToggler from "../../MenuToggler";
 
 const index = () => {
-  const handleUploadCV = (e) => {
-    const file = e.target.files[0];
-    console.log(file);
-  };
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
@@ -46,12 +42,6 @@ const index = () => {
                 <div className="tabs-box">
                   <div className="widget-title">
                     <h4>Hồ sơ của bạn</h4>
-                    <label className="theme-btn btn-style-one">
-                    Nhập thông tin nhanh bằng CV
-                    <input type="file" style={{ display: 'none' }} 
-                    onChange={handleUploadCV}
-                    />
-                  </label>
                   </div>
                   <MyProfile />
                 </div>

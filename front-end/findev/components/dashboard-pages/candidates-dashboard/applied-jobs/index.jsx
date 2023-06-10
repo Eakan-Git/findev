@@ -38,7 +38,7 @@ const index = () => {
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
-          <BreadCrumb title="Xem công việc đã ứng tuyển!" />
+          <BreadCrumb title="Applied jobs!" />
           {/* breadCrumb */}
 
           <MenuToggler />
@@ -48,7 +48,7 @@ const index = () => {
             <div className="col-lg-12">
               {/* <!-- Ls widget --> */}
               <div className="ls-widget">
-                <JobListingsTable user={user} />
+                <JobListingsTable />
               </div>
             </div>
           </div>
