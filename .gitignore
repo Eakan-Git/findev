@@ -4,6 +4,7 @@ data preparation/scrape/webs/www.topcv.vn/company_link.csv
 data preparation/scrape/webs/www.topcv.vn/companies_data.csv
 node_modules
 .DS_Store
+<<<<<<< HEAD
 
 # Logs
 logs
@@ -33,3 +34,12 @@ dist-ssr
 .env
 *.pack
 front-end/findev/.next/
+=======
+front-end/findev/package.json
+front-end/findev/yarn.lock
+Front-end/findev/.next/*
+*.pack
+front-end/findev/.next/cache/
+front-end/findev/.next/server/
+front-end/findev/.next/static/
+>>>>>>> eakan
