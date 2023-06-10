@@ -1,10 +1,43 @@
 import Link from "next/link";
-import jobs from "../../../data/job-featured";
+import { searchUrl } from "../../../utils/path";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-const RelatedJobs = () => {
+const RelatedJobs = ({ title }) => {
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const queryUrl = `${searchUrl}${encodeURIComponent(title)}`;
+  const getJobs = async () => {
+    try {
+      setLoading(false);
+      console.log("Start fetching data...");
+      console.log(queryUrl);
+      // const res = await axios.get(queryUrl);
+      const res = await axios.get(`http://127.0.0.1:8001/jobs/${title}`);
+      console.log(res);
+      setJobs(res.data);
+    } catch (error) {
+      console.error('Error:', error);
+      setLoading(false);
+    } finally {
+      console.log("End fetching data...");
+      setLoading(true);
+    }
+  };
+  useEffect(() => {
+    getJobs();
+  }, []);
+
+  if (loading) {
+    return <div>Đang tải...</div>;
+  }
+
+  if (!jobs.length) {
+    return <div>Không tìm thấy công việc tương tự.</div>;
+  }
   return (
     <>
-      {jobs.slice(3, 7).map((item) => (
+      {jobs.slice(0, 4).map((item) => (
         <div className="job-block" key={item.id}>
           <div className="inner-box">
             <div className="content">
@@ -12,7 +45,9 @@ const RelatedJobs = () => {
                 <img src={item.logo} alt="item brand" />
               </span>
               <h4>
-                <Link href={`/job/${item.id}`}>{item.jobTitle}</Link>
+                <Link href={`/job/${item.id}`}>
+                  <a>{item.jobTitle}</a>
+                </Link>
               </h4>
 
               <ul className="job-info">

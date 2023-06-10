@@ -15,7 +15,7 @@ import {
 } from "../../../features/filter/filterSlice";
 import Pagination from "../components/Pagination";
 import JobSelect from "../components/JobSelect";
-import { localUrl } from "../../../utils/path";
+import { localUrl, searchUrl } from "../../../utils/path";
 
 const FilterJobBox = () => {
     const [jobs, setJobs] = useState(null);
@@ -34,42 +34,57 @@ const FilterJobBox = () => {
         if(query.keyword) {
             console.log(query.keyword);
         }
-    }, [router]);
-    useEffect(() => {
         const getJobs = async () => {
             try {
-                let url = `${localUrl}/jobs`;
-                let queryParams = [];
-                if(currentPage !== 1) {
-                    queryParams.push(`page=${currentPage}`);
-                }
-                if(jobsPerPage !== 10) {
-                    queryParams.push(`count_per_page=${jobsPerPage}`);
-                }
-                if(keyword !== "") {
-                    queryParams.push(`keyword=${keyword}`);
-                }
-                if(location !== "") {
-                    queryParams.push(`location=${location}`);
-                }
-                if(queryParams.length > 0) {
-                    url += `?${queryParams.join("&")}`;
-                }
+                let url = `${searchUrl}/jobs/`;
+                url += `${query.keyword}`;
+                url += " "
+                url += `${query.location}`;
                 const res = await fetch(url);
                 const resData = await res.json();
-                setJobs(resData.data.jobs);
-                // console.log(resData);
-                const updatedUrl = `/search${
-                    queryParams.length > 0 ? `?${queryParams.join("&")}` : ""
-                  }`;
-                  router.push(updatedUrl, undefined, { shallow: true });
+                console.log(resData);
             } catch (err) {
                 console.log(err);
             }
-        };
-
+        }
         getJobs();
-    }, [currentPage, jobsPerPage]);
+    }, [router]);
+    // useEffect(() => {
+    //     const getJobs = async () => {
+    //         try {
+    //             let url = `${searchUrl}/jobs/`;
+    //             let queryParams = [];
+    //             if(currentPage !== 1) {
+    //                 queryParams.push(`page=${currentPage}`);
+    //             }
+    //             if(jobsPerPage !== 10) {
+    //                 queryParams.push(`count_per_page=${jobsPerPage}`);
+    //             }
+    //             if(keyword !== "") {
+    //                 queryParams.push(`keyword=${keyword}`);
+    //             }
+    //             if(location !== "") {
+    //                 queryParams.push(`location=${location}`);
+    //             }
+    //             if(queryParams.length > 0) {
+    //                 url += `${queryParams.join(" ")}`;
+    //             }
+    //             const res = await fetch(url);
+    //             const resData = await res.json();
+    //             console.log(resData);
+    //             setJobs(resData.data.jobs);
+    //             // console.log(resData);
+    //             const updatedUrl = `/search${
+    //                 queryParams.length > 0 ? `?${queryParams.join("&")}` : ""
+    //               }`;
+    //             //   router.push(updatedUrl, undefined, { shallow: true });
+    //         } catch (err) {
+    //             console.log(err);
+    //         }
+    //     };
+
+    //     getJobs();
+    // }, [currentPage, jobsPerPage]);
     const handlePageChange = (page) => {
         // check page is a number
         if (!isNaN(page)) {
