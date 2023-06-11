@@ -1,0 +1,142 @@
+.wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  img {
+    height: 200px;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    height: 50px;
+    padding: 10px;
+    background-color: $white;
+    transition: all 0.3s ease;
+
+    h5 {
+      margin: 0;
+      line-height: 1;
+    }
+
+    p {
+      margin: 0;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+  }
+
+  &:hover {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+
+    .content {
+      height: 100px;
+      margin-top: -50px;
+
+      p {
+        opacity: 1;
+      }
+    }
+  }
+
+  @include desktop-screen-1280 {
+    img {
+      height: 250px;
+    }
+  }
+
+  @include desktop-screen-1440 {
+    img {
+      height: 300px;
+    }
+
+    .content {
+      height: 50px;
+      padding: 12px;
+
+      h5 {
+        font-size: 1.25rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    &:hover {
+      .content {
+        height: 150px;
+        margin-top: -100px;
+
+        p {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  @include desktop-screen-1920 {
+    img {
+      height: 400px;
+    }
+
+    .content {
+      height: 60px;
+      padding: 12px;
+
+      h5 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        font-size: 1.25rem;
+      }
+    }
+
+    &:hover {
+      .content {
+        height: 160px;
+        margin-top: -100px;
+
+        p {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  @include desktop-screen-2560 {
+    img {
+      height: 600px;
+    }
+
+    .content {
+      height: 80px;
+      padding: 24px;
+
+      h5 {
+        font-size: 1.75rem;
+      }
+
+      p {
+        font-size: 1.5rem;
+      }
+    }
+
+    &:hover {
+      .content {
+        height: 180px;
+        margin-top: -100px;
+
+        p {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}

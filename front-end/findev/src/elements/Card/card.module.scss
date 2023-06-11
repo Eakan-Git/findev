@@ -2,8 +2,9 @@
   position: relative;
   height: 100%;
   padding: 30px 20px;
+  overflow: hidden;
   background: $white;
-  border: 1px solid #ecedf2;
+  border: 1px solid $gray;
   border-radius: 8px;
   transition: all 300ms ease;
 

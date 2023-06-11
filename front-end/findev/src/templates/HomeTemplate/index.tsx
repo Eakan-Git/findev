@@ -3,6 +3,7 @@ import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Header from "@/elements/Header";
+import SideBar from "@/elements/SideBar";
 import userStore from "@/store/user";
 
 import homeTemplateStyles from "./homeTemplate.module.scss";
@@ -18,7 +19,7 @@ const HomeTemplate = ({ children }: { children: ReactNode }) => {
   return (
     <section className={homeTemplateStyles.homeTemplateWrapper}>
       <Header />
-      {/* <SideBar /> */}
+      <SideBar />
       <Box className={homeTemplateStyles.home}>
         <Box className={homeTemplateStyles.fakeSideBar}>.</Box>
         <Box className={homeTemplateStyles.children}>{children}</Box>

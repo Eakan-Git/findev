@@ -2,7 +2,7 @@ import { FC } from "react";
 
 import CalendarScheduler from "@/elements/CalendarScheduler";
 
-const Dashboard: FC = () => {
+const TimeTable: FC = () => {
   return (
     <div>
       <CalendarScheduler />
@@ -10,4 +10,4 @@ const Dashboard: FC = () => {
   );
 };
 
-export default Dashboard;
+export default TimeTable;

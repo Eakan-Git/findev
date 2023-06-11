@@ -3,10 +3,13 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 
 import ScrollToTop from "@/elements/ScrollToTop";
 import Auth from "@/pages/Auth";
-import Dashboard from "@/pages/Dashboard";
+import CvManager from "@/pages/CvManager";
 import "@/styles/global.scss";
+import TimeTable from "@/pages/TimeTable";
 import HomeTemplate from "@/templates/HomeTemplate";
 import { ROUTES } from "@/utils/routes";
+import Profile from "@/pages/Profile";
+import CreateCv from "@/pages/CreateCv";
 
 function App() {
   return (
@@ -20,8 +23,11 @@ function App() {
             </HomeTemplate>
           }
         >
-          <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
-          <Route path="/" element={<Dashboard />} />
+          <Route path={ROUTES.CV_MANAGER} element={<CvManager />} />
+          <Route path={ROUTES.TIME_TABLE} element={<TimeTable />} />
+          <Route path={ROUTES.PROFILE} element={<Profile />} />
+          <Route path={ROUTES.CREATE_CV} element={<CreateCv />} />
+          <Route path="/" element={<CvManager />} />
         </Route>
         <Route path="/auth" element={<Auth />} />
         <Route
@@ -38,7 +44,7 @@ function App() {
                   fontWeight: "bold",
                 }}
               >
-                No Data
+                Không có dữ liệu
               </div>
             </HomeTemplate>
           }
