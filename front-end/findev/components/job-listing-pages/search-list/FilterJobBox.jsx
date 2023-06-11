@@ -15,76 +15,39 @@ import {
 } from "../../../features/filter/filterSlice";
 import Pagination from "../components/Pagination";
 import JobSelect from "../components/JobSelect";
-import { localUrl, searchUrl } from "../../../utils/path";
+import {searchUrl } from "../../../utils/path";
 
 const FilterJobBox = () => {
-    const [jobs, setJobs] = useState(null);
+    const [jobs, setJobs] = useState(undefined);
     const [currentPage, setCurrentPage] = useState(1);
     const [jobsPerPage, setJobsPerPage] = useState(10);
     const router = useRouter();
-    // handle url query params
+    const { keyword, location } = router.query;
+    console.log(keyword, location);
+    // construct query url, if keyword or location is not undefined
+    // if keyword is not undefined but location is undefined, search by keyword
+    // if location is not undefined but keyword is undefined, search by location
+    // if both are not undefined, search by both
+    let queryUrl = "";
+    if (keyword !== undefined && location === undefined) {
+    queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}`;
+    } else if (location !== undefined && keyword === undefined) {
+    queryUrl = `${searchUrl}?location=${encodeURIComponent(location)}`;
+    } else if (keyword !== undefined && location !== undefined) {
+    queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}&location=${encodeURIComponent(location)}`;
+    }
+    console.log(queryUrl);
+    // fetch jobs
     useEffect(() => {
-        const { query } = router;
-        if (query.page) {
-            setCurrentPage(parseInt(query.page));
-        }
-        if (query.count_per_page) {
-            setJobsPerPage(parseInt(query.count_per_page));
-        }
-        if(query.keyword) {
-            console.log(query.keyword);
-        }
-        const getJobs = async () => {
-            try {
-                let url = `${searchUrl}/jobs/`;
-                url += `${query.keyword}`;
-                url += " "
-                url += `${query.location}`;
-                const res = await fetch(url);
-                const resData = await res.json();
-                console.log(resData);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-        getJobs();
-    }, [router]);
-    // useEffect(() => {
-    //     const getJobs = async () => {
-    //         try {
-    //             let url = `${searchUrl}/jobs/`;
-    //             let queryParams = [];
-    //             if(currentPage !== 1) {
-    //                 queryParams.push(`page=${currentPage}`);
-    //             }
-    //             if(jobsPerPage !== 10) {
-    //                 queryParams.push(`count_per_page=${jobsPerPage}`);
-    //             }
-    //             if(keyword !== "") {
-    //                 queryParams.push(`keyword=${keyword}`);
-    //             }
-    //             if(location !== "") {
-    //                 queryParams.push(`location=${location}`);
-    //             }
-    //             if(queryParams.length > 0) {
-    //                 url += `${queryParams.join(" ")}`;
-    //             }
-    //             const res = await fetch(url);
-    //             const resData = await res.json();
-    //             console.log(resData);
-    //             setJobs(resData.data.jobs);
-    //             // console.log(resData);
-    //             const updatedUrl = `/search${
-    //                 queryParams.length > 0 ? `?${queryParams.join("&")}` : ""
-    //               }`;
-    //             //   router.push(updatedUrl, undefined, { shallow: true });
-    //         } catch (err) {
-    //             console.log(err);
-    //         }
-    //     };
+    const fetchJobs = async () => {
+        const res = await fetch(queryUrl);
+        const data = await res.json();
+        setJobs(data?.data?.jobs);
+        console.log(data?.data?.jobs);
+    };
+    fetchJobs();
+    }, [queryUrl]);
 
-    //     getJobs();
-    // }, [currentPage, jobsPerPage]);
     const handlePageChange = (page) => {
         // check page is a number
         if (!isNaN(page)) {
@@ -99,8 +62,8 @@ const FilterJobBox = () => {
     };
     const { jobList, jobSort } = useSelector((state) => state.filter);
     const {
-        keyword,
-        location,
+        // keyword,
+        // location,
         destination,
         category,
         datePosted,
@@ -108,6 +71,7 @@ const FilterJobBox = () => {
         experienceSelect,
         salary,
     } = jobList || {};
+    // console.log(keyword, location);
 
     const { sort, perPage } = jobSort;
     const dispatch = useDispatch();
@@ -130,20 +94,20 @@ const FilterJobBox = () => {
         jobTypeSelect !== "" &&
         item?.jobType[0]?.type.toLowerCase().split(" ").join("-") === jobTypeSelect
             ? item
-            : null;
+            : undefined;
 
     const datePostedFilter = (item) =>
         datePosted !== "all" &&
         datePosted !== "" &&
         item?.created_at.toLowerCase().split(" ").join("-").includes(datePosted)
             ? item
-            : null;
+            : undefined;
 
     const experienceFilter = (item) =>
         experienceSelect !== "" &&
         item?.experience.split(" ").join("-").toLowerCase() === experienceSelect
             ? item
-            : null;
+            : undefined;
 
     const salaryFilter = (item) =>
         item?.totalSalary?.min >= salary?.min && item?.totalSalary?.max <= salary?.max;
@@ -151,9 +115,9 @@ const FilterJobBox = () => {
     const sortFilter = (a, b) => (sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1);
 
     // Jobs content
-    let content = null;
+    let content = undefined;
 
-    if (jobs !== null && jobs !== undefined) {
+    if (jobs !== undefined && jobs !== undefined) {
         const filteredJobs = jobs.data;
             // .filter(keywordFilter)
             // .filter(locationFilter)
@@ -173,12 +137,12 @@ const FilterJobBox = () => {
                         <div className="content">
                             <span className="company-logo">
                                 <Link href={`/job/${item.id}`}>
-                                <img src={item.employer_profile.company_profile.logo}
-                                title={item.employer_profile.company_profile.name} 
-                                alt={item.employer_profile.company_profile.name}
+                                <img src={item?.employer_profile.company_profile.logo || "/images/logo.png"}
+                                title={item?.employer_profile.company_profile.name || "Company Logo"} 
+                                alt={item?.employer_profile.company_profile.name || "Company Logo"}
                                 />
                                 </Link>
-                                {/* <img src={item.employer_profile.company_profile.logo} alt={item.employer_profile.company_profile.name} /> */}
+                                {/* <img src={item?.employer_profile.company_profile.logo} alt={item?.employer_profile.company_profile.name} /> */}
                             </span>
                             <h4>
                                 <Link href={`/job/${item.id}`}
@@ -195,11 +159,11 @@ const FilterJobBox = () => {
                             <ul className="job-info">
                                 <li>
                                     <span className="icon flaticon-briefcase"></span>
-                                    <Link href={`/employer/${item.employer_profile.company_profile.id}`}
-                                    alt={item.employer_profile.company_profile.name}
-                                    title={item.employer_profile.company_profile.name}
+                                    <Link href={`/employer/${item?.employer_profile.company_profile.id}`}
+                                    alt={item?.employer_profile.company_profile.name}
+                                    title={item?.employer_profile.company_profile.name}
                                     >
-                                    {item.employer_profile.company_profile.name.length > 12 ? item.employer_profile.company_profile.name.slice(0, 12) + "..." : item.employer_profile.company_profile.name}
+                                    {item?.employer_profile.company_profile.name.length > 12 ? item?.employer_profile.company_profile.name.slice(0, 12) + "..." : item?.employer_profile.company_profile.name}
                                     </Link>
                                 </li>
                                 <li>
@@ -311,7 +275,7 @@ const FilterJobBox = () => {
                         >
                             Về mặc định
                         </button>
-                    ) : null}
+                    ) : undefined}
 
                     <select
                         value={sort}
@@ -338,7 +302,7 @@ const FilterJobBox = () => {
 
             <div className="row">{content}</div>
 
-            <Pagination jobs={jobs} handlePageChange={handlePageChange}/>
+            {/* <Pagination jobs={jobs} handlePageChange={handlePageChange}/> */}
         </>
     );
 };

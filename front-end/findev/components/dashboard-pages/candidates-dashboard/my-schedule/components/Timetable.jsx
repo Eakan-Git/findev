@@ -1,11 +1,55 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './Timetable.module.css';
+import { localUrl } from '/utils/path';
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
+import { fetchProfile } from './fetchProfile';
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '/app/actions/userActions';
 
 const Timetable = () => {
+  const dispatch = useDispatch();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [selectedCells, setSelectedCells] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [activatedCells, setActivatedCells] = useState([]);
+  const { user } = useSelector((state) => state.user);
+  const router = useRouter();
+
+  const fetchUser = async () => {
+    const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
+    if (fetchedProfile.error === false) {
+      setProfile(fetchedProfile.data.user_profile);
+      console.log(fetchedProfile.data.user_profile.time_tables);
+      setLoading(!loading);
+    } else if (fetchedProfile.message === 'Unauthenticated.') {
+      alert('Phiên làm việc đã hết hạn, vui lòng đăng nhập lại');
+      router.push('/');
+      dispatch(logoutUser());
+    } else {
+      console.log('Đã có lỗi xảy ra, vui lòng thử lại sau');
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    if (profile && profile.time_tables) {
+      const parsedActivatedCells = profile.time_tables.map((item) => {
+        const [columnIndex, rowIndex] = item.coordinate.split(';');
+        return { rowIndex: parseInt(rowIndex), columnIndex: parseInt(columnIndex) };
+      });
+      setActivatedCells(parsedActivatedCells);
+      setSelectedCells(parsedActivatedCells); // Set saved cells as selected cells
+    }
+    setIsBlankTimetable(!profile || !profile.time_tables || profile.time_tables.length === 0);
+  }, [profile]);
+
   const [originalActivatedCells, setOriginalActivatedCells] = useState([]);
+  const [isBlankTimetable, setIsBlankTimetable] = useState(false);
 
   const dragTargetRef = useRef(null);
 
@@ -60,9 +104,9 @@ const Timetable = () => {
 
   const getCellClassName = (rowIndex, columnIndex) => {
     const cellClasses = [styles.cell];
-    if (isCellActivated(rowIndex, columnIndex)) {
-      cellClasses.push(styles.activatedCell);
-    }
+    // if (isCellActivated(rowIndex, columnIndex)) {
+    //   cellClasses.push(styles.activatedCell);
+    // }
     if (isCellSelected({ rowIndex, columnIndex })) {
       cellClasses.push(styles.selectedCell);
     }
@@ -73,30 +117,40 @@ const Timetable = () => {
   };
 
   const handleCancel = () => {
-    setActivatedCells(originalActivatedCells);
+    setSelectedCells(originalActivatedCells); // Revert to original activated cells
   };
 
   const handleSave = () => {
     // Perform the save action here
-    setOriginalActivatedCells(activatedCells);
+    // setOriginalActivatedCells(activatedCells);
+    alert('Đã lưu thay đổi');
+    console.log(selectedCells);
   };
 
-  const isChanged = JSON.stringify(originalActivatedCells) !== JSON.stringify(activatedCells);
+  const handleClear = () => {
+    setSelectedCells([]); // Clear selected cells
+  };
 
-  let buttons = null;
-  if (isChanged || selectedCells.length > 0) {
-    buttons = (
-      <div className="form-group col-lg-6 col-md-12" style={{ marginTop: '10px' }}>
-        <button type="submit" className="theme-btn btn-style-cancel" onClick={handleCancel}>
-          Hủy
-        </button>
-        <span style={{ margin: '0 10px' }}></span>
-        <button type="submit" className="theme-btn btn-style-one" onClick={handleSave}>
-          Cập nhật
-        </button>
-      </div>
-    );
-  }
+  const isChanged = JSON.stringify(originalActivatedCells) !== JSON.stringify(selectedCells);
+
+  // let buttons = null;
+
+  let buttons = (
+    <div className="form-group col-lg-6 col-md-12" style={{ marginTop: '10px' }}>
+      <button type="submit" className="theme-btn btn-style-cancel" onClick={handleCancel}>
+        Hủy
+      </button>
+      <span style={{ margin: '0 10px' }}></span>
+      <button type="submit" className="theme-btn btn-style-one" onClick={handleSave}>
+        Cập nhật
+      </button>
+      <span style={{ margin: '0 10px' }}></span>
+      <button type="submit" className="theme-btn btn-style-clear" onClick={handleClear}>
+        Xóa tất cả
+      </button>
+    </div>
+  );
+
 
   return (
     <div className={styles.container}>
