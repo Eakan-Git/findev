@@ -12,6 +12,8 @@ import RelatedJobs from "../../components/employer-single-pages/related-jobs/Rel
 import MapJobFinder from "../../components/job-listing-pages/components/MapJobFinder";
 import Social from "../../components/employer-single-pages/social/Social";
 import Contact from "../../components/job-single-pages/shared-components/Contact";
+import ReportCompanyModalContent from "../../components/job-single-pages/shared-components/ReportCompanyModalContent";
+import { Modal, Button } from 'react-bootstrap';
 
 const EmployersSingleV3 = ({}) => {
   const router = useRouter();
@@ -20,6 +22,17 @@ const EmployersSingleV3 = ({}) => {
   const [error, setError] = useState(null);
   const id = router.query.id;
   const [hiringJobs, setHiringJobs] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+
   useEffect(() => {
     const getEmployer = async () => {
       try {
@@ -137,7 +150,44 @@ const EmployersSingleV3 = ({}) => {
                       </div>
                       {/* btn-box */}
                     </div>
+                    
                   </div>
+                  {/* btn-box-report */}
+                  <div className="btn-box">
+                  <button
+                    className="theme-btn btn-style-two"
+                    onClick={handleModalOpen}
+                  >
+                  <div className="text-center">
+                    Báo cáo công ty 
+                  </div>
+                  </button>
+                </div>
+
+             {/* <!-- Modal --> */}
+             <Modal
+                show={isModalOpen}
+                onHide={handleModalClose}
+                dialogClassName="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+              >
+                <Modal.Header closeButton={false}>
+                <div className="apply-modal-content modal-content">
+                <div className="text-center">
+                <h3 className="title">Báo cáo công ty</h3>
+                  <button
+                    type="button"
+                    className="closed-modal"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                    onClick= {handleModalClose}
+                  ></button>
+                  </div>
+                </div>
+                </Modal.Header>
+                <Modal.Body>
+                  <ReportCompanyModalContent id={id} onClose={handleModalClose} />
+                </Modal.Body>
+              </Modal>
                   {/* End company-widget */}
 
                   {/* <div className="sidebar-widget"> */}

@@ -35,7 +35,6 @@ const JobSingleDynamicV1 = () => {
   const [error, setError] = useState(null);
   const id = router.query.id;
   const { user } = useSelector((state) => state.user);
-  const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleModalOpen = () => {
@@ -345,6 +344,7 @@ const JobSingleDynamicV1 = () => {
                       <JobSkills skills={job?.job_skills} />
                     </div>
                     <br />
+
                     <div className="btn-box">
                       <button
                         className="theme-btn btn-style-two"
