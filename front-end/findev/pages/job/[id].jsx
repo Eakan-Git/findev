@@ -16,11 +16,13 @@ import SocialTwo from "../../components/job-single-pages/social/SocialTwo";
 import Contact from "../../components/job-single-pages/shared-components/Contact";
 import JobDetailsDescriptions from "../../components/job-single-pages/shared-components/JobDetailsDescriptions";
 import ApplyJobModalContent from "../../components/job-single-pages/shared-components/ApplyJobModalContent";
+import ReportJobModalContent from "../../components/job-single-pages/shared-components/ReportJobModalContent";
 import Link from "next/link";
 import { localUrl } from "../../utils/path";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import CachedIcon from '@mui/icons-material/Cached';
+import { Modal, Button } from 'react-bootstrap';
 
 
 const JobSingleDynamicV1 = () => {
@@ -33,6 +35,16 @@ const JobSingleDynamicV1 = () => {
   const [error, setError] = useState(null);
   const id = router.query.id;
   const { user } = useSelector((state) => state.user);
+  const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
   
   useEffect(() => {
     const getJob = async () => {
@@ -69,7 +81,8 @@ const JobSingleDynamicV1 = () => {
   if (error) {
     return <div>Error: {error}</div>; // You can display a proper error message or retry option here
   }
-  console.log(isSaved);
+
+
    const handleSaveJob = async () => {
     if (isSaved === true) {
       try {
@@ -333,17 +346,44 @@ const JobSingleDynamicV1 = () => {
                     </div>
                     <br />
                     <div className="btn-box">
-                        <a
-                          href="#"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="theme-btn btn-style-two"
-                        >
-                          Báo cáo công việc không phù hợp
-                        </a>
+                      <button
+                        className="theme-btn btn-style-two"
+                        onClick={handleModalOpen}
+                      >
+                      <div className="text-center">
+                        Báo cáo công việc không phù hợp
                       </div>
-                    {/* <!-- Job Skills --> */}
-                  </div>
+                      </button>
+                    </div>
+
+                   {/* <!-- Modal --> */}
+                   <Modal
+                      show={isModalOpen}
+                      onHide={handleModalClose}
+                      dialogClassName="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+                    >
+                      <Modal.Header closeButton={false}>
+                      <div className="apply-modal-content modal-content">
+                      <div className="text-center">
+                      <h3 className="title">Báo cáo công việc</h3>
+                      <button
+                        type="button"
+                        className="closed-modal"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                        onClick= {handleModalClose}
+                      ></button>
+                      </div>
+                    </div>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <ReportJobModalContent id={id} onClose={handleModalClose} />
+                      </Modal.Body>
+                    </Modal>
+                     {/* End .send-private-message-wrapper */}
+                   </div>
+                 {/* End .modal */}
+
                   {/* End .sidebar-widget */}
 
                   <div className="sidebar-widget company-widget">
