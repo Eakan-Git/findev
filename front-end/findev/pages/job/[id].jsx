@@ -20,11 +20,15 @@ import Link from "next/link";
 import { localUrl } from "../../utils/path";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import CachedIcon from '@mui/icons-material/Cached';
+
+
 const JobSingleDynamicV1 = () => {
   const router = useRouter();
   const [company, setCompany] = useState(null);
   const [job, setJob] = useState(null);
-  const [isSaved, setIsSaved] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const id = router.query.id;
@@ -43,7 +47,7 @@ const JobSingleDynamicV1 = () => {
         const fetchedJob = res.data?.data?.job;
         setJob(fetchedJob || null);
         setCompany(fetchedJob?.employer_profile || null);
-        const isJobSaved = res.data?.data?.is_saved;
+        const isJobSaved = res.data?.data?.job.is_saved;
         setIsSaved(isJobSaved);
       } catch (err) {
         setError(err.message);
@@ -66,31 +70,46 @@ const JobSingleDynamicV1 = () => {
     return <div>Error: {error}</div>; // You can display a proper error message or retry option here
   }
   console.log(isSaved);
-  const handleSaveJob = async () => {
+   const handleSaveJob = async () => {
     if (isSaved === true) {
       try {
+        // Xác nhận trạng thái đang lưu
+        setIsSaving(true);
+
+        // Gửi request xóa công việc
         const params = new URLSearchParams();
         params.append('user_id', user.userAccount.id);
         params.append('job_id', id);
-    
+
         const response = await axios.delete(`${localUrl}/saved-jobs/user-job`, {
           data: params,
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': user.token
           }
-        })
+        });
+
         // Xử lý phản hồi nếu cần
+
+        // Cập nhật giá trị isSaved sau khi xóa thành công
+        setIsSaved(false);
       } catch (error) {
         console.error('Failed to delete saved job:', error);
+      } finally {
+        // Kết thúc trạng thái lưu
+        setIsSaving(false);
       }
       console.log("Job removed from saved list");
     } else {
       try {
+        // Xác nhận trạng thái đang lưu
+        setIsSaving(true);
+
+        // Gửi request lưu công việc
         await axios.post(
           `${localUrl}/saved-jobs/`,
           {
-            'user_id': user.userAccount.id ,
+            'user_id': user.userAccount.id,
             'job_id' : id
           },
           {
@@ -100,8 +119,14 @@ const JobSingleDynamicV1 = () => {
             },
           }
         );
+
+        // Cập nhật giá trị isSaved sau khi lưu thành công
+        setIsSaved(true);
       } catch (err) {
         // Xử lý lỗi
+      } finally {
+        // Kết thúc trạng thái lưu
+        setIsSaving(false);
       }
       console.log("Job added to saved list");
     }
@@ -235,18 +260,24 @@ const JobSingleDynamicV1 = () => {
                     >
                       Ứng tuyển ngay
                     </a>
-                    {isSaved ? (
-                      <button
-                        className="bookmark-btn"
-                        style={{ background: "var(--primary-color)", color: "white" }}
-                        onClick={handleSaveJob}
-                      >
-                        <i className="flaticon-bookmark"></i>
+                    {isSaving ? (
+                      <button className="bookmark-btn" disabled>
+                        <i ><CachedIcon/></i>
                       </button>
                     ) : (
-                      <button className="bookmark-btn" onClick={handleSaveJob}>
-                        <i className="flaticon-bookmark"></i>
-                      </button>
+                      isSaved ? (
+                        <button
+                          className="bookmark-btn"
+                          style={{ background: "var(--primary-color)", color: "white" }}
+                          onClick={handleSaveJob}
+                        >
+                          <i className="flaticon-bookmark"></i>
+                        </button>
+                      ) : (
+                        <button className="bookmark-btn" onClick={handleSaveJob}>
+                          <i className="flaticon-bookmark"></i>
+                        </button>
+                      )
                     )}
                   </div>
                   {/* End apply for job btn */}
