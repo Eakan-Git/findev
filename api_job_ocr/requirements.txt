@@ -12,4 +12,6 @@ pymongo
 mysql-connector-python
 requests
 gensim
+python-multipart
 python-dotenv
+paginate_sqlalchemy
