@@ -1,50 +1,56 @@
+import { useState } from "react";
 import Router from "next/router";
 
 const SearchForm3 = () => {
+  const [keyword, setKeyword] = useState("");
+  const [location, setLocation] = useState("");
+
   const handleSubmit = (event) => {
     event.preventDefault();
+    
+    let url = "/search?";
+    
+    if (keyword) {
+      url += `keyword=${encodeURIComponent(keyword)}&`;
+    }
+    
+    if (location) {
+      url += `location=${encodeURIComponent(location)}&`;
+    }
+
+    Router.push(url.slice(0, -1));
   };
 
   return (
-    <form onClick={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <div className="row">
         {/* <!-- Form Group --> */}
         <div className="form-group col-lg-7 col-md-12 col-sm-12">
           <span className="icon flaticon-search-1"></span>
           <input
             type="text"
-            name="field_name"
+            name="keyword"
             placeholder="Tên công việc, kỹ năng hoặc công ty..."
+            value={keyword}
+            onChange={(event) => setKeyword(event.target.value)}
           />
         </div>
 
         {/* <!-- Form Group --> */}
         <div className="form-group col-lg-3 col-md-12 col-sm-12 location">
           <span className="icon flaticon-map-locator"></span>
-          <input type="text" name="field_name" placeholder="Thành phố" />
+          <input
+            type="text"
+            name="location"
+            placeholder="Thành phố"
+            value={location}
+            onChange={(event) => setLocation(event.target.value)}
+          />
         </div>
 
         {/* <!-- Form Group --> */}
-        {/* <div className="form-group col-lg-3 col-md-12 col-sm-12 category">
-          <span className="icon flaticon-briefcase"></span>
-          <select className="chosen-single form-select">
-            <option defaultValue="">Nhóm công việc</option>
-            <option defaultValue="44">Công nghệ thông tin</option>
-            <option defaultValue="106">Tài Chính</option>
-            <option defaultValue="46">Ngân Hàng</option>
-            <option defaultValue="48">Thiết Kế</option>
-            <option defaultValue="47">Bán Hàng</option>
-            <option defaultValue="45">Bán thời gian</option>
-          </select>
-        </div> */}
-
-        {/* <!-- Form Group --> */}
         <div className="form-group col-lg-2 col-md-12 col-sm-12 text-right">
-          <button
-            type="submit"
-            className="theme-btn btn-style-one"
-            onClick={() => Router.push("/find-jobs")}
-          >
+          <button type="submit" className="theme-btn btn-style-one">
             Tìm kiếm
           </button>
         </div>

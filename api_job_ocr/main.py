@@ -1,7 +1,12 @@
+import os
+from dotenv import load_dotenv
+from paginate_sqlalchemy import SqlalchemyOrmPage
+import math
 import pandas as pd
 import mysql.connector
 from elasticsearch import Elasticsearch
 from fastapi import FastAPI
+from fastapi import Query
 from pymongo import MongoClient
 import random
 import numpy as np
@@ -18,24 +23,39 @@ from fastapi.responses import JSONResponse
 import os
 import shutil
 import requests
+from fastapi.middleware.cors import CORSMiddleware
+
 warnings.simplefilter('ignore')
 
-app = FastAPI()
 
+# Load environment variables from .env file
+load_dotenv()
+
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with the appropriate origins if needed
+    allow_methods=["*"],  # Or specify the allowed HTTP methods
+    allow_headers=["*"],  # Or specify the allowed headers
+)
 # Define Elasticsearch connection
-es = Elasticsearch(['http://localhost:9201'])
+es = Elasticsearch([os.environ.get("ELASTICSEARCH_HOST")])
 
 # Connect to MongoDB
-client = MongoClient("mongodb+srv://tuansoi19127084:tuansoi19127084@cluster0.n8shx9d.mongodb.net/test?retryWrites=true&w=majority")
+client = MongoClient(os.environ.get("MONGODB_CONNECTION_STRING"))
 db = client['BaseOnAL']
 collection = db['user_history']
 
 # Establish MySQL connection
-cnx = mysql.connector.connect(user='root', database='recommend', password="123456")
+cnx = mysql.connector.connect(
+    user=os.environ.get("MYSQL_USER"),
+    database=os.environ.get("MYSQL_DATABASE"),
+    password=os.environ.get("MYSQL_PASSWORD")
+)
 cursor = cnx.cursor()
 
 # Đường dẫn đến tệp trên Google Drive
-file_url = "https://drive.google.com/uc?id=1AQrnIFnqzPQbXXbYRADj5yh1I3_E_YMt"
+file_url = os.environ.get("GOOGLE_DRIVE_FILE_URL")
 
 # Tên biến toàn cục để lưu trữ nội dung của tệp
 stopwords_vn = None
@@ -406,7 +426,7 @@ def startup_event():
                'min_yoe', 'max_yoe', 'benefit', 'deadline', 'requirement', 'skills']
     df = pd.DataFrame(results, columns=columns)
 
-    # Xoá toàn bộ index và dữ liệu trong Elasticsearch
+    # Delete all data in Elasticsearch
     def delete_all_data():
         response = es.indices.delete(index="_all")
         return response
@@ -432,7 +452,7 @@ def startup_event():
                 "min_yoe": {"type": "integer"},
                 "max_yoe": {"type": "integer"},
                 "benefit": {"type": "text"},
-                 "deadline": {"type": "date", "format": "dd-MM-yyyy"},
+                "deadline": {"type": "date", "format": "dd-MM-yyyy"},
                 "requirement": {"type": "text"},
                 "skills": {"type": "text"}
             }
@@ -462,11 +482,17 @@ def recommend_jobs(user_id: int):
     job_recommendations = get_job_id(get_recommendations_userwise(user_id))
     return JSONResponse(content=job_recommendations.to_dict(orient="records"))
 
-@app.get("/jobs/{keyword}")
-def search_jobs(keyword: str):
+@app.get("/jobs")
+@app.get("/jobs")
+def search_jobs(
+    keyword: str = Query(..., description="Keyword to search for"),
+    page: int = Query(1, description="Page number"),
+    limit: int = Query(10, description="Number of results per page"),
+):
     # Search for jobs in Elasticsearch
     body = {
-        "size": 10000,  # Adjust the size as per your requirements
+        "size": limit,
+        "from": (page - 1) * limit,
         "query": {
             "multi_match": {
                 "query": keyword,
@@ -483,7 +509,87 @@ def search_jobs(keyword: str):
         job_info = hit["_source"]
         jobs.append(job_info)
 
-    return jobs
+    total = result["hits"]["total"]["value"]
+
+    # Calculate pagination information
+    total_pages = math.ceil(total / limit)
+    base_url = f"http://localhost:8000/jobs?keyword={keyword}"
+    first_page_url = f"{base_url}&page=1"
+    last_page = total_pages
+    last_page_url = f"{base_url}&page={last_page}"
+    next_page = page + 1 if page < total_pages else None
+    prev_page = page - 1 if page > 1 else None
+
+    links = [
+        {
+            "url": None,
+            "label": "&laquo; Previous",
+            "active": False
+        },
+        {
+            "url": first_page_url,
+            "label": "1",
+            "active": page == 1
+        }
+    ]
+
+    for i in range(2, total_pages + 1):
+        links.append({
+            "url": f"{base_url}&page={i}",
+            "label": str(i),
+            "active": page == i
+        })
+
+    links.append({
+        "url": f"{base_url}&page={next_page}" if next_page else None,
+        "label": "Next &raquo;",
+        "active": False
+    })
+
+    if len(jobs) == 0:
+        return {
+            "error": True,
+            "message": "Không tìm thấy công việc",
+            "data": None,
+            "status_code": 400
+        }
+    
+    pagination_info = {
+        "first_page_url": first_page_url,
+        "from": (page - 1) * limit + 1,
+        "last_page": last_page,
+        "last_page_url": last_page_url,
+        "links": links,
+        "next_page_url": f"{base_url}&page={next_page}" if next_page else None,
+        "path": f"http://localhost:8000/jobs?keyword={keyword}",
+        "per_page": limit,
+        "prev_page_url": f"{base_url}&page={prev_page}" if prev_page else None,
+        "to": min(page * limit, total),
+        "total": total
+    }
+
+    return {
+        "error": False,
+        "message": "Xử lí thành công",
+        "data": {
+            "jobs": {
+                "current_page": page,
+                "data": jobs,
+                "first_page_url": first_page_url,
+                "from": (page - 1) * limit + 1,
+                "last_page": last_page,
+                "last_page_url": last_page_url,
+                "links": links,
+                "next_page_url": f"{base_url}&page={next_page}" if next_page else None,
+                "path": f"http://localhost:8000/jobs?keyword={keyword}",
+                "per_page": limit,
+                "prev_page_url": f"{base_url}&page={prev_page}" if prev_page else None,
+                "to": min(page * limit, total),
+                "total": total
+            }
+        },
+        "status_code": 200
+    }
 
 # Connect to MongoDB
 client = MongoClient("mongodb+srv://tuansoi19127084:tuansoi19127084@cluster0.n8shx9d.mongodb.net/test?retryWrites=true&w=majority")
@@ -499,7 +605,7 @@ documents = [document for document in data]
 # Create a DataFrame
 df = pd.DataFrame(documents)
 
-# Preprocess job descriptions, skills, and requirements
+## Preprocess job descriptions, skills, and requirements
 df_job['description'] = df_job['description'].fillna('')
 df_job['skills'] = df_job['skills'].fillna('')
 df_job['requirement'] = df_job['requirement'].fillna('')
@@ -599,9 +705,81 @@ def recommend_jobs_for_user(user_id):
     return detailed_jobs_df
 
 @app.get("/recommend_jobs/{user_id}")
-def get_recommended_jobs(user_id: int):
+def get_recommended_jobs(user_id: int, page: int = Query(1, ge=1), limit: int = Query(10, ge=1)):
+    page_size = limit
+    start_index = (page - 1) * page_size
+    end_index = start_index + page_size
+
     recommended_jobs = recommend_jobs_for_user(user_id)
-    return recommended_jobs.to_dict(orient='records')
+    paginated_jobs = recommended_jobs[start_index:end_index].to_dict(orient='records')
+
+    total_jobs = len(recommended_jobs)
+    total_pages = math.ceil(total_jobs / limit)
+
+    first_page_url = f"http://localhost:8000/recommend_jobs/{user_id}?page=1"
+    last_page = total_pages
+    last_page_url = f"http://localhost:8000/recommend_jobs/{user_id}?page={last_page}"
+    next_page = page + 1 if page < total_pages else None
+    prev_page = page - 1 if page > 1 else None
+
+    links = [
+        {
+            "url": None,
+            "label": "&laquo; Previous",
+            "active": False
+        },
+        {
+            "url": first_page_url,
+            "label": "1",
+            "active": page == 1
+        }
+    ]
+
+    for i in range(2, total_pages + 1):
+        links.append({
+            "url": f"http://localhost:8000/recommend_jobs/{user_id}?page={i}",
+            "label": str(i),
+            "active": page == i
+        })
+
+    links.append({
+        "url": f"http://localhost:8000/recommend_jobs/{user_id}?page={next_page}" if next_page else None,
+        "label": "Next &raquo;",
+        "active": False
+    })
+
+    pagination_info = {
+        "current_page": page,
+        "data": paginated_jobs,
+        "first_page_url": first_page_url,
+        "from": start_index + 1,
+        "last_page": last_page,
+        "last_page_url": last_page_url,
+        "links": links,
+        "next_page_url": f"http://localhost:8000/recommend_jobs/{user_id}?page={next_page}" if next_page else None,
+        "path": f"http://localhost:8000/recommend_jobs/{user_id}",
+        "per_page": limit,
+        "prev_page_url": f"http://localhost:8000/recommend_jobs/{user_id}?page={prev_page}" if prev_page else None,
+        "to": min(end_index, total_jobs),
+        "total": total_jobs
+    }
+
+    if len(paginated_jobs) == 0:
+        return {
+            "error": True,
+            "message": "Xử lí lổi",
+            "data": None,
+            "status_code": 400
+        }
+
+    return {
+        "error": False,
+        "message": "Xử lí thành công",
+        "data": {
+            "jobs": pagination_info
+        },
+        "status_code": 200
+    }
 
 # Hoang
 # Write json

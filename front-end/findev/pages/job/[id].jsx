@@ -218,7 +218,7 @@ const JobSingleDynamicV1 = () => {
                   </div>
                   {/* End title box */}
 
-                  <RelatedJobs />
+                  <RelatedJobs title={job?.title || ""} />
                 </div>
                 {/* <!-- Related Jobs --> */}
               </div>

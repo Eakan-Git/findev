@@ -2,7 +2,7 @@ fastapi
 pandas
 numpy
 scikit-learn
-elasticsearch
+elasticsearch==7.7.0
 scikit-learn
 tika
 opencv-python-headless
@@ -12,3 +12,6 @@ pymongo
 mysql-connector-python
 requests
 gensim
+python-multipart
+python-dotenv
+paginate_sqlalchemy

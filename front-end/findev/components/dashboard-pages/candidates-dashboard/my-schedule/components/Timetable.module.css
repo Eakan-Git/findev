@@ -1,0 +1,40 @@
+.container {
+    overflow: auto;
+  }
+  
+  .table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+  }
+  
+  .columnHeader,
+  .rowHeader {
+    padding: 8px;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #ccc;
+  }
+  
+  .cell {
+    width: 100px;
+    height: 40px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    transition: background-color 0.3s ease;
+  }
+  
+  .activatedCell {
+    background-color: #e6e6e6;
+  }
+  
+  .selectedCell {
+    background-color: #ffcccc;
+  }
+  
+  .draggingCell {
+    background-color: #e6e6e6;
+    border: 2px dashed #333;
+  }
+  
