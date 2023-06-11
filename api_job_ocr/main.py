@@ -23,15 +23,21 @@ from fastapi.responses import JSONResponse
 import os
 import shutil
 import requests
+from fastapi.middleware.cors import CORSMiddleware
+
 warnings.simplefilter('ignore')
 
-app = FastAPI()
 
 # Load environment variables from .env file
 load_dotenv()
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with the appropriate origins if needed
+    allow_methods=["*"],  # Or specify the allowed HTTP methods
+    allow_headers=["*"],  # Or specify the allowed headers
+)
 # Define Elasticsearch connection
 es = Elasticsearch([os.environ.get("ELASTICSEARCH_HOST")])
 
