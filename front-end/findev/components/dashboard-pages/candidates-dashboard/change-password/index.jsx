@@ -38,7 +38,7 @@ const index = () => {
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
-          <BreadCrumb title="Change Password!" />
+          <BreadCrumb title="Đổi mật khẩu!" />
           {/* breadCrumb */}
 
           <MenuToggler />
@@ -46,7 +46,7 @@ const index = () => {
 
           <div className="ls-widget">
             <div className="widget-title">
-              <h4>Change Password</h4>
+              <h4>Điền các thông tin dưới đây để đổi mật khẩu</h4>
             </div>
 
             <div className="widget-content">
