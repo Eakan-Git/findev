@@ -5,7 +5,7 @@ import ChangePassword from "../../../components/dashboard-pages/candidates-dashb
 const index = () => {
   return (
     <>
-      <Seo pageTitle="Change Password" />
+      <Seo pageTitle="Đổi mật khẩu" />
       <ChangePassword />
     </>
   );
