@@ -27,7 +27,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 warnings.simplefilter('ignore')
 
-
 # Load environment variables from .env file
 load_dotenv()
 
@@ -38,6 +37,7 @@ app.add_middleware(
     allow_methods=["*"],  # Or specify the allowed HTTP methods
     allow_headers=["*"],  # Or specify the allowed headers
 )
+
 # Define Elasticsearch connection
 es = Elasticsearch([os.environ.get("ELASTICSEARCH_HOST")])
 
@@ -115,35 +115,47 @@ def get_user_profiles(job_title):
 # Define the SQL query for jobs
 query_jobs = """
     SELECT
-        j.id AS job_id,
-        j.title,
-        j.description,
-        j.min_salary,
-        j.max_salary,
-        j.recruit_num,
-        j.position,
-        j.min_yoe,
-        j.max_yoe,
-        j.benefit,
-        j.deadline,
-        j.requirement,
-        GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills
+    j.id AS job_id,
+    j.title,
+    j.description,
+    j.min_salary,
+    j.max_salary,
+    j.recruit_num,
+    j.position,
+    j.type,
+    j.min_yoe,
+    j.max_yoe,
+    j.benefit,
+    DATE_FORMAT(j.deadline, '%d-%m-%Y') AS deadline,
+    j.requirement,
+    GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills,
+    company_profiles.name AS company_name,
+    company_profiles.logo AS company_logo,
+	company_profiles.description AS company_description,
+    company_profiles.site AS company_site,
+    company_profiles.address AS company_address,
+    company_profiles.size AS company_size,
+    company_profiles.phone AS company_phone,
+    company_profiles.email AS company_email
     FROM
-        jobs j
-        LEFT JOIN job_skills s ON j.id = s.job_id
+    jobs j
+	JOIN job_skills s ON j.id = s.job_id
+    JOIN employer_profiles ON j.employer_id = employer_profiles.id
+    JOIN company_profiles ON employer_profiles.company_id = company_profiles.id
     GROUP BY
-        j.id,
-        j.title,
-        j.description,
-        j.min_salary,
-        j.max_salary,
-        j.recruit_num,
-        j.position,
-        j.min_yoe,
-        j.max_yoe,
-        j.benefit,
-        j.deadline,
-        j.requirement
+    j.id,
+    j.title,
+    j.description,
+    j.min_salary,
+    j.max_salary,
+    j.recruit_num,
+    j.position,
+    j.type,
+    j.min_yoe,
+    j.max_yoe,
+    j.benefit,
+    j.deadline,
+    j.requirement
     """
 
 # Execute the jobs query and fetch the results
@@ -211,10 +223,20 @@ jobs_query = """
     j.benefit,
     DATE_FORMAT(j.deadline, '%d-%m-%Y') AS deadline,
     j.requirement,
-    GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills
+    GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills,
+    company_profiles.name AS company_name,
+    company_profiles.logo AS company_logo,
+	company_profiles.description AS company_description,
+    company_profiles.site AS company_site,
+    company_profiles.address AS company_address,
+    company_profiles.size AS company_size,
+    company_profiles.phone AS company_phone,
+    company_profiles.email AS company_email
     FROM
     jobs j
-    LEFT JOIN job_skills s ON j.id = s.job_id
+	JOIN job_skills s ON j.id = s.job_id
+    JOIN employer_profiles ON j.employer_id = employer_profiles.id
+    JOIN company_profiles ON employer_profiles.company_id = company_profiles.id
     GROUP BY
     j.id,
     j.title,
@@ -398,10 +420,20 @@ def startup_event():
     j.benefit,
     DATE_FORMAT(j.deadline, '%d-%m-%Y') AS deadline,
     j.requirement,
-    GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills
+    GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills,
+    company_profiles.name AS company_name,
+    company_profiles.logo AS company_logo,
+	company_profiles.description AS company_description,
+    company_profiles.site AS company_site,
+    company_profiles.address AS company_address,
+    company_profiles.size AS company_size,
+    company_profiles.phone AS company_phone,
+    company_profiles.email AS company_email
     FROM
     jobs j
-    LEFT JOIN job_skills s ON j.id = s.job_id
+	JOIN job_skills s ON j.id = s.job_id
+    JOIN employer_profiles ON j.employer_id = employer_profiles.id
+    JOIN company_profiles ON employer_profiles.company_id = company_profiles.id
     GROUP BY
     j.id,
     j.title,
@@ -423,7 +455,9 @@ def startup_event():
 
     # Create DataFrame from the SQL results
     columns = ['job_id', 'title', 'description', 'min_salary', 'max_salary', 'recruit_num', 'position', 'type',
-               'min_yoe', 'max_yoe', 'benefit', 'deadline', 'requirement', 'skills']
+               'min_yoe', 'max_yoe', 'benefit', 'deadline', 'requirement', 'skills', 'company_name', 'company_logo', 'company_description',
+               'company_site', 'company_address', 'company_size', 'company_phone', 'company_email']
+
     df = pd.DataFrame(results, columns=columns)
 
     # Delete all data in Elasticsearch
@@ -482,7 +516,6 @@ def recommend_jobs(user_id: int):
     job_recommendations = get_job_id(get_recommendations_userwise(user_id))
     return JSONResponse(content=job_recommendations.to_dict(orient="records"))
 
-@app.get("/jobs")
 @app.get("/jobs")
 def search_jobs(
     keyword: str = Query(..., description="Keyword to search for"),
