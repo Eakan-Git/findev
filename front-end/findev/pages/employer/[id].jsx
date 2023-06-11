@@ -38,9 +38,9 @@ const EmployersSingleV3 = ({}) => {
       try {
         const res = await fetch(`http://localhost:8000/api/company-profiles/${id}`);
         const resJobs = await fetch(`http://localhost:8000/api/jobs?company_id=${id}`);
-        if (res.error || resJobs.error) {
-          throw new Error("Failed to fetch employer");
-        }
+        // if (!res.error || !resJobs.error) {
+        //   throw new Error("Failed to fetch employer");
+        // }
         const resData = await res.json();
         const resJobsData = await resJobs.json();
         const fetchedCompany = resData?.data?.company_profile;
@@ -67,7 +67,7 @@ const EmployersSingleV3 = ({}) => {
   }
   return (
     <>
-      <Seo pageTitle={employer.name} />
+      <Seo pageTitle={employer?.name} />
 
       {/* <!-- Header Span --> */}
       <span className="header-span"></span>
@@ -90,12 +90,12 @@ const EmployersSingleV3 = ({}) => {
               <div className="inner-box">
                 <div className="content">
                   <span className="company-logo">
-                    <img src={employer.logo} alt={employer.name} title={employer.name}/>
+                    <img src={employer?.logo} alt={employer?.name} title={employer?.name}/>
                   </span>
                   <h4>{employer?.name}</h4>
 
                   <ul className="job-other-info">
-                    <li className="time">Số vị trí đang tuyển – {hiringJobs.total > 0 ? hiringJobs.total : 0}</li>
+                    <li className="time">Số vị trí đang tuyển – {hiringJobs?.total > 0 ? hiringJobs?.total : 0}</li>
                   </ul>
                   {/* End .job-other-info */}
                 </div>
@@ -223,15 +223,15 @@ const EmployersSingleV3 = ({}) => {
                 <div className="related-jobs">
                   <div className="title-box">
                     <h3>Vị trí đang tuyển</h3>
-                    {hiringJobs.total > 0 ? (
+                    {hiringJobs?.total > 0 ? (
                       <span className="color-text-2">
-                        {hiringJobs.total} vị trí
+                        {hiringJobs?.total} vị trí
                       </span>
                     ) : () => null}
                   </div>
                   {/* End .title-box */}
 
-                  {hiringJobs.total > 0 ? (
+                  {hiringJobs?.total > 0 ? (
                     <RelatedJobs jobs={hiringJobs}/>
                   ) : (
                     <div className="alert alert-warning" role="alert">
