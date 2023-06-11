@@ -20,37 +20,48 @@ import Link from "next/link";
 import { localUrl } from "../../utils/path";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import CachedIcon from '@mui/icons-material/Cached';
+
+
 const JobSingleDynamicV1 = () => {
   const router = useRouter();
   const [company, setCompany] = useState(null);
   const [job, setJob] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const id = router.query.id;
   const { user } = useSelector((state) => state.user);
-  // console.log(id);
+  
   useEffect(() => {
     const getJob = async () => {
       try {
-        const res = await fetch(`${localUrl}/jobs/${id}`);
-        if (res.error) {
-          throw new Error("Failed to fetch job");
-        }
-        const resData = await res.json();
-        const fetchedJob = resData?.data?.job;
+        const res = await axios.get(`${localUrl}/jobs/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': user.token
+          }
+        });
+  
+        const fetchedJob = res.data?.data?.job;
         setJob(fetchedJob || null);
+        setCompany(fetchedJob?.employer_profile || null);
+        const isJobSaved = res.data?.data?.job.is_saved;
+        setIsSaved(isJobSaved);
       } catch (err) {
         setError(err.message);
       } finally {
         setIsLoading(false);
       }
     };
+  
     if (id) {
       getJob();
-      setCompany(job?.employer_profile || null);
     }
-  }, [id]);
-
+  }, [id, user.token]);
+  
+  
   if (isLoading) {
     return <div>Loading...</div>; // You can replace this with a loading spinner or skeleton UI component
   }
@@ -58,37 +69,47 @@ const JobSingleDynamicV1 = () => {
   if (error) {
     return <div>Error: {error}</div>; // You can display a proper error message or retry option here
   }
-
-  const handleSaveJob = async () => {
-    if (job.is_saved) {
+  console.log(isSaved);
+   const handleSaveJob = async () => {
+    if (isSaved === true) {
       try {
-        await axios.post(
-          `${localUrl}/saved-jobs/`,
-          {
-            'user_id': user.userAccount.id ,
-            'job_id' : id
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': user.token
-            },
+        // Xác nhận trạng thái đang lưu
+        setIsSaving(true);
+
+        // Gửi request xóa công việc
+        const params = new URLSearchParams();
+        params.append('user_id', user.userAccount.id);
+        params.append('job_id', id);
+
+        const response = await axios.delete(`${localUrl}/saved-jobs/user-job`, {
+          data: params,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': user.token
           }
-        );
-      } catch (err) {
-        // Xử lý lỗi
+        });
+
+        // Xử lý phản hồi nếu cần
+
+        // Cập nhật giá trị isSaved sau khi xóa thành công
+        setIsSaved(false);
+      } catch (error) {
+        console.error('Failed to delete saved job:', error);
+      } finally {
+        // Kết thúc trạng thái lưu
+        setIsSaving(false);
       }
       console.log("Job removed from saved list");
     } else {
-      console.log("job ne", job.is_saved)
-      console.log("jobid:", id)
-      console.log("user_id:", user.userAccount.id)
-      console.log("token:", user.token  )
       try {
+        // Xác nhận trạng thái đang lưu
+        setIsSaving(true);
+
+        // Gửi request lưu công việc
         await axios.post(
           `${localUrl}/saved-jobs/`,
           {
-            'user_id': user.userAccount.id ,
+            'user_id': user.userAccount.id,
             'job_id' : id
           },
           {
@@ -98,8 +119,14 @@ const JobSingleDynamicV1 = () => {
             },
           }
         );
+
+        // Cập nhật giá trị isSaved sau khi lưu thành công
+        setIsSaved(true);
       } catch (err) {
         // Xử lý lỗi
+      } finally {
+        // Kết thúc trạng thái lưu
+        setIsSaving(false);
       }
       console.log("Job added to saved list");
     }
@@ -233,18 +260,24 @@ const JobSingleDynamicV1 = () => {
                     >
                       Ứng tuyển ngay
                     </a>
-                    {job.is_saved ? (
-                      <button
-                        className="bookmark-btn"
-                        style={{ background: "var(--primary-color)", color: "white" }}
-                        onClick={handleSaveJob}
-                      >
-                        <i className="flaticon-bookmark"></i>
+                    {isSaving ? (
+                      <button className="bookmark-btn" disabled>
+                        <i ><CachedIcon/></i>
                       </button>
                     ) : (
-                      <button className="bookmark-btn" onClick={handleSaveJob}>
-                        <i className="flaticon-bookmark"></i>
-                      </button>
+                      isSaved ? (
+                        <button
+                          className="bookmark-btn"
+                          style={{ background: "var(--primary-color)", color: "white" }}
+                          onClick={handleSaveJob}
+                        >
+                          <i className="flaticon-bookmark"></i>
+                        </button>
+                      ) : (
+                        <button className="bookmark-btn" onClick={handleSaveJob}>
+                          <i className="flaticon-bookmark"></i>
+                        </button>
+                      )
                     )}
                   </div>
                   {/* End apply for job btn */}
