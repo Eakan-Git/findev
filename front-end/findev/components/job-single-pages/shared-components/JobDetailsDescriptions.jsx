@@ -3,12 +3,12 @@ const JobDetailsDescriptions = ({job}) => {
     <div className="job-detail">
       <h4>Mô tả công việc</h4>
       <p>
-        {job.description}
+        {job?.description}
       </p>
       <h4>Yêu cầu</h4>
       {/* <ul className="list-style-three"> */}
       <p>
-        {job.requirement}
+        {job?.requirement}
       </p>
       {/* </ul> */}
       <h4>Quyền lợi</h4>
@@ -24,7 +24,7 @@ const JobDetailsDescriptions = ({job}) => {
         <li>You are familiar using Jira and Confluence in your workflow</li>
       </ul> */}
       <p>
-        {job.benefit}
+        {job?.benefit}
       </p>
     </div>
   );

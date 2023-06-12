@@ -5,7 +5,7 @@ const CompanyDetailsDescriptions = ({employer}) => {
     <div className="job-detail">
       <h4>Giới thiệu</h4>
       <p>
-        {employer.description}
+        {employer?.description}
       </p>
     </div>
   );

@@ -12,6 +12,8 @@ import RelatedJobs from "../../components/employer-single-pages/related-jobs/Rel
 import MapJobFinder from "../../components/job-listing-pages/components/MapJobFinder";
 import Social from "../../components/employer-single-pages/social/Social";
 import Contact from "../../components/job-single-pages/shared-components/Contact";
+import ReportCompanyModalContent from "../../components/job-single-pages/shared-components/ReportCompanyModalContent";
+import { Modal, Button } from 'react-bootstrap';
 
 const EmployersSingleV3 = ({}) => {
   const router = useRouter();
@@ -20,14 +22,25 @@ const EmployersSingleV3 = ({}) => {
   const [error, setError] = useState(null);
   const id = router.query.id;
   const [hiringJobs, setHiringJobs] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+
   useEffect(() => {
     const getEmployer = async () => {
       try {
         const res = await fetch(`http://localhost:8000/api/company-profiles/${id}`);
         const resJobs = await fetch(`http://localhost:8000/api/jobs?company_id=${id}`);
-        if (res.error || resJobs.error) {
-          throw new Error("Failed to fetch employer");
-        }
+        // if (!res.error || !resJobs.error) {
+        //   throw new Error("Failed to fetch employer");
+        // }
         const resData = await res.json();
         const resJobsData = await resJobs.json();
         const fetchedCompany = resData?.data?.company_profile;
@@ -54,7 +67,7 @@ const EmployersSingleV3 = ({}) => {
   }
   return (
     <>
-      <Seo pageTitle={employer.name} />
+      <Seo pageTitle={employer?.name} />
 
       {/* <!-- Header Span --> */}
       <span className="header-span"></span>
@@ -77,12 +90,12 @@ const EmployersSingleV3 = ({}) => {
               <div className="inner-box">
                 <div className="content">
                   <span className="company-logo">
-                    <img src={employer.logo} alt={employer.name} title={employer.name}/>
+                    <img src={employer?.logo} alt={employer?.name} title={employer?.name}/>
                   </span>
                   <h4>{employer?.name}</h4>
 
                   <ul className="job-other-info">
-                    <li className="time">Số vị trí đang tuyển – {hiringJobs.total > 0 ? hiringJobs.total : 0}</li>
+                    <li className="time">Số vị trí đang tuyển – {hiringJobs?.total > 0 ? hiringJobs?.total : 0}</li>
                   </ul>
                   {/* End .job-other-info */}
                 </div>
@@ -137,7 +150,44 @@ const EmployersSingleV3 = ({}) => {
                       </div>
                       {/* btn-box */}
                     </div>
+                    
                   </div>
+                  {/* btn-box-report */}
+                  <div className="btn-box">
+                  <button
+                    className="theme-btn btn-style-two"
+                    onClick={handleModalOpen}
+                  >
+                  <div className="text-center">
+                    Báo cáo công ty 
+                  </div>
+                  </button>
+                </div>
+
+             {/* <!-- Modal --> */}
+             <Modal
+                show={isModalOpen}
+                onHide={handleModalClose}
+                dialogClassName="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+              >
+                <Modal.Header closeButton={false}>
+                <div className="apply-modal-content modal-content">
+                <div className="text-center">
+                <h3 className="title">Báo cáo công ty</h3>
+                  <button
+                    type="button"
+                    className="closed-modal"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                    onClick= {handleModalClose}
+                  ></button>
+                  </div>
+                </div>
+                </Modal.Header>
+                <Modal.Body>
+                  <ReportCompanyModalContent id={id} onClose={handleModalClose} />
+                </Modal.Body>
+              </Modal>
                   {/* End company-widget */}
 
                   {/* <div className="sidebar-widget"> */}
@@ -173,15 +223,15 @@ const EmployersSingleV3 = ({}) => {
                 <div className="related-jobs">
                   <div className="title-box">
                     <h3>Vị trí đang tuyển</h3>
-                    {hiringJobs.total > 0 ? (
+                    {hiringJobs?.total > 0 ? (
                       <span className="color-text-2">
-                        {hiringJobs.total} vị trí
+                        {hiringJobs?.total} vị trí
                       </span>
                     ) : () => null}
                   </div>
                   {/* End .title-box */}
 
-                  {hiringJobs.total > 0 ? (
+                  {hiringJobs?.total > 0 ? (
                     <RelatedJobs jobs={hiringJobs}/>
                   ) : (
                     <div className="alert alert-warning" role="alert">

@@ -9,16 +9,20 @@ const SearchForm3 = () => {
     event.preventDefault();
     
     let url = "/search?";
-    
-    if (keyword) {
-      url += `keyword=${encodeURIComponent(keyword)}&`;
+    if(!keyword && !location) {
+      Router.push('find-jobs');
     }
-    
-    if (location) {
-      url += `location=${encodeURIComponent(location)}&`;
+    else {
+      if (keyword) {
+        url += `keyword=${encodeURIComponent(keyword)}&`;
+      }
+      
+      if (location) {
+        url += `location=${encodeURIComponent(location)}&`;
+      }
+  
+      Router.push(url.slice(0, -1));
     }
-
-    Router.push(url.slice(0, -1));
   };
 
   return (

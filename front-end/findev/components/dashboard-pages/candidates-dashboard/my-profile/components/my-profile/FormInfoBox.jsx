@@ -30,9 +30,9 @@ const FormInfoBox = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (Object.keys(modifiedFields).length > 0) {
-      console.log("Modified fields:", modifiedFields);
+      // console.log("Modified fields:", modifiedFields);
       const msg = await putProfile(user.token, modifiedFields);
-      console.log(msg);
+      // console.log(msg);
       if (msg?.error === false) {
         alert("Cập nhật thông tin thành công");
         setProfile((prevProfile) => ({ ...prevProfile, ...modifiedFields }));
@@ -52,11 +52,13 @@ const fetchUser = async () => {
     if (fetchedProfile.error === false) {
       setProfile(fetchedProfile.data.user_profile);
       setDefaultProfile(fetchedProfile.data.user_profile);
+      // console.log("Profile:", fetchedProfile.data.user_profile);
       setLoading(!loading);
     } else if (fetchedProfile.message === "Unauthenticated.") {
       alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
       router.push("/");
       dispatch(logoutUser());
+      return;
     } else {
       alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
     }

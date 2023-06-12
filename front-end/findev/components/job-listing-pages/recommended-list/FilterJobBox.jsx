@@ -15,43 +15,29 @@ import {
 } from "../../../features/filter/filterSlice";
 import Pagination from "../components/Pagination2";
 import JobSelect from "../components/JobSelect";
-import {searchUrl } from "../../../utils/path";
+import {recommendUrl} from "../../../utils/path";
 
 const FilterJobBox = () => {
+    const {user} = useSelector((state) => state.user);
+    // console.log(user.userAccount.id);
     const [jobs, setJobs] = useState(undefined);
     const [currentPage, setCurrentPage] = useState(1);
     const [jobsPerPage, setJobsPerPage] = useState(10);
     const router = useRouter();
-    const { keyword, location } = router.query;
     // console.log(keyword, location);
 
     useEffect(() => {
-        // construct query url, if keyword or location is not undefined
-        // if keyword is not undefined but location is undefined, search by keyword
-        // if location is not undefined but keyword is undefined, search by location
-        // if both are not undefined, search by both
-        let queryUrl = "";
-        if (keyword !== undefined && location === undefined) {
-        queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}`;
-        } else if (location !== undefined && keyword === undefined) {
-        // queryUrl = `${searchUrl}?location=${encodeURIComponent(location)}`;
-        alert("Chức năng tìm kiếm theo địa điểm đang được phát triển");
-        } else if (keyword !== undefined && location !== undefined) {
-        queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}&location=${encodeURIComponent(location)}`;
-        }
+        // construct query url
+        let queryUrl = `${recommendUrl}${user.userAccount.id}`;
         if(currentPage !== 1) {
-            queryUrl = `${queryUrl}&page=${currentPage}`;
+            queryUrl = `${queryUrl}?page=${currentPage}`;
             // update browser url
-            router.push(`${router.pathname}?keyword=${keyword}&location=${location}&page=${currentPage}`);
-        }
-        if(jobsPerPage !== 10) {
-            queryUrl = `${queryUrl}&limit=${jobsPerPage}`;
-            // update browser url
-            router.push(`${router.pathname}?keyword=${keyword}&location=${location}&page=${currentPage}&limit=${jobsPerPage}`);
+            router.push(`${router.pathname}?page=${currentPage}`);
         }
         // console.log(queryUrl);
         // call api to get jobs with keyword and location as params
         const getJobs = async () => {
+        console.log(queryUrl);
         const res = await fetch(queryUrl);
         const data = await res.json();
         console.log(data.data);
@@ -60,7 +46,7 @@ const FilterJobBox = () => {
         }
         };
         getJobs();
-    }, [keyword, location, currentPage, jobsPerPage]);
+    }, [currentPage, jobsPerPage]);
 
     const handlePageChange = (page) => {
         // check page is a number
@@ -270,9 +256,9 @@ const FilterJobBox = () => {
     return (
         <>
             <div className="ls-switcher">
-                <JobSelect />
+                {/* <JobSelect /> */}
 
-                <div className="sort-by">
+                {/* <div className="sort-by">
                     {
                         // keyword !== "" ||
                         // location !== "" ||
@@ -313,7 +299,7 @@ const FilterJobBox = () => {
                         <option value={JSON.stringify({ start: 0, end: 30 })}>30 mỗi trang</option>
                         <option value={JSON.stringify({ start: 0, end: 50 })}>50 mỗi trang</option>
                     </select>
-                </div>
+                </div> */}
             </div>
 
             <div className="row">{content}</div>

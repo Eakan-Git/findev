@@ -1,5 +1,5 @@
 const Awards = ({ awards }) => {
-  console.log(awards);
+  // console.log(awards);
   return (
     <div className="resume-outer theme-yellow">
       <div className="upper-title">

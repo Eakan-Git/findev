@@ -1,4 +1,18 @@
-const Form = () => {
+
+const Form = ({user}) => {
+  const handleChangePassword = (e) => {
+    e.preventDefault();
+    const { current_password, new_password, confirm_new_password } = e.target;
+    if (new_password.value !== confirm_new_password.value) {
+      alert("Mật khẩu mới không khớp");
+      return;
+    }
+    const data = {
+      current_password: current_password.value,
+      new_password: new_password.value,
+    };
+    console.log(data);
+  };
   return (
     <form className="default-form">
       <div className="row">
@@ -22,7 +36,9 @@ const Form = () => {
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <button type="submit" className="theme-btn btn-style-one">
+          <button type="submit" className="theme-btn btn-style-one"
+            onClick={handleChangePassword}
+          >
             Đổi mật khẩu
           </button>
         </div>

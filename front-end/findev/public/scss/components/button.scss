@@ -21,6 +21,7 @@ Buttons Styles
   align-items: center;
 }
 
+
 /* Btn Style One */
 .btn-style-one {
   position: relative;
@@ -57,6 +58,15 @@ Buttons Styles
 .btn-style-two:hover {
   color: #202124;
   background-color: var(--primary-2nd-hover-bg-color);
+}
+
+.custom-btn-style {
+  color: #000000; /* Chữ đen */
+  background-color: var(--primary-2nd-color); /* Màu nền #f9ab00 */
+}
+
+.custom-btn-style:hover {
+  background-color: var(--primary-2nd-hover-bg-color); /* Màu nền hover #e9a000 */
 }
 
 /* Btn Style Three */
@@ -217,3 +227,4 @@ Buttons Styles
   line-height: 21px;
   border-radius: 5px;
 }
+

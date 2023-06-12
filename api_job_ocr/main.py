@@ -27,7 +27,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 warnings.simplefilter('ignore')
 
-
 # Load environment variables from .env file
 load_dotenv()
 
@@ -38,6 +37,7 @@ app.add_middleware(
     allow_methods=["*"],  # Or specify the allowed HTTP methods
     allow_headers=["*"],  # Or specify the allowed headers
 )
+
 # Define Elasticsearch connection
 es = Elasticsearch([os.environ.get("ELASTICSEARCH_HOST")])
 
@@ -54,24 +54,6 @@ cnx = mysql.connector.connect(
 )
 cursor = cnx.cursor()
 
-# Đường dẫn đến tệp trên Google Drive
-file_url = os.environ.get("GOOGLE_DRIVE_FILE_URL")
-
-# Tên biến toàn cục để lưu trữ nội dung của tệp
-stopwords_vn = None
-
-def load_stopwords():
-    global stopwords_vn
-
-    if stopwords_vn is None:
-        # Tải tệp từ URL nếu chưa được tải
-        response = requests.get(file_url)
-        stopwords_vn = response.text.splitlines()
-
-    return stopwords_vn
-
-# Gọi hàm load_stopwords() để đảm bảo tệp đã được tải trước khi sử dụng
-stop_words = load_stopwords()
 
 def find_user_ids_by_job_title(job_title):
     pipeline = [
@@ -84,66 +66,121 @@ def find_user_ids_by_job_title(job_title):
     
     return user_ids
 
-def get_user_profiles(job_title):
+def get_user_profiles(job_title, page: int = 1, limit: int = 10):
     user_ids = find_user_ids_by_job_title(job_title)
     if not user_ids:
         return []
 
-    # Query to retrieve user profile information from MySQL
-    query = f"SELECT * FROM user_profiles WHERE id IN ({', '.join(str(id) for id in user_ids)})"
+    random.shuffle(user_ids)  # Xáo trộn danh sách user_ids
+
+    # Lấy ngẫu nhiên 10 user_ids nếu có nhiều hơn 10
+    if len(user_ids) > 10:
+        user_ids = user_ids[:10]
+
+    # Câu truy vấn để lấy thông tin hồ sơ người dùng từ MySQL
+    query = f"""
+        SELECT
+            up.id,
+            up.full_name,
+            up.avatar,
+            up.about_me,
+            up.good_at_position,
+            up.year_of_experience,
+            up.date_of_birth,
+            up.gender,
+            up.address,
+            up.email,
+            up.phone,
+            GROUP_CONCAT(DISTINCT us.skill) AS skills,
+            GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences,
+            GROUP_CONCAT(DISTINCT ue.title ORDER BY ue.user_id SEPARATOR '; ') AS experiences_title
+        FROM
+            user_profiles up
+        LEFT JOIN user_skills us ON up.id = us.user_id
+        LEFT JOIN (
+            SELECT
+                user_id,
+                GROUP_CONCAT(description ORDER BY user_id SEPARATOR '; ') AS description,
+                GROUP_CONCAT(title ORDER BY user_id SEPARATOR '; ') AS title
+            FROM
+                user_experiences
+            GROUP BY
+                user_id
+        ) ue ON up.id = ue.user_id
+        WHERE up.id IN ({', '.join(str(id) for id in user_ids)})
+        GROUP BY
+            up.id,
+            up.full_name,
+            up.avatar,
+            up.about_me,
+            up.good_at_position,
+            up.year_of_experience,
+            up.date_of_birth,
+            up.gender,
+            up.address,
+            up.email,
+            up.phone
+        LIMIT {limit} OFFSET {(page - 1) * limit}
+    """
+
+    # Thực thi truy vấn và lấy kết quả từ MySQL
     cursor = cnx.cursor()
     cursor.execute(query)
     results = cursor.fetchall()
-    cursor.close()
+    
 
     columns = [column[0] for column in cursor.description]
     df = pd.DataFrame(results, columns=columns)
 
-    # Create a dictionary of user profiles in the order of user_ids
-    filtered_profiles_dict = []
-    for user_id in user_ids:
-        profile = df[df['id'] == user_id].to_dict('records')
-        if profile:
-            filtered_profiles_dict.extend(profile)
-
-    # Randomly select 10 user profiles if there are more than 10
-    if len(filtered_profiles_dict) > 10:
-        filtered_profiles_dict = random.sample(filtered_profiles_dict, 10)
-
-    return filtered_profiles_dict
+    user_profiles = df.to_dict('records')
+    return user_profiles
 
 # Define the SQL query for jobs
 query_jobs = """
-    SELECT
-        j.id AS job_id,
-        j.title,
-        j.description,
-        j.min_salary,
-        j.max_salary,
-        j.recruit_num,
-        j.position,
-        j.min_yoe,
-        j.max_yoe,
-        j.benefit,
-        j.deadline,
-        j.requirement,
-        GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills
+     SELECT
+    j.id AS job_id,
+    j.title,
+    j.description,
+    j.min_salary,
+    j.max_salary,
+    j.recruit_num,
+    j.position,
+    j.type,
+    j.min_yoe,
+    j.max_yoe,
+    j.benefit,
+    DATE_FORMAT(j.deadline, '%d-%m-%Y') AS deadline,
+    j.requirement,
+    j.location,
+    GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills,
+    company_profiles.id AS company_id,
+    company_profiles.name AS company_name,
+    company_profiles.logo AS company_logo,
+	company_profiles.description AS company_description,
+    company_profiles.site AS company_site,
+    company_profiles.address AS company_address,
+    company_profiles.size AS company_size,
+    company_profiles.phone AS company_phone,
+    company_profiles.email AS company_email
     FROM
-        jobs j
-        LEFT JOIN job_skills s ON j.id = s.job_id
+    jobs j
+	JOIN job_skills s ON j.id = s.job_id
+    JOIN employer_profiles ON j.employer_id = employer_profiles.id
+    JOIN company_profiles ON employer_profiles.company_id = company_profiles.id
     GROUP BY
-        j.id,
-        j.title,
-        j.description,
-        j.min_salary,
-        j.max_salary,
-        j.recruit_num,
-        j.position,
-        j.min_yoe,
-        j.max_yoe,
-        j.benefit,
-        j.deadline,
-        j.requirement
+    j.id,
+    j.title,
+    j.description,
+    j.min_salary,
+    j.max_salary,
+    j.recruit_num,
+    j.position,
+    j.type,
+    j.min_yoe,
+    j.max_yoe,
+    j.benefit,
+    j.deadline,
+    j.requirement
     """
 
 # Execute the jobs query and fetch the results
@@ -195,190 +232,6 @@ user_columns = [desc[0] for desc in cursor.description]
 # Create a DataFrame for users
 df_user = pd.DataFrame(user_results, columns=user_columns)
 
-# Define the SQL query for jobs
-jobs_query = """
-    SELECT
-    j.id AS job_id,
-    j.title,
-    j.description,
-    j.min_salary,
-    j.max_salary,
-    j.recruit_num,
-    j.position,
-    j.type,
-    j.min_yoe,
-    j.max_yoe,
-    j.benefit,
-    DATE_FORMAT(j.deadline, '%d-%m-%Y') AS deadline,
-    j.requirement,
-    GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills
-    FROM
-    jobs j
-    LEFT JOIN job_skills s ON j.id = s.job_id
-    GROUP BY
-    j.id,
-    j.title,
-    j.description,
-    j.min_salary,
-    j.max_salary,
-    j.recruit_num,
-    j.position,
-    j.type,
-    j.min_yoe,
-    j.max_yoe,
-    j.benefit,
-    j.deadline,
-    j.requirement
-    """
-
-# Execute the jobs query and fetch the results
-cursor.execute(jobs_query)
-job_results = cursor.fetchall()
-
-# Get the column names for jobs
-job_columns = [desc[0] for desc in cursor.description]
-
-# Create a DataFrame for jobs
-job_TOPCV = pd.DataFrame(job_results, columns=job_columns)
-
-# Define the SQL query for users
-users_query = """
-SELECT
-  up.id,
-  up.full_name,
-  up.about_me,
-  up.good_at_position,
-  up.gender,
-  GROUP_CONCAT(DISTINCT us.skill) AS skills,
-  GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences,
-  GROUP_CONCAT(DISTINCT ue.title ORDER BY ue.user_id SEPARATOR '; ') AS experiences_title
-FROM
-  user_profiles up
-LEFT JOIN user_educations ued ON up.id = ued.user_id
-LEFT JOIN user_skills us ON up.id = us.user_id
-LEFT JOIN (
-  SELECT
-    user_id,
-    GROUP_CONCAT(description ORDER BY user_id SEPARATOR '; ') AS description,
-    GROUP_CONCAT(title ORDER BY user_id SEPARATOR '; ') AS title
-  FROM
-    user_experiences
-  GROUP BY
-    user_id
-) ue ON up.id = ue.user_id
-GROUP BY
-  up.id, up.full_name, up.about_me, up.good_at_position, up.gender;
-"""
-
-# Execute the users query and fetch the results
-cursor.execute(users_query)
-user_results = cursor.fetchall()
-
-# Get the column names for users
-user_columns = [desc[0] for desc in cursor.description]
-
-# Create a DataFrame for users
-users_CV = pd.DataFrame(user_results, columns=user_columns)
-users_CV['experiences'] = users_CV['experiences'].str.replace(r'\s+', ' ', regex=True)
-users_CV['about_me'] = users_CV['about_me'].str.replace(r'\s+', ' ', regex=True)
-
-# Define the SQL query for users
-users_query = """
-SELECT
-  up.id,
-  up.full_name,
-  up.about_me,
-  up.good_at_position,
-  up.gender,
-  GROUP_CONCAT(DISTINCT us.skill) AS skills,
-  GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences,
-  GROUP_CONCAT(DISTINCT ue.title ORDER BY ue.user_id SEPARATOR '; ') AS experiences_title
-FROM
-  user_profiles up
-LEFT JOIN user_educations ued ON up.id = ued.user_id
-LEFT JOIN user_skills us ON up.id = us.user_id
-LEFT JOIN (
-  SELECT
-    user_id,
-    GROUP_CONCAT(description ORDER BY user_id SEPARATOR '; ') AS description,
-    GROUP_CONCAT(title ORDER BY user_id SEPARATOR '; ') AS title
-  FROM
-    user_experiences
-  GROUP BY
-    user_id
-) ue ON up.id = ue.user_id
-GROUP BY
-  up.id, up.full_name, up.about_me, up.good_at_position, up.gender;
-"""
-
-# Execute the users query and fetch the results
-cursor.execute(users_query)
-user_results = cursor.fetchall()
-
-# Get the column names for users
-user_columns = [desc[0] for desc in cursor.description]
-
-# Create a DataFrame for users
-candidate_df = pd.DataFrame(user_results, columns=user_columns)
-candidate_df['experiences'] = candidate_df['experiences'].str.replace(r'\s+', ' ', regex=True)
-candidate_df['about_me'] = candidate_df['about_me'].str.replace(r'\s+', ' ', regex=True)
-
-# Define the SQL query for user_history
-user_history_query = """
-SELECT
-    id,
-    user_id,
-    job_id,
-    times
-FROM
-    user_history
-"""
-
-# Execute the user_history query and fetch the results
-cursor.execute(user_history_query)
-user_history_results = cursor.fetchall()
-
-# Get the column names for user_history
-user_history_columns = [desc[0] for desc in cursor.description]
-
-# Create a DataFrame for user_history
-users_CV_history = pd.DataFrame(user_history_results, columns=user_history_columns)
-
-users_CV['good_at_position'] = users_CV['good_at_position'].fillna('')
-users_CV['skills'] = users_CV['skills'].fillna('')
-users_CV['about_me'] = users_CV['about_me'].fillna('')
-users_CV['experiences'] = users_CV['experiences'].fillna('')
-users_CV['good_at_position'] = users_CV['good_at_position'] + users_CV['skills'] + users_CV['about_me'] + users_CV['experiences']
-tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 5), min_df=0, stop_words=stop_words)
-tfidf_matrix = tf.fit_transform(users_CV['good_at_position'])
-cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-users_CV = users_CV.reset_index()
-userid = users_CV['id']
-indices = pd.Series(users_CV.index, index=users_CV['id'])
-
-def get_recommendations_userwise(userid):
-    idx = indices[userid]
-    sim_scores = list(enumerate(cosine_sim[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: np.mean(x[1]) if np.iterable(x[1]) else x[1], reverse=True)
-    user_indices = [i[0] for i in sim_scores]
-    return user_indices[0:10]
-
-def get_job_id(usrid_list):
-    sorted_df = users_CV_history.sort_values(by=["times"], ascending=False)
-    jobs_userwise = sorted_df['user_id'].isin(usrid_list)
-    df1 = pd.DataFrame(data=sorted_df[jobs_userwise], columns=['job_id', 'user_id', 'times'])
-    joblist = df1['job_id'].tolist()
-    Job_list = job_TOPCV['job_id'].isin(joblist)
-    df_temp = pd.DataFrame(data=job_TOPCV[Job_list],
-                           columns=['job_id', 'title', 'description', 'min_salary', 'max_salary',
-                                    'recruit_num', 'position', 'skills', 'min_yoe', 'max_yoe', 'benefit', 'requirement'])
-
-    # Merge
-    merged_df = pd.merge(df_temp, df1, on="job_id")
-    sorted_df = merged_df.sort_values(by=["times"], ascending=False)
-    return sorted_df
-
-
 @app.on_event("startup")
 def startup_event():
     # Execute SQL query to retrieve job data
@@ -398,10 +251,22 @@ def startup_event():
     j.benefit,
     DATE_FORMAT(j.deadline, '%d-%m-%Y') AS deadline,
     j.requirement,
-    GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills
+    j.location,
+    GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills,
+    company_profiles.id AS company_id,
+    company_profiles.name AS company_name,
+    company_profiles.logo AS company_logo,
+	company_profiles.description AS company_description,
+    company_profiles.site AS company_site,
+    company_profiles.address AS company_address,
+    company_profiles.size AS company_size,
+    company_profiles.phone AS company_phone,
+    company_profiles.email AS company_email
     FROM
     jobs j
-    LEFT JOIN job_skills s ON j.id = s.job_id
+	JOIN job_skills s ON j.id = s.job_id
+    JOIN employer_profiles ON j.employer_id = employer_profiles.id
+    JOIN company_profiles ON employer_profiles.company_id = company_profiles.id
     GROUP BY
     j.id,
     j.title,
@@ -423,7 +288,9 @@ def startup_event():
 
     # Create DataFrame from the SQL results
     columns = ['job_id', 'title', 'description', 'min_salary', 'max_salary', 'recruit_num', 'position', 'type',
-               'min_yoe', 'max_yoe', 'benefit', 'deadline', 'requirement', 'skills']
+               'min_yoe', 'max_yoe', 'benefit', 'deadline', 'requirement', 'location', 'skills', 'company_id', 'company_name', 'company_logo', 'company_description',
+               'company_site', 'company_address', 'company_size', 'company_phone', 'company_email']
+
     df = pd.DataFrame(results, columns=columns)
 
     # Delete all data in Elasticsearch
@@ -454,6 +321,7 @@ def startup_event():
                 "benefit": {"type": "text"},
                 "deadline": {"type": "date", "format": "dd-MM-yyyy"},
                 "requirement": {"type": "text"},
+                "location": {"type": "text"},
                 "skills": {"type": "text"}
             }
         }
@@ -470,19 +338,6 @@ def startup_event():
         job_data['skills'] = [skill.strip() for skill in job_data['skills'].split(",")]
         es.index(index=index_name, body=job_data)
 
-#Recommend applicant
-@app.get("/user_profiles/{job_title}")
-def get_user_profiles_by_job_title(job_title: str):
-    user_profiles = get_user_profiles(job_title)
-    return {"user_profiles": user_profiles}
-
-#Recommend base on profile user
-@app.get("/recommend/{user_id}")
-def recommend_jobs(user_id: int):
-    job_recommendations = get_job_id(get_recommendations_userwise(user_id))
-    return JSONResponse(content=job_recommendations.to_dict(orient="records"))
-
-@app.get("/jobs")
 @app.get("/jobs")
 def search_jobs(
     keyword: str = Query(..., description="Keyword to search for"),
@@ -591,13 +446,87 @@ def search_jobs(
         "status_code": 200
     }
 
-# Connect to MongoDB
-client = MongoClient("mongodb+srv://tuansoi19127084:tuansoi19127084@cluster0.n8shx9d.mongodb.net/test?retryWrites=true&w=majority")
-db = client['BaseOnAL']
-collection = db['job_add']
+@app.get("/user_profiles/{job_title}")
+def get_user_profiles_by_job_title(job_title: str, page: int = Query(1, gt=0), limit: int = Query(10, gt=0, le=100)):
+    user_profiles = get_user_profiles(job_title, page, limit)
+    
+    total = len(user_profiles)
+    total_pages = math.ceil(total / limit)
+    base_url = f"http://localhost:8000/user_profiles/{job_title}"
+    first_page_url = f"{base_url}?page=1&limit={limit}"
+    last_page = total_pages
+    last_page_url = f"{base_url}?page={last_page}&limit={limit}"
+    next_page = page + 1 if page < total_pages else None
+    prev_page = page - 1 if page > 1 else None
+
+    links = [
+        {
+            "url": None,
+            "label": "&laquo; Previous",
+            "active": False
+        },
+        {
+            "url": first_page_url,
+            "label": "1",
+            "active": page == 1
+        }
+    ]
+
+    for i in range(2, total_pages + 1):
+        links.append({
+            "url": f"{base_url}?page={i}&limit={limit}",
+            "label": str(i),
+            "active": page == i
+        })
+
+    links.append({
+        "url": f"{base_url}?page={next_page}&limit={limit}" if next_page else None,
+        "label": "Next &raquo;",
+        "active": False
+    })
+
+    if len(user_profiles) == 0:
+        return {
+            "error": True,
+            "message": "Không tìm thấy thông tin người dùng",
+            "data": None,
+            "status_code": 400
+        }
+    
+    pagination_info = {
+        "first_page_url": first_page_url,
+        "from": (page - 1) * limit + 1,
+        "last_page": last_page,
+        "last_page_url": last_page_url,
+        "links": links,
+        "next_page_url": f"{base_url}?page={next_page}&limit={limit}" if next_page else None,
+        "path": f"http://localhost:8000/user_profiles/{job_title}",
+        "per_page": limit,
+        "prev_page_url": f"{base_url}?page={prev_page}&limit={limit}" if prev_page else None,
+        "to": min(page * limit, total),
+        "total": total
+    }
+
+    return {
+        "error": False,
+        "message": "Xử lí thành công",
+        "data": {
+            "user_profiles": {
+                "current_page": page,
+                "data": user_profiles,
+                "pagination_info": pagination_info
+            }
+        },
+        "status_code": 200
+    }
+
+# Connect to MongoDB for job_add collection
+client_job_add = MongoClient(os.environ.get("MONGODB_CONNECTION_STRING"))
+db_job_add = client_job_add['BaseOnAL']
+collection_job_add = db_job_add['job_add']
 
 # Read data from the collection
-data = collection.find()
+data = collection_job_add .find()
 
 # Create a list of dictionaries
 documents = [document for document in data]
