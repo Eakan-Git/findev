@@ -13,7 +13,7 @@ import {
     addSalary,
     addSort,
 } from "../../../features/filter/filterSlice";
-import Pagination from "../components/Pagination";
+import Pagination from "../components/Pagination2";
 import JobSelect from "../components/JobSelect";
 import {searchUrl } from "../../../utils/path";
 
