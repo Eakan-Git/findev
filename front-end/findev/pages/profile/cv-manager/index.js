@@ -5,7 +5,7 @@ import CvManager from "../../../components/dashboard-pages/candidates-dashboard/
 const index = () => {
   return (
     <>
-      <Seo pageTitle="CV Manager" />
+      <Seo pageTitle="Quản lý CV" />
       <CvManager />
     </>
   );
