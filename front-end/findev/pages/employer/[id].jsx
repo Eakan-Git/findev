@@ -38,9 +38,9 @@ const EmployersSingleV3 = ({}) => {
       try {
         const res = await fetch(`http://localhost:8000/api/company-profiles/${id}`);
         const resJobs = await fetch(`http://localhost:8000/api/jobs?company_id=${id}`);
-        // if (!res.error || !resJobs.error) {
-        //   throw new Error("Failed to fetch employer");
-        // }
+        if (res.error || resJobs.error) {
+          throw new Error("Failed to fetch employer");
+        }
         const resData = await res.json();
         const resJobsData = await resJobs.json();
         const fetchedCompany = resData?.data?.company_profile;

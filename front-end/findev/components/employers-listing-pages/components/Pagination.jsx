@@ -1,28 +1,54 @@
-const Pagination = () => {
+const Pagination = ({ companies, handlePageChange, totalPages, currentPage }) => {
+  // Check if companies is null or undefined
+  if (!companies) {
+    return (
+      <nav className="ls-pagination">
+        <ul>
+          <li>
+            <a href="#" className="current-page">
+              1
+            </a>
+          </li>
+        </ul>
+      </nav>
+    );
+  }
+
+  // Access the pagination links from companies.links
+  const paginationLinks = companies.links;
+
   return (
     <nav className="ls-pagination">
       <ul>
-        <li className="prev">
-          <a href="#">
-            <i className="fa fa-arrow-left"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#">1</a>
-        </li>
-        <li>
-          <a href="#" className="current-page">
-            2
-          </a>
-        </li>
-        <li>
-          <a href="#">3</a>
-        </li>
-        <li className="next">
-          <a href="#">
-            <i className="fa fa-arrow-right"></i>
-          </a>
-        </li>
+        {paginationLinks.map((link, index) => {
+          if (link.active) {
+            return (
+              <li key={index}>
+                <a
+                  href="#"
+                  className={link.label === currentPage.toString() ? "current-page" : ""}
+                  onClick={() => handlePageChange(link.label, link.url)}
+                >
+                  {link.label}
+                </a>
+              </li>
+            );
+          } else {
+            return (
+              <li key={index}>
+                <a href="#" onClick={() => handlePageChange(link.label, link.url)}>
+                  {link.label === "&laquo; Previous" ? (
+                    <i className="fa fa-arrow-left"></i>
+                  ) : link.label === "Next &raquo;" ? (
+                    <i className="fa fa-arrow-right"></i>
+                  ) : (
+                    link.label
+                  )}
+                </a>
+              </li>
+            );
+          }
+        })}
       </ul>
     </nav>
   );
