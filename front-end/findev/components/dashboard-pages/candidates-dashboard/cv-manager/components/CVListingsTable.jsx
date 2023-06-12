@@ -8,39 +8,34 @@ import { logoutUser } from "/app/actions/userActions";
 const CVListingsTable = ({ user }) => {
   const router = useRouter();
   const dispatch = useDispatch();
-
-  const fetchApplications = async (id, token) => {
-    const url = `${localUrl}/applications?user_id=${id}`;
-    const headers = {
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    };
-
-    try {
-      const response = await fetch(url, { method: "GET", headers });
-      if (response.message === "Unauthenticated.") {
-        alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
-        router.push("/");
-        dispatch(logoutUser());
-      } else if (!response.error) {
-        const data = await response.json();
-        return data;
-      } else {
-        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const [jobs, setJobs] = useState([]);
+  const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
-
+  const [cvListings, setCvListings] = useState([]);
+  // get profile
   useEffect(() => {
-    const fetchJobListings = async () => {
+    const getProfile = async () => {
+      const url = `${localUrl}/user-profiles/${user?.userAccount?.id}`;
+      const headers = {
+        Accept: "application/json",
+        Authorization: `Bearer ${user.token}`,
+      };
       try {
-        const res = await fetchApplications(user.userAccount.id, user.token);
-        if (!res.error) {
-          setJobs(res.data.applications.data);
+        const response = await fetch(url, { headers });
+        if (response.message === "Unauthenticated.") {
+          alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+          router.push("/");
+          dispatch(logoutUser());
+        } else if (!response.error) {
+          const data = await response.json();
+          // console.log(data);
+          if (data.error === false) {
+            // console.log(data.data);  
+            setProfile(data.data);
+            setCvListings(data.data.user_profile.cvs);
+            // console.log(data.data.user_profile.cvs);
+          } else {
+            alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          }
         }
       } catch (error) {
         console.error(error);
@@ -48,42 +43,44 @@ const CVListingsTable = ({ user }) => {
         setLoading(false);
       }
     };
-
-    fetchJobListings();
-  }, []);
+    getProfile();
+  }, [user]);
+  const handleDeleteCV = () => {
+    console.log("delete");
+  };
 
   if (loading) {
     return <div>Đang tải dữ liệu...</div>;
   }
-  const handleDeleteApplication = async (id) => {
-    const url = `${localUrl}/applications/${id}`;
-    const headers = {
-      Accept: "application/json",
-      Authorization: `Bearer ${user.token}`,
-    };
-    // ask for confirmation
-    const confirmation = confirm("Bạn có chắc chắn muốn xóa?");
-    if (confirmation) {
-      try {
-        const response = await fetch(url, { method: "DELETE", headers });
-        if (response.message === "Unauthenticated.") {
-          alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
-          router.push("/");
-          dispatch(logoutUser());
-        } else if (!response.error) {
-          const data = await response.json();
-          if (!data.error) {
-            alert("Xóa thành công");
-            router.reload();
-          } else {
-            alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
+  // const handleDeleteApplication = async (id) => {
+  //   const url = `${localUrl}/applications/${id}`;
+  //   const headers = {
+  //     Accept: "application/json",
+  //     Authorization: `Bearer ${user.token}`,
+  //   };
+  //   // ask for confirmation
+  //   const confirmation = confirm("Bạn có chắc chắn muốn xóa?");
+  //   if (confirmation) {
+  //     try {
+  //       const response = await fetch(url, { method: "DELETE", headers });
+  //       if (response.message === "Unauthenticated.") {
+  //         alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+  //         router.push("/");
+  //         dispatch(logoutUser());
+  //       } else if (!response.error) {
+  //         const data = await response.json();
+  //         if (!data.error) {
+  //           alert("Xóa thành công");
+  //           router.reload();
+  //         } else {
+  //           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
+  // };
   return (
     <div className="tabs-box">
       {/* <div className="widget-title"> */}
@@ -111,69 +108,39 @@ const CVListingsTable = ({ user }) => {
                 <tr>
                   <th>Tên CV</th>
                   <th>Ngày tạo</th>
-                  <th>Ngày chỉnh sửa</th>
+                  <th>Ghi chú</th>
                   <th>Hành động</th>
                 </tr>
               </thead>
 
               <tbody>
-                {jobs.length === 0 ? (
+                {cvListings.length === 0 ? (
                   <tr>
                     <td colSpan="4">Bạn chưa có CV nào</td>
                   </tr>
                 ) : (
-                  jobs.map((item) => (
+                  cvListings.map((item) => (
                     <tr key={item.id}>
                       <td>
                         {/* <!-- Job Block --> */}
                         <div className="job-block">
                           <div className="inner-box">
-                            <div className="content">
-                              <span className="company-logo">
-                                <img
+                            {/* <div className="content"> */}
+                              {/* <span className="company-logo"> */}
+                                {/* <img
                                   src={
                                     item.job.employer_profile.company_profile
                                       .logo
                                   }
                                   alt="logo"
-                                />
-                              </span>
-                              <h4>
-                                <Link
-                                  href={`/job/${item.id}`}
-                                  title={item.job.title}
-                                >
-                                  {item.job.title.length > 50
-                                    ? item.job.title.slice(0, 50) + "..."
-                                    : item.job.title}
+                                /> */}
+                              {/* </span> */}
+                              <h4 style={{ float: 'left', marginRight: '10px' }}>
+                                <Link href={item?.cv_path || "#"} target="_blank">
+                                  {item?.name || "CV chưa đặt tên"}
                                 </Link>
                               </h4>
-                              <ul className="job-info">
-                                <li>
-                                  <span className="icon flaticon-briefcase"></span>
-                                  <Link
-                                    href={`/employer/${item.job.employer_profile.company_id}`}
-                                  >
-                                    {item.job.employer_profile.company_profile.name.length > 40
-                                      ? item.job.employer_profile.company_profile.name.slice(
-                                          0,
-                                          40
-                                        ) + "..."
-                                      : item.job.employer_profile.company_profile.name}
-                                  </Link>
-                                </li>
-                                <li>
-                                  <span className="icon flaticon-map-locator"></span>
-                                  {/* get substring before ':' of item.job.location 
-                                      else get 20 first characters of item.job.location
-                                  */}
-                                  {item.job.location.split(":")[0] ||
-                                  item.job.location.length > 30
-                                    ? item.job.location.slice(0, 30) + "..."
-                                    : item.job.location}
-                                </li>
-                              </ul>
-                            </div>
+                            {/* </div> */}
                           </div>
                         </div>
                       </td>
@@ -198,12 +165,16 @@ const CVListingsTable = ({ user }) => {
                         <div className="option-box">
                           <ul className="option-list">
                             <li>
-                              <button data-text="Tải về">
-                                <span className="la la-download"></span>
+                              <button data-text="Xem"
+                                onClick={() => {
+                                  window.open(item?.cv_path || "#", "_blank");
+                                }}
+                              >
+                                <span className="la la-eye"></span>
                               </button>
                             </li>
                             <li>
-                              <button data-text="Xóa CV" onClick={() => handleDeleteApplication(item.id)}>
+                              <button data-text="Xóa CV" onClick={() => handleDeleteCV(item.id)}>
                                 <span className="la la-trash"></span>
                               </button>
                             </li>
