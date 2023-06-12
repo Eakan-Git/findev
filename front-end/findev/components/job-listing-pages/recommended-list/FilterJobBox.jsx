@@ -118,7 +118,7 @@ const FilterJobBox = () => {
     // Jobs content
     let content = undefined;
 
-    if (jobs !== undefined && jobs !== null) {
+    if (jobs !== undefined && jobs !== null) {  
         const filteredJobs = jobs.data.jobs.data;
         // console.log(filteredJobs);
             // .filter(keywordFilter)
