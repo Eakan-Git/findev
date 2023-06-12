@@ -1,6 +1,6 @@
 import FooterDefault from "../../../components/footer/common-footer";
 import LoginPopup from "../../common/form/login/LoginPopup";
-import DefaulHeader from "../../header/DefaulHeader";
+import DefaulHeader from "../../header/DefaulHeader2";
 import MobileMenu from "../../header/MobileMenu";
 import FilterTopBox from "./FilterTopBox";
 import JobSearchForm from "./JobSearchForm";
