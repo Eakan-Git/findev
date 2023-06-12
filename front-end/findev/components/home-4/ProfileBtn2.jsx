@@ -33,7 +33,7 @@ const ProfileBtn = ({textColor}) => {
               <div className="d-flex align-items-center btn-box2">
                 <a
                   href="#"
-                  className="theme-btn btn-style-five call-modal"
+                  className="theme-btn btn-style-one call-modal"
                   data-bs-toggle="modal"
                   data-bs-target="#loginPopupModal"
                 >
@@ -41,7 +41,7 @@ const ProfileBtn = ({textColor}) => {
                 </a>
                 <Link
                   href="#"
-                  className="theme-btn btn-style-six"
+                  className="theme-btn btn-style-three"
                 >
                   Đăng tin tuyển dụng
                 </Link>
