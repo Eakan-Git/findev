@@ -45,8 +45,11 @@ const CVListingsTable = ({ user }) => {
     };
     getProfile();
   }, [user]);
-  const handleDeleteCV = () => {
-    console.log("delete");
+  const handleDeleteCV = (id) => {
+    const cf = confirm("Bạn có chắc chắn muốn xóa CV này?");
+    if (cf) {
+      console.log("deleted", id);
+    }
   };
 
   if (loading) {
