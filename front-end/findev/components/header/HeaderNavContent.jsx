@@ -15,10 +15,8 @@ import {
     isActiveParentChaild,
 } from "../../utils/linkActiveChecker";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+
 const HeaderNavContent = () => {
-    const { user } = useSelector((state) => state.user);
-    // console.log(user);
     const router = useRouter();
 
     return (
@@ -339,16 +337,6 @@ const HeaderNavContent = () => {
                             ))}
                         </ul>
                     </li> */}
-
-                    {user ? (
-                        <li>
-                            <Link href="/recommended-jobs">
-                            Gợi ý việc làm
-                        </Link>
-                        </li>
-                    ) : (
-                        null)
-                    }
                     <li>
                         <Link href="/employers">Công ty</Link>
                     </li>

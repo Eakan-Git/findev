@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import HeaderNavContent from "./HeaderNavContent";
-import ProfileBtn from "../home-4/ProfileBtn2";
-const DefaulHeader = () => {
+
+const DefaulHeader2 = () => {
   const [navbar, setNavbar] = useState(false);
 
   const changeBackground = () => {
@@ -43,28 +43,31 @@ const DefaulHeader = () => {
         {/* End .nav-outer */}
 
         <div className="outer-box">
+          {/* <!-- Add Listing --> */}
+          <Link href="/candidates-dashboard/cv-manager" className="upload-cv">
+            Upload your CV
+          </Link>
           {/* <!-- Login/Register --> */}
-          <ProfileBtn />
-          {/* <div className="btn-box">
+          <div className="btn-box">
             <a
               href="#"
               className="theme-btn btn-style-three call-modal"
               data-bs-toggle="modal"
               data-bs-target="#loginPopupModal"
             >
-              Đăng nhập
+              Login / Register
             </a>
             <Link
               href="/employers-dashboard/post-jobs"
               className="theme-btn btn-style-one"
             >
-              Đăng tin tuyển dụng
+              Job Post
             </Link>
-          </div> */}
+          </div>
         </div>
       </div>
     </header>
   );
 };
 
-export default DefaulHeader;
+export default DefaulHeader2;

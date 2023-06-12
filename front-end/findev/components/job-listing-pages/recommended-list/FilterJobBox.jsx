@@ -25,8 +25,8 @@ const FilterJobBox = () => {
     const [jobsPerPage, setJobsPerPage] = useState(10);
     const router = useRouter();
     // console.log(keyword, location);
-    if(user) {
-        useEffect(() => {
+
+    useEffect(() => {
         // construct query url
         let queryUrl = `${recommendUrl}${user.userAccount.id}`;
         if(currentPage !== 1) {
@@ -37,17 +37,16 @@ const FilterJobBox = () => {
         // console.log(queryUrl);
         // call api to get jobs with keyword and location as params
         const getJobs = async () => {
-        // console.log(queryUrl);
+        console.log(queryUrl);
         const res = await fetch(queryUrl);
         const data = await res.json();
-        // console.log(data.data);
+        console.log(data.data);
         if(data.length !== 0){
             setJobs(data);
         }
         };
         getJobs();
     }, [currentPage, jobsPerPage]);
-    }
 
     const handlePageChange = (page) => {
         // check page is a number
@@ -222,7 +221,7 @@ const FilterJobBox = () => {
                 </div>
             ));
         } else {
-            content = <h1>Không tìm thấy công việc, bạn hãy cập nhật thông tin cá nhân của mình</h1>;
+            content = <h1>Không tìm thấy công việc</h1>;
         }
     }
 
@@ -254,24 +253,6 @@ const FilterJobBox = () => {
         dispatch(addPerPage({start: 0, end: 10}));
     };
 
-    if(!user) {
-        return (
-            <>
-            <div className="ls-switcher">
-                {/* <JobSelect /> */}
-            </div>
-
-            <div className="row">{content}</div>
-            <div className="row">
-                <div className="col-md-12">
-                    <h2 className="text-center">
-                        Bạn cần đăng nhập để sử dụng tính năng này
-                    </h2>
-                </div>
-            </div>
-        </>
-        )
-    }
     return (
         <>
             <div className="ls-switcher">

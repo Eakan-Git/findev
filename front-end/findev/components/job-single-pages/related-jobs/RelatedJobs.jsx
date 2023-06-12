@@ -1,16 +1,17 @@
 import Link from "next/link";
 import { searchUrl } from "../../../utils/path";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const RelatedJobs = ({ title }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const queryUrl = `${searchUrl}?keyword=${encodeURIComponent(title)}&limit=6`;
+  const queryUrl = `${searchUrl}?keyword=${encodeURIComponent(title)}&limit=3`;
   useEffect(() => {
     const getJob = async () => {
       try {
-        // console.log(queryUrl);
+        console.log(queryUrl);
         const res = await fetch(`${queryUrl}`);
         if (res.error) {
           throw new Error("Failed to fetch job");
@@ -18,7 +19,7 @@ const RelatedJobs = ({ title }) => {
         const resData = await res.json();
         // console.log(resData);
         const fetchedJob = resData?.data?.jobs.data;
-        // console.log(fetchedJob);
+        console.log(fetchedJob);
         setJobs(fetchedJob || null);
       } catch (err) {
         setError(err.message);
@@ -27,7 +28,7 @@ const RelatedJobs = ({ title }) => {
       }
     };
       getJob();
-  }, [title]);
+  }, []);
 
   if (loading) {
     return <div>Đang tải...</div>;
@@ -38,12 +39,12 @@ const RelatedJobs = ({ title }) => {
   }
   return (
     <>
-      {jobs.slice(1,6).map((item) => (
+      {jobs.map((item) => (
         <div className="job-block" key={item.job_id}>
           <div className="inner-box">
             <div className="content">
               <span className="company-logo">
-                <img src={item.company_logo} alt="item brand" />
+                <img src={item.logo} alt="item brand" />
               </span>
               <h4>
                 <Link href={`/job/${item.job_id}`}>
@@ -54,17 +55,12 @@ const RelatedJobs = ({ title }) => {
               <ul className="job-info">
                 <li>
                   <span className="icon flaticon-briefcase"></span>
-                  <Link href={`/employer/${item.company_id}`}
-                  alt={item.company_name}
-                  title={item.company_name}
-                  >
-                  {item.company_name.length > 20 ? item.company_name.slice(0, 20) + "..." : item.company_name }
-                  </Link>
+                  {item.company}
                 </li>
                 {/* compnay info */}
                 <li>
                   <span className="icon flaticon-map-locator"></span>
-                  {item.location.split(":")[0]}
+                  {item.location}
                 </li>
                 {/* location info */}
                 <li>

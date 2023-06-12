@@ -40,7 +40,7 @@ const ProfileBtn = ({textColor}) => {
                   Đăng nhập
                 </a>
                 <Link
-                  href="#"
+                  href="/employers-dashboard/post-jobs"
                   className="theme-btn btn-style-six"
                 >
                   Đăng tin tuyển dụng
