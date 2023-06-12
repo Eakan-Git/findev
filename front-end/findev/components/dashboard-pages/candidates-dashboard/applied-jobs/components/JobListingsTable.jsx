@@ -32,7 +32,6 @@ const JobListingsTable = ({ user }) => {
       console.error(error);
     }
   };
-
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -56,11 +55,39 @@ const JobListingsTable = ({ user }) => {
   if (loading) {
     return <div>Đang tải dữ liệu...</div>;
   }
-
+  const handleDeleteApplication = async (id) => {
+    const url = `${localUrl}/applications/${id}`;
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Bearer ${user.token}`,
+    };
+    // ask for confirmation
+    const confirmation = confirm("Bạn có chắc chắn muốn xóa?");
+    if (confirmation) {
+      try {
+        const response = await fetch(url, { method: "DELETE", headers });
+        if (response.message === "Unauthenticated.") {
+          alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+          router.push("/");
+          dispatch(logoutUser());
+        } else if (!response.error) {
+          const data = await response.json();
+          if (!data.error) {
+            alert("Xóa thành công");
+            router.reload();
+          } else {
+            alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
   return (
     <div className="tabs-box">
       <div className="widget-title">
-        <h4>Danh sách công việc</h4>
+        <h4>Danh sách công việc đã ứng tuyển</h4>
 
         <div className="chosen-outer">
           {/* <!--Tabs Box--> */}
@@ -155,16 +182,17 @@ const JobListingsTable = ({ user }) => {
                           "en-GB"
                         )}
                       </td>
-                      <td className="status">
-                        {item.status === "Đang chờ"
-                          ? "pending"
-                          : item.status === "Đã gửi"
-                          ? "sent"
-                          : item.status === "Đã duyệt"
-                          ? "approved"
-                          : item.status === "Từ chối"
-                          ? "rejected"
-                          : ""}
+                      <td className="status"
+                        style={{
+                          color:
+                            item.status === "Đã xem"
+                              ? "green"
+                              : item.status === "Đã từ chối"  
+                              ? "red"
+                              : "blue",
+                        }}
+                      >
+                          {item.status}
                       </td>
                       <td>
                         <div className="option-box">
@@ -175,7 +203,7 @@ const JobListingsTable = ({ user }) => {
                               </button>
                             </li> */}
                             <li>
-                              <button data-text="Xóa đơn ứng tuyển">
+                              <button data-text="Xóa đơn ứng tuyển" onClick={() => handleDeleteApplication(item.id)}>
                                 <span className="la la-trash"></span>
                               </button>
                             </li>

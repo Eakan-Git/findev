@@ -1,6 +1,6 @@
 import SearchForm3 from "../../common/job-search/SearchForm3";
 import PopularSearch from "../PopularSearch";
-
+import RecommendedJobsBtn from "../RecommendedJobsBtn";
 const index = () => {
   return (
     <section
@@ -27,6 +27,7 @@ const index = () => {
         {/* <!-- Popular Search --> */}
         <PopularSearch />
         {/* <!-- End Popular Search --> */}
+        <RecommendedJobsBtn />
       </div>
     </section>
   );
