@@ -57,13 +57,13 @@ const index = () => {
                     </button>
                     &nbsp;&nbsp;
                     <button className="theme-btn btn-style-one">
-                      Tạo CV tự động&nbsp;<i className="la la-file-text"></i>
+                      Tạo CV tự động&nbsp;<i className="la la-download"></i>
                     </button>
                   </div>
                 </div>
                 {/* End widget-title */}
                 <div className="widget-content">
-                  <CVListingsTable />
+                  <CVListingsTable user={user} />
                   {/* <CvUploader /> */}
                 </div>
                 {/* End widget-content */}
