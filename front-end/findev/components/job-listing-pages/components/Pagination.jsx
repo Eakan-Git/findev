@@ -13,7 +13,8 @@ const Pagination = ({ jobs, handlePageChange }) => {
   }
 
   // Access the pagination links from jobs.links
-  const paginationLinks = jobs.links;
+  const paginationLinks = jobs.data.jobs.links;
+  // console.log(paginationLinks);
 
   return (
     <nav className="ls-pagination">

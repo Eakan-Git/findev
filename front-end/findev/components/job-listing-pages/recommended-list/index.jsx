@@ -27,8 +27,10 @@ const index = () => {
 
       <section className="page-title style-two">
         <div className="auto-container">
-          <JobSearchForm />
-          {/* <!-- Job Search Form --> */}
+          {/* <JobSearchForm /> */}
+          <h2 className="text-center">Công việc FinDev gợi ý cho bạn</h2>
+          <br />
+          <h5 className="text-center">Đây là các công việc được FinDev sàng lọc và gợi ý dựa trên dữ liệu bạn đã cung cấp</h5>
         </div>
       </section>
       {/* <!--End Page Title--> */}

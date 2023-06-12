@@ -2,7 +2,7 @@ import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html lang="vi">
       <Head>
         <link
           rel="stylesheet"
@@ -15,9 +15,9 @@ export default function Document() {
         />
         <meta
           name="description"
-          content="Superio - Job Borad React NextJS Template"
+          content="FinDev - Cơ hội việc làm tốt nhất cho lập trình viên"
         />
-        <meta name="ibthemes" content="ATFN" />
+        <meta name="StuckOverFlow" content="ATFN" />
 
         <link rel="icon" href="/favicon.ico" />
       </Head>

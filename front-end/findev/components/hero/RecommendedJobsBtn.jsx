@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 const RecommendedJobsBtn = () => {
     const {user} = useSelector((state) => state.user);
-    console.log(user);
+    // console.log(user);
     if(!user) return (
         <div className="popular-searches" data-aos="fade-up" data-aos-delay="1200">
             <br />

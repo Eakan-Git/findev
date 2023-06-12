@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addLocation } from "../../../features/filter/filterSlice";
-
+import { useRouter } from "next/router";
 const LocationBox = () => {
+    const router = useRouter();
+    const { keyword, location } = router.query;
     const { jobList } = useSelector((state) => state.filter);
     const [getLocation, setLocation] = useState(jobList.location);
     const dispath = useDispatch();
@@ -22,7 +24,7 @@ const LocationBox = () => {
                 type="text"
                 name="listing-search"
                 placeholder="Thành phố"
-                value={getLocation}
+                value={location}
                 onChange={locationHandler}
             />
             <span className="icon flaticon-map-locator"></span>
