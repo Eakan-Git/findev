@@ -45,7 +45,7 @@ const FilterTopBox = () => {
       } else if (page === "Next &raquo;" && currentPage < totalPages) {
         setCurrentPage(currentPage + 1);
       }
-      console.log(currentPage)
+    //   console.log(currentPage)
     };
 
 

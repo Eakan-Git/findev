@@ -160,7 +160,7 @@ const FilterJobBox = () => {
                                 {/* <img src={item?.employer_profile.company_profile.logo} alt={item?.company_name} /> */}
                             </span>
                             <h4>
-                                <Link href={`/job/${item.id}`}
+                                <Link href={`/job/${item.job_id}`}
                                 alt={item.title}
                                 title={item.title}
                                 >
@@ -187,8 +187,8 @@ const FilterJobBox = () => {
                                         and get text before ':' using split
                                     */}
                                     {/* {item.location[0].split(":")[0]} */}
-                                    {/* {item.location.split(":")[0] || "Không xác định"}
-                                     */}
+                                    {item?.location.split(":")[0] || "Không xác định"}
+                                    
                                 </li>
                                 <li>
                                     <span className="icon flaticon-clock-3"></span> {item.deadline}

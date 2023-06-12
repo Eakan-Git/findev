@@ -7,44 +7,48 @@ import { logoutUser } from "/app/actions/userActions";
 
 const CVListingsTable = ({ user }) => {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const [profile, setProfile] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [cvListings, setCvListings] = useState([]);
-  // get profile
-  useEffect(() => {
-    const getProfile = async () => {
-      const url = `${localUrl}/user-profiles/${user?.userAccount?.id}`;
-      const headers = {
-        Accept: "application/json",
-        Authorization: `Bearer ${user.token}`,
-      };
-      try {
-        const response = await fetch(url, { headers });
-        if (response.message === "Unauthenticated.") {
-          alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
-          router.push("/");
-          dispatch(logoutUser());
-        } else if (!response.error) {
-          const data = await response.json();
-          // console.log(data);
-          if (data.error === false) {
-            // console.log(data.data);  
-            setProfile(data.data);
-            setCvListings(data.data.user_profile.cvs);
-            // console.log(data.data.user_profile.cvs);
-          } else {
-            alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
+const dispatch = useDispatch();
+const [profile, setProfile] = useState({});
+const [loading, setLoading] = useState(true);
+const [cvListings, setCvListings] = useState([]);
+
+// get profile
+useEffect(() => {
+  const getProfile = async () => {
+    const url = `${localUrl}/user-profiles/${user?.userAccount?.id}`;
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Bearer ${user.token}`,
     };
+    try {
+      const response = await fetch(url, { headers });
+      const data = await response.json();
+
+      if (response.ok) {
+        setProfile(data.data);
+        setCvListings(data.data.user_profile.cvs);
+      } else if (response.status === 401) {
+        alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+        router.push("/");
+        dispatch(logoutUser());
+        return;
+      } else {
+        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (user && loading) {
     getProfile();
-  }, [user]);
+  }
+}, [user, dispatch, router, loading]);
+
+
+
   const handleDeleteCV = (id) => {
     const cf = confirm("Bạn có chắc chắn muốn xóa CV này?");
     if (cf) {
