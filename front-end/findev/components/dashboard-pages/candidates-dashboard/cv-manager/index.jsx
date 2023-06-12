@@ -8,6 +8,7 @@ import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader
 import MenuToggler from "../../MenuToggler";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import CVListingsTable from "./components/CVListingsTable";
 const index = () => {
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
@@ -38,7 +39,7 @@ const index = () => {
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
-          <BreadCrumb title="CV Manager!" />
+          <BreadCrumb title="Quản lý CV!" />
           {/* breadCrumb */}
 
           <MenuToggler />
@@ -48,12 +49,22 @@ const index = () => {
             <div className="col-lg-12">
               {/* <!-- Ls widget --> */}
               <div className="cv-manager-widget ls-widget">
-                <div className="widget-title">
-                  <h4>Cv Manager</h4>
+              <div className="widget-title">
+                  <h4>Danh sách CV của bạn</h4>
+                  <div className="CV-button-wrapper">
+                    <button className="theme-btn btn-style-one">
+                      Đăng tải CV&nbsp;<i className="la la-cloud-upload"></i>
+                    </button>
+                    &nbsp;&nbsp;
+                    <button className="theme-btn btn-style-one">
+                      Tạo CV tự động&nbsp;<i className="la la-file-text"></i>
+                    </button>
+                  </div>
                 </div>
                 {/* End widget-title */}
                 <div className="widget-content">
-                  <CvUploader />
+                  <CVListingsTable />
+                  {/* <CvUploader /> */}
                 </div>
                 {/* End widget-content */}
               </div>

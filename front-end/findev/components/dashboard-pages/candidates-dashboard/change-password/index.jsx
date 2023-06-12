@@ -50,7 +50,7 @@ const index = () => {
             </div>
 
             <div className="widget-content">
-              <Form />
+              <Form user={user} />
             </div>
           </div>
           {/* <!-- Ls widget --> */}

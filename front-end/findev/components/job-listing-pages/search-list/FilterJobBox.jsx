@@ -36,6 +36,9 @@ const FilterJobBox = () => {
     } else if (keyword !== undefined && location !== undefined) {
     queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}&location=${encodeURIComponent(location)}`;
     }
+    else {
+        router.push("/find-jobs");
+    }
     console.log(queryUrl);
     // fetch jobs
     useEffect(() => {
