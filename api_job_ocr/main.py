@@ -137,7 +137,7 @@ def get_user_profiles(job_title, page: int = 1, limit: int = 10):
 
 # Define the SQL query for jobs
 query_jobs = """
-    SELECT
+     SELECT
     j.id AS job_id,
     j.title,
     j.description,
@@ -151,7 +151,9 @@ query_jobs = """
     j.benefit,
     DATE_FORMAT(j.deadline, '%d-%m-%Y') AS deadline,
     j.requirement,
+    j.location,
     GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills,
+    company_profiles.id AS company_id,
     company_profiles.name AS company_name,
     company_profiles.logo AS company_logo,
 	company_profiles.description AS company_description,
@@ -249,7 +251,9 @@ def startup_event():
     j.benefit,
     DATE_FORMAT(j.deadline, '%d-%m-%Y') AS deadline,
     j.requirement,
+    j.location,
     GROUP_CONCAT(s.skill SEPARATOR ', ') AS skills,
+    company_profiles.id AS company_id,
     company_profiles.name AS company_name,
     company_profiles.logo AS company_logo,
 	company_profiles.description AS company_description,
@@ -284,7 +288,7 @@ def startup_event():
 
     # Create DataFrame from the SQL results
     columns = ['job_id', 'title', 'description', 'min_salary', 'max_salary', 'recruit_num', 'position', 'type',
-               'min_yoe', 'max_yoe', 'benefit', 'deadline', 'requirement', 'skills', 'company_name', 'company_logo', 'company_description',
+               'min_yoe', 'max_yoe', 'benefit', 'deadline', 'requirement', 'location', 'skills', 'company_id', 'company_name', 'company_logo', 'company_description',
                'company_site', 'company_address', 'company_size', 'company_phone', 'company_email']
 
     df = pd.DataFrame(results, columns=columns)
@@ -317,6 +321,7 @@ def startup_event():
                 "benefit": {"type": "text"},
                 "deadline": {"type": "date", "format": "dd-MM-yyyy"},
                 "requirement": {"type": "text"},
+                "location": {"type": "text"},
                 "skills": {"type": "text"}
             }
         }
