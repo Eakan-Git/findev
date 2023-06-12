@@ -15,40 +15,22 @@ import {
 
 const FilterTopBox = () => {
     const [companies, setCompanies] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [companiesUrl, setCompaniesUrl] = useState('http://localhost:8000/api/company-profiles?count_per_page=8');
+
     useEffect(() => {
-      const getCompanies = async () => {
-        try {
-          const res = await fetch(companiesUrl);
-          const resData = await res.json();
-          setCompanies(resData.data.company_profiles);
-          setTotalPages(resData.data.company_profiles.last_page);
-        } catch (err) {
-          console.log(err);
-        }
-      };
-  
-      getCompanies();
-    }, [companiesUrl]);
-  
-    const handlePageChange = (page, url) => {
-        const updatedUrl = url + "&count_per_page=8";
+        const getCompanies = async () => {
+            try {
+                const res = await fetch("http://localhost:8000/api/company-profiles?count_per_page=8");
+                const resData = await res.json();
+                setCompanies(resData.data.company_profiles.data);
+                console.log(resData.data.company_profiles.data);
+            } catch (err) {
+                console.log(err);
+            }
+        };
 
-  setCompaniesUrl(updatedUrl);
-      // Check if page is a number
-      if (!isNaN(page)) {
-        setCurrentPage(page);
-      } else if (page === "&laquo; Previous" && currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      } else if (page === "Next &raquo;" && currentPage < totalPages) {
-        setCurrentPage(currentPage + 1);
-      }
-      console.log(currentPage)
-    };
-
-
+        getCompanies();
+        console.log(companies);
+    }, []);
     const {
         keyword,
         location,
@@ -102,7 +84,7 @@ const FilterTopBox = () => {
         // ?.filter(foundationDataFilter)
         // ?.sort(sortFilter)
         if(companies !== null && companies !== undefined){
-            const filteredCompanies = companies.data;
+            const filteredCompanies = companies;
             if(filteredCompanies.length > 0){
                 content = filteredCompanies.map((company) => (
             <div
@@ -256,7 +238,7 @@ const FilterTopBox = () => {
             <div className="row">{content}</div>
             {/* End .row */}
 
-            <Pagination companies={companies} handlePageChange={handlePageChange} totalPages={totalPages} currentPage={currentPage}  />
+            <Pagination />
             {/* <!-- Pagination --> */}
         </>
     );
