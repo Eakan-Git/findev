@@ -35,7 +35,6 @@ const JobSingleDynamicV1 = () => {
   const [error, setError] = useState(null);
   const id = router.query.id;
   const { user } = useSelector((state) => state.user);
-  const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleModalOpen = () => {
@@ -62,7 +61,7 @@ const JobSingleDynamicV1 = () => {
         const isJobSaved = res.data?.data?.job.is_saved;
         setIsSaved(isJobSaved);
       } catch (err) {
-        setError(err.message);
+        router.push('/404');
       } finally {
         setIsLoading(false);
       }
@@ -191,13 +190,13 @@ const JobSingleDynamicV1 = () => {
                           {/* time info */}
                           <li>
                             <span className="icon flaticon-money"></span>{" "}
-                            {job?.min_salary === -1 && job.max_salary === -1
+                            {job?.min_salary === -1 && job?.max_salary === -1
                                         ? "Thỏa thuận"
-                                        : job.min_salary === 0 && job.max_salary === 0
+                                        : job?.min_salary === 0 && job?.max_salary === 0
                                         ? "Không lương"
-                                        : job.min_salary === 0 && job.max_salary > 0
+                                        : job?.min_salary === 0 && job?.max_salary > 0
                                         ? `Lên đến ${job.max_salary} triệu`
-                                        : `${job.min_salary} - ${job.max_salary} triệu`}
+                                        : `${job?.min_salary} - ${job?.max_salary} triệu`}
                           </li>
                           {/* salary info */}
                         </ul>
@@ -345,6 +344,7 @@ const JobSingleDynamicV1 = () => {
                       <JobSkills skills={job?.job_skills} />
                     </div>
                     <br />
+
                     <div className="btn-box">
                       <button
                         className="theme-btn btn-style-two"
@@ -390,7 +390,7 @@ const JobSingleDynamicV1 = () => {
                     <div className="widget-content">
                       <div className="company-title">
                         <div className="company-logo">
-                          <img src={job.employer_profile.company_profile.logo} alt="resource" />
+                          <img src={job?.employer_profile.company_profile.logo} alt="resource" />
                         </div>
                         <h5 className="company-name">{job?.employer_profile?.company_profile?.name}</h5>
                         {/* <a href="#" className="profile-link">
@@ -399,7 +399,7 @@ const JobSingleDynamicV1 = () => {
                       </div>
                       {/* End company title */}
 
-                      <CompanyInfo company={job.employer_profile}/>
+                      <CompanyInfo company={job?.employer_profile}/>
 
                       <div className="btn-box">
                         <a

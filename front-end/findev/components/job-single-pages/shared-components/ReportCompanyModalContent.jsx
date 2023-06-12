@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { localUrl } from '../../../utils/path';
 
-const ReportJobModalContent = ({ id, onClose }) => {
+const ReportCompanyModalContent = ({ id, onClose }) => {
   const { user } = useSelector((state) => state.user);
   const [message, setMessage] = useState('');
   const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
@@ -17,10 +17,10 @@ const ReportJobModalContent = ({ id, onClose }) => {
 
     try {
       await axios.post(
-        `${localUrl}/job-reports/`,
+        `${localUrl}/company-reports/`,
         {
           reason: message,
-          job_id: id,
+          company_id: id,
         },
         {
           headers: {
@@ -83,4 +83,4 @@ const ReportJobModalContent = ({ id, onClose }) => {
   );
 };
 
-export default ReportJobModalContent;
+export default ReportCompanyModalContent;

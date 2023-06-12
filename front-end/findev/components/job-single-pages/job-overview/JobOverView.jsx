@@ -18,7 +18,7 @@ const JobOverView = ({job}) => {
           <i className="icon icon-expiry"></i>
           <h5>Hạn nộp:</h5>
           <span>
-            {job.deadline}
+            {job?.deadline}
           </span>
         </li>
         <li>
@@ -32,14 +32,14 @@ const JobOverView = ({job}) => {
           <i className="icon icon-user-2"></i>
           <h5>Vị trí:</h5>
           <span>
-            {job.position}
+            {job?.position}
           </span>
         </li>
         <li>
           <i className="icon icon-clock"></i>
           <h5>Hình thức làm việc:</h5>
           <span>
-            {job.type}
+            {job?.type}
           </span>
         </li>
         {/* <li>
@@ -51,13 +51,13 @@ const JobOverView = ({job}) => {
           <i className="icon icon-salary"></i>
           <h5>Lương:</h5>
           <span>
-          {job?.min_salary === -1 && job.max_salary === -1
+          {job?.min_salary === -1 && job?.max_salary === -1
                                         ? "Thỏa thuận"
-                                        : job.min_salary === 0 && job.max_salary === 0
+                                        : job?.min_salary === 0 && job?.max_salary === 0
                                         ? "Không lương"
-                                        : job.min_salary === 0 && job.max_salary > 0
-                                        ? `Lên đến ${job.max_salary} triệu`
-                                        : `${job.min_salary} - ${job.max_salary} triệu`}
+                                        : job?.min_salary === 0 && job?.max_salary > 0
+                                        ? `Lên đến ${job?.max_salary} triệu`
+                                        : `${job?.min_salary} - ${job?.max_salary} triệu`}
           </span>
         </li>
       </ul>
