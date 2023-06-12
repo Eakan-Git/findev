@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import employersInfo from "../../data/topCompany";
 import LoginPopup from "../../components/common/form/login/LoginPopup";
 import FooterDefault from "../../components/footer/common-footer";
-import DefaulHeader from "../../components/header/DefaulHeader";
+import DefaulHeader from "../../components/header/DefaulHeader2";
 import MobileMenu from "../../components/header/MobileMenu";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
