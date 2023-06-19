@@ -6,8 +6,32 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../../app/actions/userActions";
+import { useEffect, useState } from "react";
+import { fetchProfile } from "./fetchProfile";
+
 const ProfileBtn = ({textColor}) => {
     const { user } = useSelector((state) => state.user);
+    const [profile, setProfile] = useState(false);
+    // get profile data
+    const fetchUser = async () => {
+      const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
+      if (fetchedProfile.error === false) {
+        setProfile(fetchedProfile.data.user_profile);
+        // console.log("Profile:", fetchedProfile.data.user_profile);
+        // setLoading(!loading);
+      } else if (fetchedProfile.message === "Unauthenticated.") {
+        alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+        router.push("/");
+        dispatch(logoutUser());
+        return;
+      } else {
+        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+      }
+    };
+  
+    useEffect(() => {
+      fetchUser();
+    }, []);
     // console.log(user);
     const router = useRouter();
     // handle signout
@@ -74,9 +98,9 @@ const ProfileBtn = ({textColor}) => {
                                 <Image
                                     alt="avatar"
                                     className="thumb"
-                                    src="/images/resource/candidate-1.png"
-                                    width={30}
-                                    height={30}
+                                    src= {profile?.avatar || "/images/resource/candidate-1.png"}
+                                    width={90}
+                                    height={90}
                                 />
                                 <span className="name" style={{color: textColor}}>Hồ sơ</span>
                             </a>

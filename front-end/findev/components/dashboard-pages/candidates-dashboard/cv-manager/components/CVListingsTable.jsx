@@ -144,7 +144,7 @@ useEffect(() => {
                               {/* </span> */}
                               <h4 style={{ float: 'left', marginRight: '10px' }}>
                                 <Link href={item?.cv_path || "#"} target="_blank">
-                                  {item?.name || "CV chưa đặt tên"}
+                                  {item?.cv_name || "CV chưa đặt tên"}
                                 </Link>
                               </h4>
                             {/* </div> */}
@@ -156,17 +156,8 @@ useEffect(() => {
                           "en-GB"
                         )}
                       </td>
-                      <td className="status"
-                        style={{
-                          color:
-                            item.status === "Đã xem"
-                              ? "green"
-                              : item.status === "Đã từ chối"  
-                              ? "red"
-                              : "blue",
-                        }}
-                      >
-                          {item.status}
+                      <td className="text">
+                        {item?.cv_note || "Không có ghi chú"}
                       </td>
                       <td>
                         <div className="option-box">

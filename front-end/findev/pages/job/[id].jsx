@@ -341,7 +341,7 @@ const JobSingleDynamicV1 = () => {
                     <h4 className="widget-title">Kĩ năng cần có</h4>
                     <div className="widget-content">
                       {/* pass skills from job to JobSkills components */}
-                      <JobSkills skills={job?.job_skills} />
+                      <JobSkills skills={job?.skills} />
                     </div>
                     <br />
 

@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-import employersInfo from "../../data/topCompany";
 import LoginPopup from "../../components/common/form/login/LoginPopup";
 import FooterDefault from "../../components/footer/common-footer";
 import DefaulHeader from "../../components/header/DefaulHeader2";
@@ -9,12 +8,9 @@ import { useEffect, useState } from "react";
 import Seo from "../../components/common/Seo";
 import CompanyDetailsDescriptions from "../../components/employer-single-pages/shared-components/CompanyDetailsDescriptions";
 import RelatedJobs from "../../components/employer-single-pages/related-jobs/RelatedJobs";
-import MapJobFinder from "../../components/job-listing-pages/components/MapJobFinder";
-import Social from "../../components/employer-single-pages/social/Social";
-import Contact from "../../components/job-single-pages/shared-components/Contact";
 import ReportCompanyModalContent from "../../components/job-single-pages/shared-components/ReportCompanyModalContent";
 import { Modal, Button } from 'react-bootstrap';
-
+import { localUrl } from "../../utils/path";
 const EmployersSingleV3 = ({}) => {
   const router = useRouter();
   const [employer, setEmployersInfo] = useState(null);
@@ -36,8 +32,8 @@ const EmployersSingleV3 = ({}) => {
   useEffect(() => {
     const getEmployer = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/company-profiles/${id}`);
-        const resJobs = await fetch(`http://localhost:8000/api/jobs?company_id=${id}`);
+        const res = await fetch(`${localUrl}/company-profiles/${id}`);
+        const resJobs = await fetch(`${localUrl}/jobs?company_id=${id}`);
         if (res.error || resJobs.error) {
           throw new Error("Failed to fetch employer");
         }

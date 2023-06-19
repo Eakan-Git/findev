@@ -7,13 +7,6 @@ module.exports = [
     active: "",
   },
   {
-    id: 2,
-    name: "Mẫu đơn ứng tuyển",
-    icon: "la la-file-invoice",
-    routePath: "/profile/my-resume",
-    active: "",
-  },
-  {
     id: 3,
     name: "Công việc đã lưu",
     icon: "la la-bookmark",

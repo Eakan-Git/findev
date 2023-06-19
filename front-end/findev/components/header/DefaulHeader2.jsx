@@ -4,7 +4,7 @@ import HeaderNavContent from "./HeaderNavContent";
 import ProfileBtn from "../home-4/ProfileBtn2";
 const DefaulHeader = () => {
   const [navbar, setNavbar] = useState(false);
-
+  
   const changeBackground = () => {
     if (window.scrollY >= 10) {
       setNavbar(true);
