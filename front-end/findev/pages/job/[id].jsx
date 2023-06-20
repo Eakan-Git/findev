@@ -83,6 +83,8 @@ const JobSingleDynamicV1 = () => {
 
 
    const handleSaveJob = async () => {
+    console.log("user: ",user)
+
     if (isSaved === true) {
       try {
         // Xác nhận trạng thái đang lưu
@@ -116,12 +118,11 @@ const JobSingleDynamicV1 = () => {
       try {
         // Xác nhận trạng thái đang lưu
         setIsSaving(true);
-
         // Gửi request lưu công việc
         await axios.post(
           `${localUrl}/saved-jobs/`,
           {
-            'user_id': user.userAccount.id,
+            'user_id': `${user.userAccount.id}`,
             'job_id' : id
           },
           {
@@ -135,7 +136,7 @@ const JobSingleDynamicV1 = () => {
         // Cập nhật giá trị isSaved sau khi lưu thành công
         setIsSaved(true);
       } catch (err) {
-        // Xử lý lỗi
+        console.log(err);
       } finally {
         // Kết thúc trạng thái lưu
         setIsSaving(false);
