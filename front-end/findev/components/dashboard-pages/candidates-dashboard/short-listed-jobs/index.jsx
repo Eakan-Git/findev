@@ -48,7 +48,7 @@ const index = () => {
             <div className="col-lg-12">
               {/* <!-- Ls widget --> */}
               <div className="ls-widget">
-                <JobFavouriteTable />
+                <JobFavouriteTable/>
               </div>
             </div>
           </div>

@@ -61,6 +61,7 @@ const FilterJobBox = () => {
 
         getJobs();
     }, [currentPage, jobsPerPage]);
+    
     const handlePageChange = (page) => {
         // check page is a number
         if (!isNaN(page)) {
