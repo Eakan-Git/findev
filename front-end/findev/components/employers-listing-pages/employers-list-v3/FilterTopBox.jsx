@@ -30,10 +30,21 @@ const FilterTopBox = () => {
         perPage,
     } = useSelector((state) => state.employerFilter) || {};
 
+    const params = {
+        name: keyword,
+        address: location
+      };
+
     useEffect(() => {
         const getCompanies = async () => {
             try {
-                const res = await axios.get(`${localUrl}/company-profiles?count_per_page=${perPage.end}&page=${currentPage}`);
+                const res = await axios.get(`${localUrl}/company-profiles?count_per_page=${perPage.end}&page=${currentPage}`,
+                {
+                    params : {
+                        'name' : keyword,
+                        'address': location
+                      }
+                });
                 setCompanies(res.data.data.company_profiles.data);
                 setPaginationLinks(res.data.data.company_profiles.links)
                 setLastPage(res.data.data.company_profiles.last_page);

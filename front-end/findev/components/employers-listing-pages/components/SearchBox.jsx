@@ -4,7 +4,7 @@ import { addKeyword } from "../../../features/filter/employerFilterSlice";
 
 const SearchBox = () => {
     const { keyword } = useSelector((state) => state.employerFilter);
-    const [getKeyWord, setkeyWord] = useState(keyword);
+    //const [getKeyWord, setkeyWord] = useState(keyword);
     const dispath = useDispatch();
 
     // keyword handler
@@ -12,9 +12,9 @@ const SearchBox = () => {
         dispath(addKeyword(e.target.value));
     };
 
-    useEffect(() => {
+    /* useEffect(() => {
         setkeyWord(keyword);
-    }, [setkeyWord, keyword]);
+    }, [setkeyWord, keyword]); */
 
     return (
         <>
@@ -22,7 +22,7 @@ const SearchBox = () => {
                 type="text"
                 name="listing-search"
                 placeholder="Tên công ty"
-                value={getKeyWord}
+                value={getKeyWord} 
                 onChange={keywordHandler}
             />
             <span className="icon flaticon-search-3"></span>

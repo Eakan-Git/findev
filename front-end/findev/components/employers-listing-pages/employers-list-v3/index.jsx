@@ -3,7 +3,7 @@ import LoginPopup from "../../common/form/login/LoginPopup";
 import DefaulHeader from "../../header/DefaulHeader2";
 import MobileMenu from "../../header/MobileMenu";
 import FilterTopBox from "./FilterTopBox";
-import JobSearchForm from "./JobSearchForm";
+import CompanySearchForm from "./CompanySearchForm";
 
 const index = () => {
     return (
@@ -22,7 +22,7 @@ const index = () => {
 
             <section className="page-title">
                 <div className="auto-container">
-                    <JobSearchForm />
+                    <CompanySearchForm />
                     {/* <!-- Job Search Form --> */}
                 </div>
             </section>
