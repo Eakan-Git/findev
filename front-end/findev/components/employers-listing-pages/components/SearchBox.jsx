@@ -21,7 +21,7 @@ const SearchBox = () => {
             <input
                 type="text"
                 name="listing-search"
-                placeholder="Tên công việc, kỹ năng hoặc công ty"
+                placeholder="Tên công ty"
                 value={getKeyWord}
                 onChange={keywordHandler}
             />

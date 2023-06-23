@@ -20,11 +20,20 @@ const FilterTopBox = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [paginationLinks ,setPaginationLinks ] = useState([]);
     const [lastPage, setLastPage] = useState(0);
+    const {
+        keyword,
+        location,
+        destination,
+        category,
+        foundationDate,
+        sort,
+        perPage,
+    } = useSelector((state) => state.employerFilter) || {};
 
     useEffect(() => {
         const getCompanies = async () => {
             try {
-                const res = await axios.get(`${localUrl}/company-profiles?count_per_page=8&page=${currentPage}`);
+                const res = await axios.get(`${localUrl}/company-profiles?count_per_page=${perPage.end}&page=${currentPage}`);
                 setCompanies(res.data.data.company_profiles.data);
                 setPaginationLinks(res.data.data.company_profiles.links)
                 setLastPage(res.data.data.company_profiles.last_page);
@@ -34,7 +43,7 @@ const FilterTopBox = () => {
         };
 
         getCompanies();
-    }, [currentPage]);
+    }, [currentPage, perPage]);
 
     const handlePageChange = (page) => {
         if (typeof page === "number") {
@@ -49,18 +58,8 @@ const FilterTopBox = () => {
             setCurrentPage(clickedPage);
           }
         }
-        console.log(currentPage);
       };
 
-    const {
-        keyword,
-        location,
-        destination,
-        category,
-        foundationDate,
-        sort,
-        perPage,
-    } = useSelector((state) => state.employerFilter) || {};
     const dispatch = useDispatch();
 
     // keyword filter
@@ -105,8 +104,8 @@ const FilterTopBox = () => {
         // ?.filter(foundationDataFilter)
         // ?.sort(sortFilter)
         if(companies !== null && companies !== undefined){
-            const filteredCompanies = companies;
-            if(filteredCompanies.length > 0){
+            if(companies.length > 0){
+                const filteredCompanies = companies.sort(sortFilter);
                 content = filteredCompanies.map((company) => (
             <div
                 className="company-block-four col-xl-3 col-lg-6 col-md-6 col-sm-12"
@@ -153,6 +152,7 @@ const FilterTopBox = () => {
     const perPageHandler = (e) => {
         const pageData = JSON.parse(e.target.value);
         dispatch(addPerPage(pageData));
+        setCurrentPage(1);
     };
 
     // sort handler
@@ -168,7 +168,7 @@ const FilterTopBox = () => {
         dispatch(addCategory(""));
         dispatch(addFoundationDate({ min: 1900, max: 2028 }));
         dispatch(addSort(""));
-        dispatch(addPerPage({ start: 0, end: 0 }));
+        dispatch(addPerPage({ start: 0, end: 8 }));
     };
     return (
         <>
@@ -189,7 +189,7 @@ const FilterTopBox = () => {
                     foundationDate.max !== 2028 ||
                     sort !== "" ||
                     perPage.start !== 0 ||
-                    perPage.end !== 0 ? (
+                    perPage.end !== 8 ? (
                         <button
                             onClick={clearAll}
                             className="btn btn-danger text-nowrap me-2"
@@ -198,7 +198,7 @@ const FilterTopBox = () => {
                                 marginBottom: "15px",
                             }}
                         >
-                            Clear All
+                            Xóa hết
                         </button>
                     ) : undefined}
 
@@ -207,9 +207,9 @@ const FilterTopBox = () => {
                         className="chosen-single form-select"
                         onChange={sortHandler}
                     >
-                        <option value="">Sort by (default)</option>
-                        <option value="asc">Newest</option>
-                        <option value="des">Oldest</option>
+                        <option value="">Mặc định</option>
+                        <option value="asc">Mới nhất</option>
+                        <option value="des">Cũ nhất</option>
                     </select>
                     {/* End select */}
 
@@ -221,18 +221,26 @@ const FilterTopBox = () => {
                         <option
                             value={JSON.stringify({
                                 start: 0,
-                                end: 0,
+                                end: 8,
                             })}
                         >
-                            All
+                            8 công ty
                         </option>
                         <option
                             value={JSON.stringify({
                                 start: 0,
-                                end: 10,
+                                end: 12,
                             })}
                         >
-                            10 per page
+                            12 công ty
+                        </option>
+                        <option
+                            value={JSON.stringify({
+                                start: 0,
+                                end: 16,
+                            })}
+                        >
+                            16 công ty
                         </option>
                         <option
                             value={JSON.stringify({
@@ -240,15 +248,7 @@ const FilterTopBox = () => {
                                 end: 20,
                             })}
                         >
-                            20 per page
-                        </option>
-                        <option
-                            value={JSON.stringify({
-                                start: 0,
-                                end: 24,
-                            })}
-                        >
-                            24 per page
+                            20 công ty
                         </option>
                     </select>
                     {/* End select */}
