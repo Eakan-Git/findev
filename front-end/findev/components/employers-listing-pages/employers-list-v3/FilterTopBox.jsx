@@ -3,6 +3,8 @@ import companyData from "../../../data/topCompany";
 import { useState, useEffect } from "react";
 import Pagination from "../components/Pagination";
 import { useDispatch, useSelector } from "react-redux";
+import {localUrl} from "../../../utils/path.js"
+import axios from "axios";
 import {
     addCategory,
     addDestination,
@@ -14,23 +16,42 @@ import {
 } from "../../../features/filter/employerFilterSlice";
 
 const FilterTopBox = () => {
-    const [companies, setCompanies] = useState(null);
+    const [companies, setCompanies] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [paginationLinks ,setPaginationLinks ] = useState([]);
+    const [lastPage, setLastPage] = useState(0);
 
     useEffect(() => {
         const getCompanies = async () => {
             try {
-                const res = await fetch("http://localhost:8000/api/company-profiles?count_per_page=8");
-                const resData = await res.json();
-                setCompanies(resData.data.company_profiles.data);
-                console.log(resData.data.company_profiles.data);
+                const res = await axios.get(`${localUrl}/company-profiles?count_per_page=8&page=${currentPage}`);
+                setCompanies(res.data.data.company_profiles.data);
+                setPaginationLinks(res.data.data.company_profiles.links)
+                setLastPage(res.data.data.company_profiles.last_page);
             } catch (err) {
                 console.log(err);
             }
         };
 
         getCompanies();
-        console.log(companies);
-    }, []);
+    }, [currentPage]);
+
+    const handlePageChange = (page) => {
+        if (typeof page === "number") {
+          setCurrentPage(page);
+        } else if (page === "&laquo; Previous" && currentPage > 1) {
+          setCurrentPage((prevPage) => prevPage - 1);
+        } else if (page === "Next &raquo;" && currentPage < lastPage) {
+          setCurrentPage((prevPage) => prevPage + 1);
+        } else {
+          const clickedPage = parseInt(page);
+          if (!isNaN(clickedPage) && clickedPage !== currentPage) {
+            setCurrentPage(clickedPage);
+          }
+        }
+        console.log(currentPage);
+      };
+
     const {
         keyword,
         location,
@@ -238,7 +259,7 @@ const FilterTopBox = () => {
             <div className="row">{content}</div>
             {/* End .row */}
 
-            <Pagination />
+           <Pagination paginationLinks={paginationLinks} handlePageChange={handlePageChange}/>
             {/* <!-- Pagination --> */}
         </>
     );
