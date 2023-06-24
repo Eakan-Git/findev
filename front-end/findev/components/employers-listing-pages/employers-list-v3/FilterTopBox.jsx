@@ -13,6 +13,7 @@ import {
     addLocation,
     addPerPage,
     addSort,
+    setClearAllFlag 
 } from "../../../features/filter/employerFilterSlice";
 
 const FilterTopBox = () => {
@@ -23,17 +24,10 @@ const FilterTopBox = () => {
     const {
         keyword,
         location,
-        destination,
-        category,
-        foundationDate,
         sort,
         perPage,
+        ClearAllFlag
     } = useSelector((state) => state.employerFilter) || {};
-
-    const params = {
-        name: keyword,
-        address: location
-      };
 
     useEffect(() => {
         const getCompanies = async () => {
@@ -49,12 +43,12 @@ const FilterTopBox = () => {
                 setPaginationLinks(res.data.data.company_profiles.links)
                 setLastPage(res.data.data.company_profiles.last_page);
             } catch (err) {
-                console.log(err);
+                setCompanies([]);
             }
         };
 
         getCompanies();
-    }, [currentPage, perPage]);
+    }, [currentPage, perPage, keyword, location]);
 
     const handlePageChange = (page) => {
         if (typeof page === "number") {
@@ -85,36 +79,13 @@ const FilterTopBox = () => {
             ? item?.location?.toLowerCase().includes(location?.toLowerCase())
             : item;
 
-    // destination filter
-    const destinationFilter = (item) =>
-        item?.destination?.min >= destination?.min &&
-        item?.destination?.max <= destination?.max;
-
-    // category filter
-    const categoryFilter = (item) =>
-        category !== ""
-            ? item?.category?.toLocaleLowerCase() ===
-              category?.toLocaleLowerCase()
-            : item;
-
-    // foundation date filter
-    const foundationDataFilter = (item) =>
-        item?.foundationDate?.min >= foundationDate?.min &&
-        item?.foundationDate?.max <= foundationDate?.max;
-
     // sort filter
     const sortFilter = (a, b) =>
         sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
 
-    let content = null;
-        // ?.slice(perPage.start !== 0 && 12, perPage.end !== 0 ? perPage.end : 24)
-        // ?.filter(keywordFilter)
-        // ?.filter(locationFilter)
-        // ?.filter(destinationFilter)
-        // ?.filter(categoryFilter)
-        // ?.filter(foundationDataFilter)
-        // ?.sort(sortFilter)
-        if(companies !== null && companies !== undefined){
+        let content = null;
+    //console.log("com", companies)
+        if(companies !== [] && companies !== undefined){
             if(companies.length > 0){
                 const filteredCompanies = companies.sort(sortFilter);
                 content = filteredCompanies.map((company) => (
@@ -175,12 +146,11 @@ const FilterTopBox = () => {
     const clearAll = () => {
         dispatch(addKeyword(""));
         dispatch(addLocation(""));
-        dispatch(addDestination({ min: 0, max: 100 }));
-        dispatch(addCategory(""));
-        dispatch(addFoundationDate({ min: 1900, max: 2028 }));
         dispatch(addSort(""));
         dispatch(addPerPage({ start: 0, end: 8 }));
+        dispatch(setClearAllFlag(true))
     };
+
     return (
         <>
             <div className="ls-switcher">
@@ -193,11 +163,6 @@ const FilterTopBox = () => {
                 <div className="sort-by">
                     {keyword !== "" ||
                     location !== "" ||
-                    destination.min !== 0 ||
-                    destination.max !== 100 ||
-                    category !== "" ||
-                    foundationDate.min !== 1900 ||
-                    foundationDate.max !== 2028 ||
                     sort !== "" ||
                     perPage.start !== 0 ||
                     perPage.end !== 8 ? (
