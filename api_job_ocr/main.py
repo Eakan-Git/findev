@@ -17,11 +17,15 @@ import warnings
 from tika import parser
 import cv2
 import re
-import json
+import shutil
+import pyrebase
+from pdf2image import convert_from_path
+import dlib
+import urllib.parse
+from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 import os
-import shutil
 import requests
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -711,11 +715,6 @@ def get_recommended_jobs(user_id: int, page: int = Query(1, ge=1), limit: int = 
     }
 
 # Hoang
-# Write json
-def JsonFile(key, value):
-    data_dict = dict(zip(key, value))
-    json_string = json.dumps(data_dict, ensure_ascii=False)
-    return json_string
 # Define vietnamese component in list
 def HasVietnamese(string):
     pattern = re.compile(r'\b\w*[àáạảãăắằẳẵặâấầẩẫậèéẹẻẽêếềểễệìíịỉĩòóọỏõôốồổỗộơớờởỡợùúụủũưứừửữựỳýỵỷỹđ]+\w*\b', re.IGNORECASE)
@@ -914,26 +913,170 @@ def ReadContent(string):
                 value.append(temp_2)
     # Return
     return key, value
+# Get image
+def UploadImage(path):
+     # Set Config
+    config = {
+  "apiKey": os.environ.get("API_KEY"),
+  "authDomain": os.environ.get("AUTH_DOMAIN"),
+  "databaseURL": os.environ.get("DATABASE_URL"),
+  "projectId": os.environ.get("PROJECT_ID"),
+  "storageBucket": os.environ.get("STORAGE_BUCKET"),
+  "messagingSenderId": os.environ.get("MESSAGING_SENDER_ID"),
+  "appId": os.environ.get("APP_ID"),
+  "measurementId": os.environ.get("MEASUREMENT_ID")}
+    # Set information
+    firebase = pyrebase.initialize_app(config)
+    storage = firebase.storage() 
+    # Upload image
+    storage.child(path).put(path)   
+    auth = firebase.auth()
+    # Information
+    email = os.environ.get("EMAIL")
+    password = os.environ.get("PASSWORD")
+    # Get URL
+    user = auth.sign_in_with_email_and_password(email, password)
+    url = storage.child(path).get_url(user['idToken'])
+    # Hide token of URL
+    url = urllib.parse.urlparse(url)
+    query_params = urllib.parse.parse_qs(url.query)
+    query_params.pop('token', None)
+    url = urllib.parse.urlunparse(url._replace(query=urllib.parse.urlencode(query_params, doseq=True)))
+    return(url)
+def DetectFaces(path):
+    # Link URL
+    link = ""
+    # Convert PDF to images
+    images = convert_from_path(path)
+    # Face detector 
+    face_detector = dlib.get_frontal_face_detector()
+    # Convet into MAT from
+    image = np.array(images[0])
+    # Convert the image to grayscale
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # Detect face in grayscale
+    faces = face_detector(gray_image)
+    # Scale 
+    scale_factor = 1.5
+    # Check if any faces are detected
+    if len(faces) > 0:
+        for face in faces:
+            x, y, w, h = face.left(), face.top(), face.width(), face.height()
+            dlib.rectangle(left=x, top=y, right=x + w, bottom=y + h)
+            # Apply scaling factor to the dimensions
+            x -= int(w * (scale_factor - 1) / 2)
+            y -= int(h * (scale_factor - 1) / 2)
+            w = int(w * scale_factor)
+            h = int(h * scale_factor)
+            # Save cropped face image
+            cropped_image = image[max(0, y):y + h, max(0, x):x + w]
+            # Convert into RGB channels
+            cropped_image = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB)
+            # save the cropped face image
+            face_image_path = "crop.jpg"
+            cv2.imwrite(face_image_path, cropped_image)
+            # Upload image and get URL
+            link = UploadImage(face_image_path)
+            # Remove file at local
+            os.remove(face_image_path)
+    return link
 # Return result
 def ExtractTextFromPDF(path):
     key = []
     value = []
+    result = ''
+    link = DetectFaces(path)
     raw_text = parser.from_file(path)
     text = raw_text['content']
     key, value = ReadContent(text)
     if len(key) != 0 and len(value) != 0:
-        json = JsonFile(key, value)
-        return {
-            "success": True,
-            "message": "Trích xuất thông tin CV thành công",
-            "data": json
+        # Get name
+        name = about = position = birthday = address= email = phone = ''
+        education = experience = achievement = skill = github = activity = info = ''
+        tmp = None # None value
+        for i in range(0, len(key)):
+            if(key[i] == "NAME"):
+                name = value[i]
+                continue
+            if(key[i] == "PERSONAL"):
+                about = value[i]
+                continue 
+            if(key[i] == "POSITION"):
+                position = value[i]
+                continue     
+            if(key[i] == "BIRTHDAY"):
+                birthday = value[i]
+                continue
+            if(key[i] == "ADDRESS"):
+                address = value[i] 
+                continue
+            if(key[i] == "GMAIL"):
+                email = value[i]  
+                continue
+            if(key[i] == "PHONE"):
+                phone = value[i] 
+                continue
+            if(key[i] == "UNIVERSITY PROJECTS"):
+                education = value[i]  
+                continue
+            if(key[i] == "WORK EXPERIENCE"):
+                experience = value[i]  
+                continue
+            if(key[i] == "ACHIEVEMENTS"):
+                achievement = value[i]  
+                continue
+            if(key[i] == "SKILLS"):
+                skill = value[i]  
+                continue
+            if(key[i] == "GITHUB"):
+                github = value[i]  
+                continue
+            if(key[i] == "ACTIVITIES"):
+                activity = value[i]  
+                continue
+            if(key[i] == "LINK"):
+                info = value[i]  
+                continue
+        result = {
+        "error": False,
+        "message": "Trích xuất thông tin CV thành công",
+        "data":{
+            "user_profile":{
+                "id": '',
+                "full_name": name,
+                "avatar": link,
+                "about_me": about,
+                "good_at_position": position,
+                "year_of_experience": tmp,
+                "date_of_birth": birthday,
+                "gender": tmp,
+                "address": address,
+                "email": email,
+                "phone": phone,
+                "created_at": tmp,
+                "updated_at": tmp,
+                "educations": education,
+                'cvs': tmp,
+                "experiences": experience,
+                "achievements": achievement,
+                "skills" : skill,
+                "time_tables": tmp,
+                "github" : github, 
+                "activities": activity,
+                "link": info
+            },
+            "status_code": 200
+        }
         }
     else: 
-        return {
-            "success": False,
-            "message": "Định dạng CV chưa được hỗ trợ"
+        result ={
+            "error": True,
+            "message": "Định dạng CV chưa được hỗ trợ",
+            "data": ''
         }
-
+    return JSONResponse(content=result)
+# API  
+app = FastAPI()
 # Read_CV
 def cleanup_temp_directory():
     if os.path.exists(UPLOAD_DIRECTORY):
@@ -949,7 +1092,7 @@ async def read_cv(file: UploadFile = File(...)):
             buffer.write(file.file.read())
         result = ExtractTextFromPDF(file_path)
         os.remove(file_path)
-        return JSONResponse(content=result, media_type="application/json")
+        return result
     except Exception as e:
         return {
             "success": False,
@@ -964,18 +1107,22 @@ async def detect_faces(image: UploadFile = File(...)):
         # Read the uploaded image file
         image_data = await image.read()
         nparr = np.frombuffer(image_data, np.uint8)
-        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        # Load the pre-trained Haar cascade classifier for face detection
-        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        # Convert the image to grayscale
-        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        # Detect faces in the grayscale image
-        faces = face_cascade.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        # Face detector 
+        face_detector = dlib.get_frontal_face_detector()
+        # Convert to grayscale
+        gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # Detecting
+        faces = face_detector(gray_image)
+        # Check if any faces are detected
         if len(faces) > 0:
             bool_result = True
         else:
             bool_result = False
         # Return the boolean result as JSON response
-        return JSONResponse({"result": bool_result,})
+        return JSONResponse({
+            "error": False,
+            "message": bool_result,})
     except Exception as e:
-        return JSONResponse({"error": str(e)})
+        return JSONResponse({"error": True,
+                            "messsage": str(e)})

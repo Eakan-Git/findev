@@ -7,6 +7,7 @@ scikit-learn
 tika
 opencv-python-headless
 regex
+re
 uvicorn
 pymongo
 mysql-connector-python
@@ -15,3 +16,9 @@ gensim
 python-multipart
 python-dotenv
 paginate_sqlalchemy
+pyrebase
+shutil
+pdf2image
+dlib
+urllib
+dotenv
