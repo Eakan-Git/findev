@@ -1,12 +1,11 @@
 fastapi
 pandas
 numpy
-scikit-learn
 elasticsearch==7.7.0
-scikit-learn
 tika
 opencv-python-headless
 regex
+re
 uvicorn
 pymongo
 mysql-connector-python
@@ -15,3 +14,13 @@ gensim
 python-multipart
 python-dotenv
 paginate_sqlalchemy
+pyrebase
+shutil
+pdf2image
+dlib
+urllib
+dotenv
+nltk
+spacy
+pydantic
+https://gitlab.com/trungtv/vi_spacy/-/raw/master/vi_core_news_lg/dist/vi_core_news_lg-0.0.1.tar.gz
