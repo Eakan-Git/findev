@@ -315,7 +315,8 @@ const JobSingleDynamicV1 = () => {
                         </div>
                         {/* End modal-header */}
 
-                        <ApplyJobModalContent />
+                        <ApplyJobModalContent user={user} />
+
                         {/* End PrivateMessageBox */}
                       </div>
                       {/* End .send-private-message-wrapper */}
