@@ -21,7 +21,7 @@ const Timetable = () => {
     const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
     if (fetchedProfile.error === false) {
       setProfile(fetchedProfile.data.user_profile);
-      console.log(fetchedProfile.data.user_profile.time_tables);
+      console.log(fetchedProfile.data.user_profile.time_table);
       setLoading(!loading);
     } else if (fetchedProfile.message === 'Unauthenticated.') {
       alert('Phiên làm việc đã hết hạn, vui lòng đăng nhập lại');
@@ -37,15 +37,15 @@ const Timetable = () => {
   }, []);
 
   useEffect(() => {
-    if (profile && profile.time_tables) {
-      const parsedActivatedCells = profile.time_tables.map((item) => {
-        const [columnIndex, rowIndex] = item.coordinate.split(';');
+    if (profile && profile.time_table) {
+      const parsedActivatedCells = profile.time_table.coordinate.split(';').map((coordinate) => {
+        const [columnIndex, rowIndex] = coordinate.split(',');
         return { rowIndex: parseInt(rowIndex), columnIndex: parseInt(columnIndex) };
-      });
+      });      
       setActivatedCells(parsedActivatedCells);
       setSelectedCells(parsedActivatedCells); // Set saved cells as selected cells
     }
-    setIsBlankTimetable(!profile || !profile.time_tables || profile.time_tables.length === 0);
+    setIsBlankTimetable(!profile || !profile.time_table || profile.time_table.length === 0);
   }, [profile]);
 
   const [originalActivatedCells, setOriginalActivatedCells] = useState([]);
@@ -120,12 +120,36 @@ const Timetable = () => {
     setSelectedCells(originalActivatedCells); // Revert to original activated cells
   };
 
-  const handleSave = () => {
-    // Perform the save action here
-    // setOriginalActivatedCells(activatedCells);
-    alert('Đã lưu thay đổi');
-    console.log(selectedCells);
+  const handleSave = async () => {
+    // alert('Đã lưu thay đổi');
+    let coordinate = selectedCells.map((cell) => `${cell.columnIndex},${cell.rowIndex}`).join(';');
+  
+    try {
+      const response = await fetch(`${localUrl}/api/timetables/`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${user.token}`,
+          'Content-Type': 'application/json', // Add Content-Type header
+        },
+        body: JSON.stringify({ coordinate }), // Pass the coordinate as an object in the request body
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        alert(data.message);
+        // Handle successful response
+      } else {
+        // Handle error response
+        console.log('Error:', response.status);
+      }
+    } catch (error) {
+      // Handle network error
+      console.log('Error:', error);
+    }
   };
+  
+  
 
   const handleClear = () => {
     setSelectedCells([]); // Clear selected cells
