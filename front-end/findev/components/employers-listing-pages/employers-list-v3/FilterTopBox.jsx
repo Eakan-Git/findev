@@ -3,6 +3,8 @@ import companyData from "../../../data/topCompany";
 import { useState, useEffect } from "react";
 import Pagination from "../components/Pagination";
 import { useDispatch, useSelector } from "react-redux";
+import {localUrl} from "../../../utils/path.js"
+import axios from "axios";
 import {
     addCategory,
     addDestination,
@@ -11,53 +13,58 @@ import {
     addLocation,
     addPerPage,
     addSort,
+    setClearAllFlag 
 } from "../../../features/filter/employerFilterSlice";
 
 const FilterTopBox = () => {
-    const [companies, setCompanies] = useState(null);
+    const [companies, setCompanies] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [companiesUrl, setCompaniesUrl] = useState('http://localhost:8000/api/company-profiles?count_per_page=8');
-    useEffect(() => {
-      const getCompanies = async () => {
-        try {
-          const res = await fetch(companiesUrl);
-          const resData = await res.json();
-          setCompanies(resData.data.company_profiles);
-          setTotalPages(resData.data.company_profiles.last_page);
-        } catch (err) {
-          console.log(err);
-        }
-      };
-  
-      getCompanies();
-    }, [companiesUrl]);
-  
-    const handlePageChange = (page, url) => {
-        const updatedUrl = url + "&count_per_page=8";
-
-  setCompaniesUrl(updatedUrl);
-      // Check if page is a number
-      if (!isNaN(page)) {
-        setCurrentPage(page);
-      } else if (page === "&laquo; Previous" && currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      } else if (page === "Next &raquo;" && currentPage < totalPages) {
-        setCurrentPage(currentPage + 1);
-      }
-    //   console.log(currentPage)
-    };
-
-
+    const [paginationLinks ,setPaginationLinks ] = useState([]);
+    const [lastPage, setLastPage] = useState(0);
     const {
         keyword,
         location,
-        destination,
-        category,
-        foundationDate,
         sort,
         perPage,
+        ClearAllFlag
     } = useSelector((state) => state.employerFilter) || {};
+
+    useEffect(() => {
+        const getCompanies = async () => {
+            try {
+                const res = await axios.get(`${localUrl}/company-profiles?count_per_page=${perPage.end}&page=${currentPage}`,
+                {
+                    params : {
+                        'name' : keyword,
+                        'address': location
+                      }
+                });
+                setCompanies(res.data.data.company_profiles.data);
+                setPaginationLinks(res.data.data.company_profiles.links)
+                setLastPage(res.data.data.company_profiles.last_page);
+            } catch (err) {
+                setCompanies([]);
+            }
+        };
+
+        getCompanies();
+    }, [currentPage, perPage, keyword, location]);
+
+    const handlePageChange = (page) => {
+        if (typeof page === "number") {
+          setCurrentPage(page);
+        } else if (page === "&laquo; Previous" && currentPage > 1) {
+          setCurrentPage((prevPage) => prevPage - 1);
+        } else if (page === "Next &raquo;" && currentPage < lastPage) {
+          setCurrentPage((prevPage) => prevPage + 1);
+        } else {
+          const clickedPage = parseInt(page);
+          if (!isNaN(clickedPage) && clickedPage !== currentPage) {
+            setCurrentPage(clickedPage);
+          }
+        }
+      };
+
     const dispatch = useDispatch();
 
     // keyword filter
@@ -72,38 +79,15 @@ const FilterTopBox = () => {
             ? item?.location?.toLowerCase().includes(location?.toLowerCase())
             : item;
 
-    // destination filter
-    const destinationFilter = (item) =>
-        item?.destination?.min >= destination?.min &&
-        item?.destination?.max <= destination?.max;
-
-    // category filter
-    const categoryFilter = (item) =>
-        category !== ""
-            ? item?.category?.toLocaleLowerCase() ===
-              category?.toLocaleLowerCase()
-            : item;
-
-    // foundation date filter
-    const foundationDataFilter = (item) =>
-        item?.foundationDate?.min >= foundationDate?.min &&
-        item?.foundationDate?.max <= foundationDate?.max;
-
     // sort filter
     const sortFilter = (a, b) =>
         sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
 
-    let content = null;
-        // ?.slice(perPage.start !== 0 && 12, perPage.end !== 0 ? perPage.end : 24)
-        // ?.filter(keywordFilter)
-        // ?.filter(locationFilter)
-        // ?.filter(destinationFilter)
-        // ?.filter(categoryFilter)
-        // ?.filter(foundationDataFilter)
-        // ?.sort(sortFilter)
-        if(companies !== null && companies !== undefined){
-            const filteredCompanies = companies.data;
-            if(filteredCompanies.length > 0){
+        let content = null;
+    //console.log("com", companies)
+        if(companies !== [] && companies !== undefined){
+            if(companies.length > 0){
+                const filteredCompanies = companies.sort(sortFilter);
                 content = filteredCompanies.map((company) => (
             <div
                 className="company-block-four col-xl-3 col-lg-6 col-md-6 col-sm-12"
@@ -150,6 +134,7 @@ const FilterTopBox = () => {
     const perPageHandler = (e) => {
         const pageData = JSON.parse(e.target.value);
         dispatch(addPerPage(pageData));
+        setCurrentPage(1);
     };
 
     // sort handler
@@ -161,12 +146,11 @@ const FilterTopBox = () => {
     const clearAll = () => {
         dispatch(addKeyword(""));
         dispatch(addLocation(""));
-        dispatch(addDestination({ min: 0, max: 100 }));
-        dispatch(addCategory(""));
-        dispatch(addFoundationDate({ min: 1900, max: 2028 }));
         dispatch(addSort(""));
-        dispatch(addPerPage({ start: 0, end: 0 }));
+        dispatch(addPerPage({ start: 0, end: 8 }));
+        dispatch(setClearAllFlag(true))
     };
+
     return (
         <>
             <div className="ls-switcher">
@@ -179,14 +163,9 @@ const FilterTopBox = () => {
                 <div className="sort-by">
                     {keyword !== "" ||
                     location !== "" ||
-                    destination.min !== 0 ||
-                    destination.max !== 100 ||
-                    category !== "" ||
-                    foundationDate.min !== 1900 ||
-                    foundationDate.max !== 2028 ||
                     sort !== "" ||
                     perPage.start !== 0 ||
-                    perPage.end !== 0 ? (
+                    perPage.end !== 8 ? (
                         <button
                             onClick={clearAll}
                             className="btn btn-danger text-nowrap me-2"
@@ -195,7 +174,7 @@ const FilterTopBox = () => {
                                 marginBottom: "15px",
                             }}
                         >
-                            Clear All
+                            Xóa hết
                         </button>
                     ) : undefined}
 
@@ -204,9 +183,9 @@ const FilterTopBox = () => {
                         className="chosen-single form-select"
                         onChange={sortHandler}
                     >
-                        <option value="">Sort by (default)</option>
-                        <option value="asc">Newest</option>
-                        <option value="des">Oldest</option>
+                        <option value="">Mặc định</option>
+                        <option value="asc">Mới nhất</option>
+                        <option value="des">Cũ nhất</option>
                     </select>
                     {/* End select */}
 
@@ -218,18 +197,26 @@ const FilterTopBox = () => {
                         <option
                             value={JSON.stringify({
                                 start: 0,
-                                end: 0,
+                                end: 8,
                             })}
                         >
-                            All
+                            8 công ty
                         </option>
                         <option
                             value={JSON.stringify({
                                 start: 0,
-                                end: 10,
+                                end: 12,
                             })}
                         >
-                            10 per page
+                            12 công ty
+                        </option>
+                        <option
+                            value={JSON.stringify({
+                                start: 0,
+                                end: 16,
+                            })}
+                        >
+                            16 công ty
                         </option>
                         <option
                             value={JSON.stringify({
@@ -237,15 +224,7 @@ const FilterTopBox = () => {
                                 end: 20,
                             })}
                         >
-                            20 per page
-                        </option>
-                        <option
-                            value={JSON.stringify({
-                                start: 0,
-                                end: 24,
-                            })}
-                        >
-                            24 per page
+                            20 công ty
                         </option>
                     </select>
                     {/* End select */}
@@ -256,7 +235,7 @@ const FilterTopBox = () => {
             <div className="row">{content}</div>
             {/* End .row */}
 
-            <Pagination companies={companies} handlePageChange={handlePageChange} totalPages={totalPages} currentPage={currentPage}  />
+           <Pagination paginationLinks={paginationLinks} handlePageChange={handlePageChange}/>
             {/* <!-- Pagination --> */}
         </>
     );

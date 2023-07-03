@@ -38,7 +38,7 @@ const RelatedJobs = ({ title }) => {
   }
   return (
     <>
-      {jobs.slice(0,6).map((item) => (
+      {jobs.slice(1,6).map((item) => (
         <div className="job-block" key={item.job_id}>
           <div className="inner-box">
             <div className="content">

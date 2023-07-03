@@ -18,6 +18,7 @@ const initialState = {
         start: 0,
         end: 0,
     },
+    clearAllFlag: false,
 };
 
 export const employerFilterSlice = createSlice({
@@ -30,17 +31,6 @@ export const employerFilterSlice = createSlice({
         addLocation: (state, { payload }) => {
             state.location = payload;
         },
-        addDestination: (state, { payload }) => {
-            state.destination.min = payload.min;
-            state.destination.max = payload.max;
-        },
-        addCategory: (state, { payload }) => {
-            state.category = payload;
-        },
-        addFoundationDate: (state, { payload }) => {
-            state.foundationDate.min = payload.min;
-            state.foundationDate.max = payload.max;
-        },
         addSort: (state, { payload }) => {
             state.sort = payload;
         },
@@ -48,16 +38,18 @@ export const employerFilterSlice = createSlice({
             state.perPage.start = payload.start;
             state.perPage.end = payload.end;
         },
+        setClearAllFlag: (state, action) => { 
+            state.clearAllFlag = action.payload;
+        },
+
     },
 });
 
 export const {
     addKeyword,
     addLocation,
-    addDestination,
-    addCategory,
-    addFoundationDate,
     addSort,
     addPerPage,
+    setClearAllFlag
 } = employerFilterSlice.actions;
 export default employerFilterSlice.reducer;

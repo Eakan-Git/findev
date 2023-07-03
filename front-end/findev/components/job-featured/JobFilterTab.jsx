@@ -3,7 +3,7 @@ import jobFeatured from "../../data/job-featured";
 import { useState } from "react";
 
 const JobFilterTab = () => {
-    const [tabId, setTabId] = useState(1);
+    const [tabId, setTabId] = useState(2);
     const [tabs, setTab] = useState([
         { id: 1, name: "Tất cả", isActive: false },
         { id: 2, name: "Trending", isActive: true },
@@ -31,7 +31,7 @@ const JobFilterTab = () => {
     return (
         <>
             {/* <!--Tabs Box--> */}
-            {/* <ul className="tab-buttons">
+            <ul className="tab-buttons">
                 {tabs?.map((tab) => (
                     <li
                         onClick={() => tabHandler(tab.id)}
@@ -43,7 +43,7 @@ const JobFilterTab = () => {
                         {tab.name}
                     </li>
                 ))}
-            </ul> */}
+            </ul>
 
             {/* <!--Tab--> */}
             <div className="tab active-tab" data-aos="fade-up">
@@ -51,7 +51,7 @@ const JobFilterTab = () => {
                     {/* all tab */}
                     {tabId === 1 ? (
                         <>
-                            {jobFeatured.slice(0, 8).map((item) => (
+                            {jobFeatured.slice(0, 6).map((item) => (
                                 <div
                                     className="job-block col-lg-6 col-md-12 col-sm-12"
                                     key={item.id}
@@ -108,9 +108,9 @@ const JobFilterTab = () => {
                                             </ul>
                                             {/* End .job-other-info */}
 
-                                            {/* <button className="bookmark-btn">
+                                            <button className="bookmark-btn">
                                                 <span className="flaticon-bookmark"></span>
-                                            </button> */}
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

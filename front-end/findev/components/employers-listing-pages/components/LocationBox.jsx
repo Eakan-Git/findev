@@ -1,28 +1,34 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addLocation } from "../../../features/filter/employerFilterSlice";
+import { setClearAllFlag } from "../../../features/filter/employerFilterSlice";
 
-const LocationBox = () => {
-    const { location } = useSelector((state) => state.employerFilter);
-    const [getLocation, setLocation] = useState(location);
-    const dispath = useDispatch();
 
-    // location handler
-    const locationHandler = (e) => {
-        dispath(addLocation(e.target.value));
-    };
-
+const LocationBox = ({ location, onLocationChange, clearAllFlag }) => {
+    const dispatch = useDispatch();
+    const [inputValue, setInputValue] = useState(location);
+  
     useEffect(() => {
-        setLocation(location);
-    }, [setLocation, location]);
-
+      setInputValue(location);
+    }, [location]);
+  
+    useEffect(() => {
+      if (clearAllFlag) {
+        setInputValue("");
+        dispatch(setClearAllFlag(false));
+      }
+    }, [clearAllFlag, dispatch]);
+  
+    const locationHandler = (e) => {
+      setInputValue(e.target.value);
+      onLocationChange(e.target.value);
+    };
     return (
         <>
             <input
                 type="text"
                 name="listing-search"
                 placeholder="Thành phố"
-                value={getLocation}
+                value={inputValue}
                 onChange={locationHandler}
             />
             <span className="icon flaticon-map-locator"></span>
