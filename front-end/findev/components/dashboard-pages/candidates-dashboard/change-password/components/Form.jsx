@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { localUrl } from "/utils/path.js";
+import { localUrl } from "../../../../../utils/path.js";
 import React, { useState } from 'react';
 
 const Form = ({ user }) => {
@@ -9,11 +9,6 @@ const Form = ({ user }) => {
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
-
-    if (newPassword !== confirmNewPassword) {
-      alert("Mật khẩu mới không khớp");
-      return;
-    }
     try {
       await axios.put(
         `${localUrl}/user/password`,
@@ -31,7 +26,7 @@ const Form = ({ user }) => {
       );
       alert("Bạn đã thay đổi mật khẩu thành công");
     } catch (error) {
-      console.log(error);
+      alert(error.response.data.message[0]);
     }
   };
 

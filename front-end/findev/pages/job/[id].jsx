@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import jobs from "../../data/job-featured";
 import LoginPopup from "../../components/common/form/login/LoginPopup";
 import FooterDefault from "../../components/footer/common-footer";
-import DefaulHeader from "../../components/header/DefaulHeader2";
+import DefaulHeader from "../../components/header/DefaulHeader";
 import MobileMenu from "../../components/header/MobileMenu";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -52,7 +52,7 @@ const JobSingleDynamicV1 = () => {
         const res = await axios.get(`${localUrl}/jobs/${id}`, {
           headers: {
             'Content-Type': 'application/json',
-            // 'Authorization': user.token
+            'Authorization': user.token
           }
         });
   
@@ -71,7 +71,7 @@ const JobSingleDynamicV1 = () => {
     if (id) {
       getJob();
     }
-  }, [id]);
+  }, [id, user.token]);
   
   
   if (isLoading) {
@@ -84,6 +84,8 @@ const JobSingleDynamicV1 = () => {
 
 
    const handleSaveJob = async () => {
+    console.log("user: ",user)
+
     if (isSaved === true) {
       try {
         // Xác nhận trạng thái đang lưu
@@ -117,12 +119,11 @@ const JobSingleDynamicV1 = () => {
       try {
         // Xác nhận trạng thái đang lưu
         setIsSaving(true);
-
         // Gửi request lưu công việc
         await axios.post(
           `${localUrl}/saved-jobs/`,
           {
-            'user_id': user.userAccount.id,
+            'user_id': `${user.userAccount.id}`,
             'job_id' : id
           },
           {
@@ -136,7 +137,7 @@ const JobSingleDynamicV1 = () => {
         // Cập nhật giá trị isSaved sau khi lưu thành công
         setIsSaved(true);
       } catch (err) {
-        // Xử lý lỗi
+        console.log(err);
       } finally {
         // Kết thúc trạng thái lưu
         setIsSaving(false);
@@ -315,7 +316,8 @@ const JobSingleDynamicV1 = () => {
                         </div>
                         {/* End modal-header */}
 
-                        <ApplyJobModalContent />
+                        <ApplyJobModalContent user={user} />
+
                         {/* End PrivateMessageBox */}
                       </div>
                       {/* End .send-private-message-wrapper */}

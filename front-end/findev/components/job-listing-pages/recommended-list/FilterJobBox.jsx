@@ -118,7 +118,7 @@ const FilterJobBox = () => {
     // Jobs content
     let content = undefined;
 
-    if (jobs !== undefined && jobs !== null) {  
+    if (jobs !== undefined && jobs !== null) {
         const filteredJobs = jobs.data.jobs.data;
         // console.log(filteredJobs);
             // .filter(keywordFilter)
@@ -147,7 +147,7 @@ const FilterJobBox = () => {
                                 {/* <img src={item?.employer_profile.company_profile.logo} alt={item?.company_name} /> */}
                             </span>
                             <h4>
-                                <Link href={`/job/${item.job_id}`}
+                                <Link href={`/job/${item.id}`}
                                 alt={item.title}
                                 title={item.title}
                                 >
