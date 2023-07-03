@@ -1309,8 +1309,7 @@ def ExtractTextFromPDF(path):
             "data": ''
         }
     return JSONResponse(content=result)
-# API  
-app = FastAPI()
+
 # Read_CV
 def cleanup_temp_directory():
     if os.path.exists(UPLOAD_DIRECTORY):
@@ -1334,6 +1333,7 @@ async def read_cv(file: UploadFile = File(...)):
        }
     finally:
         cleanup_temp_directory()
+        
 # Detect_Faces
 @app.post("/detect-faces")
 async def detect_faces(image: UploadFile = File(...)):
