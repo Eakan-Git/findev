@@ -45,6 +45,12 @@ Kiểm tra kết quả cài đặt Elasticsearch bằng cách mở trính duyệ
 
 Là bạn đã cài thành công
 
+## Tải vi_spacy
+Mở Command Prompt hoặc PowerShell nhập lệnh
+    
+    pip install https://gitlab.com/trungtv/vi_spacy/-/raw/master/vi_core_news_lg/dist/vi_core_news_lg-0.0.1.tar.gz
+
+
 ## Hướng dẫn run FastAPI
 Bước 1: Cài các thư việc trong requirements.txt như sau
 ```
@@ -53,9 +59,9 @@ pip3 install -r requirements.txt
 
 Bước 2: Mở Command Prompt hoặc PowerShell nhập lệnh
     
-    uvicorn main:app --reload
+    uvicorn main:app --reload --port 8001
 
 để truy cập vào doc thì click vào:
-    http://127.0.0.1:8000/docs#/
+    http://127.0.0.1:8001/docs#/
     
 
