@@ -9,10 +9,30 @@ import MenuToggler from "../../MenuToggler";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import CVListingsTable from "./components/CVListingsTable";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import CVTemplate from "./components/CVTemplate";
+import { fetchProfile } from "./components/fetchProfile";
+import { useEffect, useState } from "react";
 const index = () => {
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
-
+  // get user's profile
+  const [profile, setProfile] = useState(null);
+  const fetchUser = async () => {
+      const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
+      if (fetchedProfile.error === false) {
+          setProfile(fetchedProfile.data.user_profile);
+          console.log("Profile:", fetchedProfile.data.user_profile);
+      }
+      else {
+          console.log("Failed to fetch profile data");
+      }
+  }
+  useEffect(() => {
+      fetchUser();
+      console.log(profile);
+  }
+  , []);
   if (!user) {
     // show notification that user must login first
     alert("Bạn cần đăng nhập để xem thông tin cá nhân");
@@ -56,9 +76,11 @@ const index = () => {
                       Đăng tải CV&nbsp;<i className="la la-cloud-upload"></i>
                     </button>
                     &nbsp;&nbsp;
-                    <button className="theme-btn btn-style-one">
-                      Tạo CV tự động&nbsp;<i className="la la-download"></i>
-                    </button>
+                    <PDFDownloadLink document={<CVTemplate profile={profile}/>} fileName="CV.pdf">
+                      <button className="theme-btn btn-style-one">
+                        Tạo CV tự động&nbsp;<i className="la la-download"></i>
+                      </button>
+                    </PDFDownloadLink>
                   </div>
                 </div>
                 {/* End widget-title */}
@@ -79,6 +101,7 @@ const index = () => {
       {/* <!-- End Dashboard --> */}
 
       <CopyrightFooter />
+      <CVTemplate profile={profile}/>
       {/* <!-- End Copyright --> */}
     </div>
     // End page-wrapper
