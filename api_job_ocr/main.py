@@ -445,6 +445,10 @@ def get_user_profiles(job_title: str = Query(...), page: int = 1, limit: int = 1
     }
 
 # recommned job
+nltk.download('punkt', quiet=True, force=True)
+nltk.download('wordnet', quiet=True, force=True)
+nltk.download('averaged_perceptron_tagger', quiet=True, force=True)
+nltk.download('omw-1.4', quiet=True, force=True)
 
 # Tạo biến global để lưu trữ dữ liệu
 timetable = None
@@ -1309,8 +1313,7 @@ def ExtractTextFromPDF(path):
             "data": ''
         }
     return JSONResponse(content=result)
-# API  
-app = FastAPI()
+
 # Read_CV
 def cleanup_temp_directory():
     if os.path.exists(UPLOAD_DIRECTORY):
@@ -1334,6 +1337,7 @@ async def read_cv(file: UploadFile = File(...)):
        }
     finally:
         cleanup_temp_directory()
+        
 # Detect_Faces
 @app.post("/detect-faces")
 async def detect_faces(image: UploadFile = File(...)):
