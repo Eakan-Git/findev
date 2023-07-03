@@ -55,34 +55,37 @@ const JobListingsTable = ({ user }) => {
   if (loading) {
     return <div>Đang tải dữ liệu...</div>;
   }
-  const handleDeleteApplication = async (id) => {
-    const url = `${localUrl}/applications/${id}`;
-    const headers = {
-      Accept: "application/json",
-      Authorization: `Bearer ${user.token}`,
-    };
-    // ask for confirmation
-    const confirmation = confirm("Bạn có chắc chắn muốn xóa?");
-    if (confirmation) {
-      try {
-        const response = await fetch(url, { method: "DELETE", headers });
-        if (response.message === "Unauthenticated.") {
-          alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
-          router.push("/");
-          dispatch(logoutUser());
-        } else if (!response.error) {
-          const data = await response.json();
-          if (!data.error) {
-            alert("Xóa thành công");
-            router.reload();
-          } else {
-            alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
+  // const handleDeleteApplication = async (id) => {
+  //   const url = `${localUrl}/applications/${id}`;
+  //   const headers = {
+  //     Accept: "application/json",
+  //     Authorization: `Bearer ${user.token}`,
+  //   };
+  //   // ask for confirmation
+  //   const confirmation = confirm("Bạn có chắc chắn muốn xóa?");
+  //   if (confirmation) {
+  //     try {
+  //       const response = await fetch(url, { method: "DELETE", headers });
+  //       if (response.message === "Unauthenticated.") {
+  //         alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+  //         router.push("/");
+  //         dispatch(logoutUser());
+  //       } else if (!response.error) {
+  //         const data = await response.json();
+  //         if (!data.error) {
+  //           setJobs(jobs.filter((item) => item.id !== id));
+  //           alert("Xóa thành công");
+  //         } else {
+  //           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
+  // };
+  const handleViewApplication = async (id) => {
+    console.log(id);
   };
   return (
     <div className="tabs-box">
@@ -197,16 +200,16 @@ const JobListingsTable = ({ user }) => {
                       <td>
                         <div className="option-box">
                           <ul className="option-list">
-                            {/* <li>
-                              <button data-text="View Aplication">
+                            <li>
+                            <button data-text="Xem" onClick={() => handleViewApplication(item.id)}>
                                 <span className="la la-eye"></span>
                               </button>
-                            </li> */}
-                            <li>
+                            </li>
+                            {/* <li>
                               <button data-text="Xóa đơn ứng tuyển" onClick={() => handleDeleteApplication(item.id)}>
                                 <span className="la la-trash"></span>
                               </button>
-                            </li>
+                            </li> */}
                           </ul>
                         </div>
                       </td>

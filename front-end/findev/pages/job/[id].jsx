@@ -10,6 +10,7 @@ import Seo from "../../components/common/Seo";
 import RelatedJobs from "../../components/job-single-pages/related-jobs/RelatedJobs";
 import JobOverView from "../../components/job-single-pages/job-overview/JobOverView";
 import JobSkills from "../../components/job-single-pages/shared-components/JobSkills";
+import JobCate from "../../components/job-single-pages/shared-components/JobCate";
 import CompanyInfo from "../../components/job-single-pages/shared-components/CompanyInfo";
 import MapJobFinder from "../../components/job-listing-pages/components/MapJobFinder";
 import SocialTwo from "../../components/job-single-pages/social/SocialTwo";
@@ -342,6 +343,11 @@ const JobSingleDynamicV1 = () => {
                     <div className="widget-content">
                       {/* pass skills from job to JobSkills components */}
                       <JobSkills skills={job?.skills} />
+                    </div>
+                    <br />
+                    <h4 className="widget-title">Ngành nghề</h4>
+                    <div className="widget-content">
+                      <JobCate cates={job?.categories} />
                     </div>
                     <br />
 

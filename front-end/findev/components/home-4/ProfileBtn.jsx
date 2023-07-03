@@ -19,18 +19,12 @@ const ProfileBtn = ({textColor}) => {
         setProfile(fetchedProfile.data.user_profile);
         // console.log("Profile:", fetchedProfile.data.user_profile);
         // setLoading(!loading);
-      } else if (fetchedProfile.message === "Unauthenticated.") {
-        alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
-        router.push("/");
-        dispatch(logoutUser());
-        return;
-      } else {
-        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
       }
     };
   
     useEffect(() => {
-      fetchUser();
+      if(user !== null)
+      {fetchUser();}
     }, []);
     // console.log(user);
     const router = useRouter();

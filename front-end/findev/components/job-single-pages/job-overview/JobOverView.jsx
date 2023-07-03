@@ -5,7 +5,7 @@ const JobOverView = ({job}) => {
         <li>
           <i className="icon icon-calendar"></i>
           <h5>Ngày đăng:</h5>
-          <span>___</span>
+          <span>{(new Date(job?.created_at)).toLocaleDateString('en-GB')}</span>
         </li>
         <li>
           <i className="icon icon-num-of-hire"></i>
@@ -18,7 +18,7 @@ const JobOverView = ({job}) => {
           <i className="icon icon-expiry"></i>
           <h5>Hạn nộp:</h5>
           <span>
-            {job?.deadline}
+          <span>{(new Date(job?.deadline)).toLocaleDateString('en-GB')}</span>
           </span>
         </li>
         <li>

@@ -29,6 +29,7 @@ const FormInfoBox = () => {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log(modifiedFields);
     if (Object.keys(modifiedFields).length > 0) {
       // console.log("Modified fields:", modifiedFields);
       const msg = await putProfile(user.token, modifiedFields);
@@ -37,6 +38,12 @@ const FormInfoBox = () => {
         alert("Cập nhật thông tin thành công");
         setProfile((prevProfile) => ({ ...prevProfile, ...modifiedFields }));
         setModifiedFields({});
+      }
+      else
+      {
+        // alert("Cập nhật thông tin thất bại");
+        // console.log(msg);
+        alert(msg.message);
       }
     }
   };
@@ -86,7 +93,7 @@ const fetchUser = async () => {
         <div className="form-group col-lg-6 col-md-12">
           <label>Họ và tên</label>
           <input type="text" name="full_name" placeholder={profile?.full_name || "Vui lòng cập nhật thông tin"} 
-          value={modifiedFields.full_name || profile?.full_name || ""}
+          value={modifiedFields.full_name !== undefined ? modifiedFields.full_name : (profile?.full_name || "")}
           onChange={handleInputChange}
            />
         </div>
@@ -95,7 +102,7 @@ const fetchUser = async () => {
         <div className="form-group col-lg-6 col-md-12">
           <label>Tên công việc</label>
           <input type="text" name="good_at_position" placeholder={profile?.good_at_position || "Vui lòng cập nhật thông tin"} 
-          value={modifiedFields.good_at_position || profile?.good_at_position || ""}
+          value={modifiedFields.good_at_position !== undefined ? modifiedFields.good_at_position : (profile?.good_at_position || "")}
           onChange={handleInputChange}
            />
         </div>
@@ -107,7 +114,7 @@ const fetchUser = async () => {
             type="text"
             name="phone"
             placeholder={modifiedFields.phone || profile?.phone || "Vui lòng cập nhật thông tin"}
-            value={modifiedFields.phone || profile?.phone || ""}
+            value={modifiedFields.phone !== undefined ? modifiedFields.phone : (profile?.phone || "")}
             onChange={handleInputChange}
           />
         </div>
@@ -119,7 +126,7 @@ const fetchUser = async () => {
             type="text"
             name="email"
             placeholder={modifiedFields.email || profile?.email || "Vui lòng cập nhật thông tin"}
-            value={modifiedFields.email || profile?.email || ""}
+            value={modifiedFields.email !== undefined ? modifiedFields.email : (profile?.email || "")}
             onChange={handleInputChange}
             
           />
@@ -132,24 +139,29 @@ const fetchUser = async () => {
             type="text"
             name="address"
             placeholder={modifiedFields.address || profile?.address || "Vui lòng cập nhật thông tin"}
-            value={modifiedFields.address || profile?.address || ""}
+            value={modifiedFields.address !== undefined ? modifiedFields.address : (profile?.address || "")}
             onChange={handleInputChange}
           />
         </div>
 
         {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-3 col-md-12">
-          <label>Current Salary($)</label>
-          <select className="chosen-single form-select" >
-            <option>40-70 K</option>
-            <option>50-80 K</option>
-            <option>60-90 K</option>
-            <option>70-100 K</option>
-            <option>100-150 K</option>
-          </select>
-        </div>
-
         <div className="form-group col-lg-3 col-md-12">
+        <label>Giới tính</label>
+        <select
+          className="chosen-single form-select"
+          name="gender"
+          value={modifiedFields.gender !== undefined ? modifiedFields.gender : (profile?.gender || "")}
+          onChange={handleInputChange}
+        >
+          <option value="">Chọn giới tính</option>
+          <option value="Nam">Nam</option>
+          <option value="Nữ">Nữ</option>
+        </select>
+      </div>
+
+
+
+        {/* <div className="form-group col-lg-3 col-md-12">
           <label>Expected Salary($)</label>
           <select className="chosen-single form-select" >
             <option>120-350 K</option>
@@ -166,7 +178,7 @@ const fetchUser = async () => {
           <label>Số năm kinh nghiệm</label>
           <input type="number" name="year_of_experience" 
           placeholder={modifiedFields.year_of_experience || profile?.year_of_experience || "Vui lòng cập nhật thông tin"}
-          value={modifiedFields.year_of_experience || profile?.year_of_experience || ""}
+          value={modifiedFields.year_of_experience !== undefined ? modifiedFields.year_of_experience : (profile?.year_of_experience || "")}
           onChange={handleInputChange}
           min={0}
            />
@@ -178,7 +190,7 @@ const fetchUser = async () => {
           <input className="chosen-single form-select"
           type="date"
           name="date_of_birth"
-          value={modifiedFields.date_of_birth || profile?.date_of_birth || ""}
+          value={modifiedFields.date_of_birth !== undefined ? modifiedFields.date_of_birth : (profile?.date_of_birth || "")}
           onChange={handleInputChange}
           >
           </input>
@@ -226,13 +238,15 @@ const fetchUser = async () => {
 
         {/* <!-- About Company --> */}
         <div className="form-group col-lg-12 col-md-12">
-          <label>Giới thiệu</label>
-          <textarea placeholder={modifiedFields.about_me || profile?.about_me || "Vui lòng cập nhật thông tin"}
-          value={modifiedFields.about_me || profile?.about_me || ""}
+        <label>Giới thiệu</label>
+        <textarea
+          placeholder="Vui lòng cập nhật thông tin"
+          value={modifiedFields.about_me !== undefined ? modifiedFields.about_me : (profile?.about_me || "")}
           name="about_me"
           onChange={handleInputChange}
-          ></textarea>
-        </div>
+        ></textarea>
+      </div>
+
         <Education educations = {profile?.educations}/>
         <Experiences exps = {profile?.experiences}/>
         <Awards awards={profile.achievements}/>
