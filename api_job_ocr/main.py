@@ -270,9 +270,8 @@ def search_jobs(
 
 
 def find_user_ids_by_job_title(job_title: str = Query(...)):
-    regex_job_title = Regex(job_title, "i")
     pipeline = [
-        {"$match": {"jobs.title": regex_job_title}},
+        {"$match": {"jobs.title": job_title}},
         {"$project": {"_id": 0, "user_id": "$user_id"}}
     ]
     
@@ -411,7 +410,7 @@ def get_user_profiles(job_title: str = Query(...), page: int = 1, limit: int = 1
 
     if len(user_profiles) == 0:
         return {
-            "error": True,
+            "error": False,
             "message": "Không tìm thấy thông tin người dùng",
             "data": None,
             "status_code": 400
@@ -445,6 +444,7 @@ def get_user_profiles(job_title: str = Query(...), page: int = 1, limit: int = 1
     }
 
 # recommned job
+
 nltk.download('punkt', quiet=True, force=True)
 nltk.download('wordnet', quiet=True, force=True)
 nltk.download('averaged_perceptron_tagger', quiet=True, force=True)
@@ -458,8 +458,7 @@ user_acc = None
 
 file_url = os.environ.get("JOB_FILE_URL")
 
-if jobs is None:
-    jobs = pd.read_csv(file_url)
+jobs = pd.read_csv(file_url)
 
 query_user = """
 SELECT
@@ -551,23 +550,25 @@ timetable_columns = [desc[0] for desc in cursor.description]
 
 # Create a DataFrame for timetable
 timetable = pd.DataFrame(timetable_results, columns=timetable_columns)
+timetable['coordinate'] = timetable['coordinate'].replace('', '0,0')
 
 stop = stopwords_vn
 stop_words_ = set(stopwords_vn)
 wn = WordNetLemmatizer()
+vietnamese_lower = "aáàảãạăắằẳẵặâấầẩẫậbcedđeéèẻẽẹêếềểễệghiíìỉĩịjklmnoóòỏõọôốồổỗộơớờởỡợpqrstuúùủũụưứừửữựvxyýỳỷỹỵ"
 
 def black_txt(token):
     return  token not in stop_words_ and token not in list(string.punctuation)  and len(token)>2
 
 def clean_txt(text):
-  clean_text = []
-  clean_text2 = []
-  text = re.sub("'", "",text)
-  text=re.sub("(\\d|\\W)+"," ",text)
-  text = text.replace("nbsp", "")
-  clean_text = [ wn.lemmatize(word, pos="v") for word in word_tokenize(text.lower()) if black_txt(word)]
-  clean_text2 = [word for word in clean_text if black_txt(word)]
-  return " ".join(clean_text2)
+    clean_text = []
+    clean_text2 = []
+    text = re.sub("'", "", text)
+    text = re.sub("(\\d|\\W)+", " ", text)
+    text = re.sub(r'(?<=[a-zÀ-ỸẠ-Ỵ])(?=[A-ZĂÂBCDĐEÊGHIKLMNOÔƠPQRSTUƯVXY])', ' ', text)
+    clean_text = [wn.lemmatize(word, pos="v") for word in word_tokenize(text.lower()) if black_txt(word)]
+    clean_text2 = [word.replace('_', ' ') for word in clean_text if word not in vietnamese_lower]
+    return " ".join(clean_text2)
 
 weights = {
 'title': 0.4,
@@ -649,13 +650,18 @@ def recommend_job(id: int, categories: str = None):
     # Chọn user_id cần xem
     user_id = id
 
-    # Lấy thông tin thời gian bận của user_id
-    user_timetable = timetable[timetable['user_id'] == user_id]['coordinate']
+    # Lấy thông tin lịch trình của user_id
+    user_timetable = timetable[timetable['user_id'] == user_id]['coordinate'].values[0]
 
-    # Điền giá trị 1 vào ma trận tương ứng với thời gian bận
-    for coordinate in user_timetable:
-        day, hour = map(int, coordinate.split(';'))
-        matrix[hour][day - 1] = 1
+    # Kiểm tra nếu user_timetable không phải NaN
+    if not pd.isnull(user_timetable):
+        # Chia các tọa độ thành danh sách con
+        coordinate_list = user_timetable.split(";")
+
+        # Kiểm tra mỗi tọa độ trong danh sách con
+        for coordinate in coordinate_list:
+            day, hour = map(int, coordinate.split(","))
+            matrix[hour - 1][day - 1] = 1
 
     # Xét từng cột và đếm số lượng số 1 trong mỗi cột
     ones_count = np.sum(matrix[6:19, :], axis=0)
@@ -669,15 +675,15 @@ def recommend_job(id: int, categories: str = None):
         t = "Thực tập|Toàn thời gian|Không yêu cầu"
 
      # Xử lý timetable
-    jobs_t = jobs[jobs['Hình thức làm việc'].str.contains(f'{t}', case=False)]
+    jobs_t = jobs[jobs['type'].str.contains(f'{t}', case=False)]
 
     # Lọc các công việc dựa trên giới tính
     gender = users[users['id'] == user_id]['gender'].iloc[0]
     
     if gender == 'Nữ':
-        jobs_g = jobs_t[(jobs_t['Giới tính'] == 'Nữ') | (jobs_t['Giới tính'] == 'Không yêu cầu')]
+        jobs_g = jobs_t[(jobs_t['gender'] == 'Nữ') | (jobs_t['gender'] == 'Không yêu cầu')]
     elif gender == 'Nam':
-        jobs_g = jobs_t[(jobs_t['Giới tính'] == 'Nam') | (jobs_t['Giới tính'] == 'Không yêu cầu')]
+        jobs_g = jobs_t[(jobs_t['gender'] == 'Nam') | (jobs_t['gender'] == 'Không yêu cầu')]
     else:
         jobs_g = jobs_t
 
@@ -718,11 +724,11 @@ def recommend_job(id: int, categories: str = None):
     jobs_ex = jobs_a[(jobs_a['min_yoe'].isin(min_yoe_condition)) & (jobs_a['max_yoe'].isin(max_yoe_condition))]
     
     jobs_ex['title'] = jobs_ex['title'].fillna('')
-    jobs_ex['Mô tả công việc'] = jobs_ex['Mô tả công việc'].fillna('')
+    jobs_ex['description'] = jobs_ex['description'].fillna('')
     jobs_ex['skills'] = jobs_ex['skills'].fillna('')
-    jobs_ex['Yêu cầu ứng viên'] = jobs_ex['Yêu cầu ứng viên'].fillna('')
+    jobs_ex['requirement'] = jobs_ex['requirement'].fillna('')
     # new column
-    jobs_ex['combine'] = jobs_ex['title'] + " " + jobs_ex['Mô tả công việc'] + " " + jobs_ex['skills'] + " " + jobs_ex['Yêu cầu ứng viên']
+    jobs_ex['combine'] = jobs_ex['title'] + " " + jobs_ex['description'] + " " + jobs_ex['skills'] + " " + jobs_ex['requirement']
 
     jobs_ex['combine'] = jobs_ex['combine'].map(str).apply(clean_txt)
 
@@ -758,38 +764,8 @@ def recommend_job(id: int, categories: str = None):
     for job in recommended_jobs_df.itertuples():
         similarity_score = next(score[1] for score in recommended_jobs if score[0] == job.Index)
         job_info = job._asdict()
-
-        # Create a new dictionary with the renamed columns
-        renamed_job_info = {
-            'job_id': job_info['job_id'],
-            'title': job_info['title'],
-            'categories': job_info['categories'],
-            'company_link': job_info['company_link'],
-            'company': job_info['company'],
-            'deadline': job_info['deadline'],
-            'addresses': job_info['addresses'],
-            'skills': job_info['skills'],
-            'Số lượng tuyển': job_info['_9'],
-            'Hình thức làm việc': job_info['_10'],
-            'Cấp bậc': job_info['_11'],
-            'Giới tính': job_info['_12'],
-            'min_yoe': job_info['min_yoe'],
-            'max_yoe': job_info['max_yoe'],
-            'Mô tả công việc': job_info['_15'],
-            'Yêu cầu ứng viên': job_info['_16'],
-            'Quyền lợi': job_info['_17'],
-            'min_salary': job_info['min_salary'],
-            'max_salary': job_info['max_salary'],
-            'company_logo': job_info['company_logo'],
-            'company_size': job_info['company_size'],
-            'company_address': job_info['company_address'],
-            'company_des': job_info['company_des'],
-            'company_phone': job_info['company_phone'],
-            'company_email': job_info['company_email'],
-            'Similarity Score': similarity_score
-        }
-
-        job_data.append(renamed_job_info)
+        job_info['Similarity Score'] = similarity_score
+        job_data.append(job_info)
 
     # Create a DataFrame from the job_data list
     recommended_jobs_data_sorted = pd.DataFrame(job_data)
@@ -799,7 +775,7 @@ def recommend_job(id: int, categories: str = None):
     highest_score = recommended_jobs_data_sorted['Similarity Score'].max()
 
     # Calculate the minimum score threshold
-    min_score = highest_score * 0.94
+    min_score = highest_score * 0.92
 
     # Filter the recommended jobs based on the minimum score threshold
     filtered_jobs = recommended_jobs_data_sorted[recommended_jobs_data_sorted['Similarity Score'] > min_score]
@@ -872,7 +848,7 @@ def recommend_job_mongo(
 
     if isinstance(recommended_jobs, str):  # Kiểm tra xem kết quả là chuỗi thông báo lỗi hay không
         error_response = {
-            "error": True,
+            "error": False,
             "message": recommended_jobs,
             "data": None,
             "status_code": 400
@@ -1318,7 +1294,9 @@ def ExtractTextFromPDF(path):
 def cleanup_temp_directory():
     if os.path.exists(UPLOAD_DIRECTORY):
         shutil.rmtree(UPLOAD_DIRECTORY)
+
 UPLOAD_DIRECTORY = "temp_uploads"
+
 @app.post("/read-cv")
 async def read_cv(file: UploadFile = File(...)):
     try:
