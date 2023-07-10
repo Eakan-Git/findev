@@ -9,6 +9,8 @@ from elasticsearch import Elasticsearch
 from pymongo import MongoClient
 from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse
+from fastapi import HTTPException, status
+from requests.exceptions import ConnectionError, Timeout
 import numpy as np
 import warnings
 import re
@@ -157,122 +159,144 @@ def search_jobs(
     page: int = Query(1, description="Page number"),
     limit: int = Query(10, description="Number of results per page"),
 ):
-    # Search for jobs in Elasticsearch
-    body = {
-        "size": limit,
-        "from": (page - 1) * limit,
-        "query": {
-            "bool": {
-                "must": [
-                    {"multi_match": {"query": keyword, "fields": ["*"]}}
-                ],
-                "filter": []
+    try:
+        # Search for jobs in Elasticsearch
+        body = {
+            "size": limit,
+            "from": (page - 1) * limit,
+            "query": {
+                "bool": {
+                    "must": [
+                        {"multi_match": {"query": keyword, "fields": ["*"]}}
+                    ],
+                    "filter": []
+                }
             }
         }
-    }
 
-    if addresses:
-        body["query"]["bool"]["filter"].append({"match": {"addresses": addresses}})
+        if addresses:
+            body["query"]["bool"]["filter"].append({"match": {"addresses": addresses}})
 
-    if skill:
-        body["query"]["bool"]["filter"].append({"match": {"skills": skill}})
+        if skill:
+            body["query"]["bool"]["filter"].append({"match": {"skills": skill}})
 
-    if categories:
-        decoded_categories = urllib.parse.unquote(categories)
-        body["query"]["bool"]["filter"].append({"match": {"categories": decoded_categories}})
+        if categories:
+            decoded_categories = urllib.parse.unquote(categories)
+            body["query"]["bool"]["filter"].append({"match": {"categories": decoded_categories}})
 
-    result = es.search(index="jobs_index", body=body)
-    hits = result["hits"]["hits"]
+        result = es.search(index="jobs_index", body=body)
+        hits = result["hits"]["hits"]
 
-    max_score = result['hits']['max_score']
-    min_score = max_score * 0.7
-    print(min_score)
+        max_score = result['hits']['max_score']
+        min_score = max_score * 0.7
+        print(min_score)
 
-    jobs = []
-    for hit in hits:
-        job_info = hit["_source"]
-        job_info["score"] = hit["_score"]
-        jobs.append(job_info)
+        jobs = []
+        for hit in hits:
+            job_info = hit["_source"]
+            job_info["score"] = hit["_score"]
+            jobs.append(job_info)
 
-    filtered_jobs = [job for job in jobs if job["score"] > min_score]
+        filtered_jobs = [job for job in jobs if job["score"] > min_score]
 
-    total = len(filtered_jobs)
+        total = len(filtered_jobs)
 
-    # Calculate pagination information
-    total_pages = math.ceil(total / limit)
-    base_url = f"http://localhost:8001/jobs?keyword={keyword}&addresses={addresses}&skill={skill}&categories={categories}"
-    first_page_url = f"{base_url}&page=1"
-    last_page = total_pages
-    last_page_url = f"{base_url}&page={last_page}"
-    next_page = page + 1 if page < total_pages else None
-    prev_page = page - 1 if page > 1 else None
+        # Calculate pagination information
+        total_pages = math.ceil(total / limit)
+        base_url = f"http://localhost:8000/jobs?keyword={keyword}&addresses={addresses}&skill={skill}&categories={categories}"
+        first_page_url = f"{base_url}&page=1"
+        last_page = total_pages
+        last_page_url = f"{base_url}&page={last_page}"
+        next_page = page + 1 if page < total_pages else None
+        prev_page = page - 1 if page > 1 else None
 
-    links = [
-        {
-            "url": None,
-            "label": "&laquo; Previous",
-            "active": False
-        },
-        {
-            "url": first_page_url,
-            "label": "1",
-            "active": page == 1
-        }
-    ]
+        links = [
+            {
+                "url": None,
+                "label": "&laquo; Previous",
+                "active": False
+            },
+            {
+                "url": first_page_url,
+                "label": "1",
+                "active": page == 1
+            }
+        ]
 
-    for i in range(2, total_pages + 1):
+        for i in range(2, total_pages + 1):
+            links.append({
+                "url": f"{base_url}&page={i}",
+                "label": str(i),
+                "active": page == i
+            })
+
         links.append({
-            "url": f"{base_url}&page={i}",
-            "label": str(i),
-            "active": page == i
+            "url": f"{base_url}&page={next_page}" if next_page else None,
+            "label": "Next &raquo;",
+            "active": False
         })
 
-    links.append({
-        "url": f"{base_url}&page={next_page}" if next_page else None,
-        "label": "Next &raquo;",
-        "active": False
-    })
+        if len(filtered_jobs) == 0:
+            return {
+                "error": False,
+                "message": "Không tìm thấy công việc",
+                "data": None,
+                "status_code": 400
+            }
+        
+        pagination_info = {
+            "first_page_url": first_page_url,
+            "from": (page - 1) * limit + 1,
+            "last_page": last_page,
+            "last_page_url": last_page_url,
+            "links": links,
+            "next_page_url": f"{base_url}&page={next_page}" if next_page else None,
+            "path": f"http://localhost:8000/jobs?keyword={keyword}&addresses={addresses}&skill={skill}&categories={categories}",
+            "per_page": limit,
+            "prev_page_url": f"{base_url}&page={prev_page}" if prev_page else None,
+            "to": min(page * limit, total),
+            "total": total
+        }
 
-    if len(filtered_jobs) == 0:
         return {
             "error": False,
-            "message": "Không tìm thấy công việc",
-            "data": None,
-            "status_code": 400
+            "message": "Xử lí thành công",
+            "data": {
+                "jobs": {
+                    "current_page": page,
+                    "data": filtered_jobs,
+                    "pagination_info": pagination_info
+                }
+            },
+            "status_code": status.HTTP_200_OK
         }
-    
-    pagination_info = {
-        "first_page_url": first_page_url,
-        "from": (page - 1) * limit + 1,
-        "last_page": last_page,
-        "last_page_url": last_page_url,
-        "links": links,
-        "next_page_url": f"{base_url}&page={next_page}" if next_page else None,
-        "path": f"http://localhost:8001/jobs?keyword={keyword}&addresses={addresses}&skill={skill}&categories={categories}",
-        "per_page": limit,
-        "prev_page_url": f"{base_url}&page={prev_page}" if prev_page else None,
-        "to": min(page * limit, total),
-        "total": total
-    }
 
-    return {
-        "error": False,
-        "message": "Xử lí thành công",
-        "data": {
-            "jobs": {
-                "current_page": page,
-                "data": filtered_jobs,
-                "pagination_info": pagination_info
-            }
-        },
-        "status_code": 200
-    }
+    except (ConnectionError, TimeoutError, Timeout) as e:
+        # Xử lý lỗi mạng
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Lỗi kết nối mạng: " + str(e),
+            headers={"error": True}
+        )
+    except (ValueError, TypeError) as e:
+        # Xử lý lỗi đầu vào gây crash hoặc lỗi xử lý không mong muốn
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Lỗi không xác định: " + str(e),
+            headers={"error": True}
+        )
+    except Exception as e:
+        # Xử lý các lỗi khác không xác định
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Lỗi không xác định: " + str(e),
+            headers={"error": True}
+        )
 
 
 def find_user_ids_by_job_title(job_title: str = Query(...)):
-    regex_job_title = Regex(job_title, "i")
     pipeline = [
-        {"$match": {"jobs.title": regex_job_title}},
+        {"$match": {"jobs.title": job_title}},
         {"$project": {"_id": 0, "user_id": "$user_id"}}
     ]
     
@@ -283,168 +307,192 @@ def find_user_ids_by_job_title(job_title: str = Query(...)):
 
 @app.get("/user_profiles/")
 def get_user_profiles(job_title: str = Query(...), page: int = 1, limit: int = 10):
-    user_ids = find_user_ids_by_job_title(job_title)
-    
-    if not user_ids:
+    try:
+        user_ids = find_user_ids_by_job_title(job_title)
+        
+        if not user_ids:
+            return {
+                "error": False,
+                "message": "Không có sinh viên được gợi ý job này",
+                "data": {
+                    "user_profiles": {
+                        "current_page": page,
+                        "data": [],
+                        "pagination_info": {
+                            "first_page_url": None,
+                            "from": 0,
+                            "last_page": 0,
+                            "last_page_url": None,
+                            "links": [],
+                            "next_page_url": None,
+                            "path": f"http://localhost:8001/user_profiles/?job_title={job_title}",
+                            "per_page": limit,
+                            "prev_page_url": None,
+                            "to": 0,
+                            "total": 0
+                        }
+                    }
+                },
+                "status_code": 404
+            }
+
+        random.shuffle(user_ids)  # Shuffle the user_ids
+
+        # Get 10 random user_ids if there are more than 10
+        if len(user_ids) > 10:
+            user_ids = user_ids[:10]
+
+        # Query to fetch user profile information from MySQL
+        query = f"""
+            SELECT
+                up.id,
+                up.full_name,
+                up.avatar,
+                up.about_me,
+                up.good_at_position,
+                up.year_of_experience,
+                up.date_of_birth,
+                up.gender,
+                up.address,
+                up.email,
+                up.phone,
+                GROUP_CONCAT(DISTINCT us.skill) AS skills,
+                GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences,
+                GROUP_CONCAT(DISTINCT ue.title ORDER BY ue.user_id SEPARATOR '; ') AS experiences_title
+            FROM
+                user_profiles up
+            LEFT JOIN user_skills us ON up.id = us.user_id
+            LEFT JOIN (
+                SELECT
+                    user_id,
+                    GROUP_CONCAT(description ORDER BY user_id SEPARATOR '; ') AS description,
+                    GROUP_CONCAT(title ORDER BY user_id SEPARATOR '; ') AS title
+                FROM
+                    user_experiences
+                GROUP BY
+                    user_id
+            ) ue ON up.id = ue.user_id
+            WHERE up.id IN ({', '.join(str(id) for id in user_ids)})
+            GROUP BY
+                up.id,
+                up.full_name,
+                up.avatar,
+                up.about_me,
+                up.good_at_position,
+                up.year_of_experience,
+                up.date_of_birth,
+                up.gender,
+                up.address,
+                up.email,
+                up.phone
+            LIMIT {limit} OFFSET {(page - 1) * limit}
+        """
+
+        # Execute the query and fetch results from MySQL
+        cursor = cnx.cursor()
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        columns = [column[0] for column in cursor.description]
+        df = pd.DataFrame(results, columns=columns)
+
+        user_profiles = df.to_dict('records')
+        random.shuffle(user_profiles)
+
+        total = len(user_profiles)
+        total_pages = math.ceil(total / limit)
+        base_url = f"http://localhost:8001/user_profiles/?job_title={job_title}"
+        first_page_url = f"{base_url}&page=1&limit={limit}"
+        last_page = total_pages
+        last_page_url = f"{base_url}&page={last_page}&limit={limit}"
+        next_page = page + 1 if page < total_pages else None
+        prev_page = page - 1 if page > 1 else None
+
+        links = [
+            {
+                "url": None,
+                "label": "&laquo; Previous",
+                "active": False
+            },
+            {
+                "url": first_page_url,
+                "label": "1",
+                "active": page == 1
+            }
+        ]
+
+        for i in range(2, total_pages + 1):
+            links.append({
+                "url": f"{base_url}&page={i}&limit={limit}",
+                "label": str(i),
+                "active": page == i
+            })
+
+        links.append({
+            "url": f"{base_url}&page={next_page}&limit={limit}" if next_page else None,
+            "label": "Next &raquo;",
+            "active": False
+        })
+
+        if len(user_profiles) == 0:
+            return {
+                "error": False,
+                "message": "Không tìm thấy thông tin người dùng",
+                "data": None,
+                "status_code": 404
+            }
+        
+        pagination_info = {
+            "first_page_url": first_page_url,
+            "from": (page - 1) * limit + 1,
+            "last_page": last_page,
+            "last_page_url": last_page_url,
+            "links": links,
+            "next_page_url": f"{base_url}&page={next_page}&limit={limit}" if next_page else None,
+            "path": f"http://localhost:8001/user_profiles/?job_title={job_title}",
+            "per_page": limit,
+            "prev_page_url": f"{base_url}&page={prev_page}&limit={limit}" if prev_page else None,
+            "to": min(page * limit, total),
+            "total": total
+        }
+
         return {
             "error": False,
-            "message": "Không có sinh viên được gợi ý job này",
+            "message": "Xử lí thành công",
             "data": {
                 "user_profiles": {
                     "current_page": page,
-                    "data": [],
-                    "pagination_info": {
-                        "first_page_url": None,
-                        "from": 0,
-                        "last_page": 0,
-                        "last_page_url": None,
-                        "links": [],
-                        "next_page_url": None,
-                        "path": f"http://localhost:8001/user_profiles/?job_title={job_title}",
-                        "per_page": limit,
-                        "prev_page_url": None,
-                        "to": 0,
-                        "total": 0
-                    }
+                    "data": user_profiles,
+                    "pagination_info": pagination_info
                 }
             },
             "status_code": 200
         }
-
-    random.shuffle(user_ids)  # Shuffle the user_ids
-
-    # Get 10 random user_ids if there are more than 10
-    if len(user_ids) > 10:
-        user_ids = user_ids[:10]
-
-    # Query to fetch user profile information from MySQL
-    query = f"""
-        SELECT
-            up.id,
-            up.full_name,
-            up.avatar,
-            up.about_me,
-            up.good_at_position,
-            up.year_of_experience,
-            up.date_of_birth,
-            up.gender,
-            up.address,
-            up.email,
-            up.phone,
-            GROUP_CONCAT(DISTINCT us.skill) AS skills,
-            GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences,
-            GROUP_CONCAT(DISTINCT ue.title ORDER BY ue.user_id SEPARATOR '; ') AS experiences_title
-        FROM
-            user_profiles up
-        LEFT JOIN user_skills us ON up.id = us.user_id
-        LEFT JOIN (
-            SELECT
-                user_id,
-                GROUP_CONCAT(description ORDER BY user_id SEPARATOR '; ') AS description,
-                GROUP_CONCAT(title ORDER BY user_id SEPARATOR '; ') AS title
-            FROM
-                user_experiences
-            GROUP BY
-                user_id
-        ) ue ON up.id = ue.user_id
-        WHERE up.id IN ({', '.join(str(id) for id in user_ids)})
-        GROUP BY
-            up.id,
-            up.full_name,
-            up.avatar,
-            up.about_me,
-            up.good_at_position,
-            up.year_of_experience,
-            up.date_of_birth,
-            up.gender,
-            up.address,
-            up.email,
-            up.phone
-        LIMIT {limit} OFFSET {(page - 1) * limit}
-    """
-
-    # Execute the query and fetch results from MySQL
-    cursor = cnx.cursor()
-    cursor.execute(query)
-    results = cursor.fetchall()
-
-    columns = [column[0] for column in cursor.description]
-    df = pd.DataFrame(results, columns=columns)
-
-    user_profiles = df.to_dict('records')
-    random.shuffle(user_profiles)
-
-    total = len(user_profiles)
-    total_pages = math.ceil(total / limit)
-    base_url = f"http://localhost:8001/user_profiles/?job_title={job_title}"
-    first_page_url = f"{base_url}&page=1&limit={limit}"
-    last_page = total_pages
-    last_page_url = f"{base_url}&page={last_page}&limit={limit}"
-    next_page = page + 1 if page < total_pages else None
-    prev_page = page - 1 if page > 1 else None
-
-    links = [
-        {
-            "url": None,
-            "label": "&laquo; Previous",
-            "active": False
-        },
-        {
-            "url": first_page_url,
-            "label": "1",
-            "active": page == 1
-        }
-    ]
-
-    for i in range(2, total_pages + 1):
-        links.append({
-            "url": f"{base_url}&page={i}&limit={limit}",
-            "label": str(i),
-            "active": page == i
-        })
-
-    links.append({
-        "url": f"{base_url}&page={next_page}&limit={limit}" if next_page else None,
-        "label": "Next &raquo;",
-        "active": False
-    })
-
-    if len(user_profiles) == 0:
-        return {
-            "error": True,
-            "message": "Không tìm thấy thông tin người dùng",
-            "data": None,
-            "status_code": 400
-        }
     
-    pagination_info = {
-        "first_page_url": first_page_url,
-        "from": (page - 1) * limit + 1,
-        "last_page": last_page,
-        "last_page_url": last_page_url,
-        "links": links,
-        "next_page_url": f"{base_url}&page={next_page}&limit={limit}" if next_page else None,
-        "path": f"http://localhost:8001/user_profiles/?job_title={job_title}",
-        "per_page": limit,
-        "prev_page_url": f"{base_url}&page={prev_page}&limit={limit}" if prev_page else None,
-        "to": min(page * limit, total),
-        "total": total
-    }
-
-    return {
-        "error": False,
-        "message": "Xử lí thành công",
-        "data": {
-            "user_profiles": {
-                "current_page": page,
-                "data": user_profiles,
-                "pagination_info": pagination_info
-            }
-        },
-        "status_code": 200
-    }
+    except (ConnectionError, TimeoutError, Timeout) as e:
+        # Xử lý lỗi kết nối mạng hoặc timeout
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Lỗi kết nối mạng hoặc timeout: " + str(e),
+            headers={"error": True}
+        )
+    except ValueError as e:
+        # Xử lý lỗi giá trị không hợp lệ
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Lỗi không xác định: " + str(e),
+            headers={"error": True}
+        )
+    except Exception as e:
+        # Xử lý các lỗi khác không xác định
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Lỗi không xác định: " + str(e),
+            headers={"error": True}
+        )
 
 # recommned job
+
 nltk.download('punkt', quiet=True, force=True)
 nltk.download('wordnet', quiet=True, force=True)
 nltk.download('averaged_perceptron_tagger', quiet=True, force=True)
@@ -458,8 +506,7 @@ user_acc = None
 
 file_url = os.environ.get("JOB_FILE_URL")
 
-if jobs is None:
-    jobs = pd.read_csv(file_url)
+jobs = pd.read_csv(file_url)
 
 query_user = """
 SELECT
@@ -551,23 +598,25 @@ timetable_columns = [desc[0] for desc in cursor.description]
 
 # Create a DataFrame for timetable
 timetable = pd.DataFrame(timetable_results, columns=timetable_columns)
+timetable['coordinate'] = timetable['coordinate'].replace('', '0,0')
 
 stop = stopwords_vn
 stop_words_ = set(stopwords_vn)
 wn = WordNetLemmatizer()
+vietnamese_lower = "aáàảãạăắằẳẵặâấầẩẫậbcedđeéèẻẽẹêếềểễệghiíìỉĩịjklmnoóòỏõọôốồổỗộơớờởỡợpqrstuúùủũụưứừửữựvxyýỳỷỹỵ"
 
 def black_txt(token):
     return  token not in stop_words_ and token not in list(string.punctuation)  and len(token)>2
 
 def clean_txt(text):
-  clean_text = []
-  clean_text2 = []
-  text = re.sub("'", "",text)
-  text=re.sub("(\\d|\\W)+"," ",text)
-  text = text.replace("nbsp", "")
-  clean_text = [ wn.lemmatize(word, pos="v") for word in word_tokenize(text.lower()) if black_txt(word)]
-  clean_text2 = [word for word in clean_text if black_txt(word)]
-  return " ".join(clean_text2)
+    clean_text = []
+    clean_text2 = []
+    text = re.sub("'", "", text)
+    text = re.sub("(\\d|\\W)+", " ", text)
+    text = re.sub(r'(?<=[a-zÀ-ỸẠ-Ỵ])(?=[A-ZĂÂBCDĐEÊGHIKLMNOÔƠPQRSTUƯVXY])', ' ', text)
+    clean_text = [wn.lemmatize(word, pos="v") for word in word_tokenize(text.lower()) if black_txt(word)]
+    clean_text2 = [word.replace('_', ' ') for word in clean_text if word not in vietnamese_lower]
+    return " ".join(clean_text2)
 
 weights = {
 'title': 0.4,
@@ -649,13 +698,18 @@ def recommend_job(id: int, categories: str = None):
     # Chọn user_id cần xem
     user_id = id
 
-    # Lấy thông tin thời gian bận của user_id
-    user_timetable = timetable[timetable['user_id'] == user_id]['coordinate']
+    # Lấy thông tin lịch trình của user_id
+    user_timetable = timetable[timetable['user_id'] == user_id]['coordinate'].values[0]
 
-    # Điền giá trị 1 vào ma trận tương ứng với thời gian bận
-    for coordinate in user_timetable:
-        day, hour = map(int, coordinate.split(';'))
-        matrix[hour][day - 1] = 1
+    # Kiểm tra nếu user_timetable không phải NaN
+    if not pd.isnull(user_timetable):
+        # Chia các tọa độ thành danh sách con
+        coordinate_list = user_timetable.split(";")
+
+        # Kiểm tra mỗi tọa độ trong danh sách con
+        for coordinate in coordinate_list:
+            day, hour = map(int, coordinate.split(","))
+            matrix[hour - 1][day - 1] = 1
 
     # Xét từng cột và đếm số lượng số 1 trong mỗi cột
     ones_count = np.sum(matrix[6:19, :], axis=0)
@@ -669,15 +723,15 @@ def recommend_job(id: int, categories: str = None):
         t = "Thực tập|Toàn thời gian|Không yêu cầu"
 
      # Xử lý timetable
-    jobs_t = jobs[jobs['Hình thức làm việc'].str.contains(f'{t}', case=False)]
+    jobs_t = jobs[jobs['type'].str.contains(f'{t}', case=False)]
 
     # Lọc các công việc dựa trên giới tính
     gender = users[users['id'] == user_id]['gender'].iloc[0]
     
     if gender == 'Nữ':
-        jobs_g = jobs_t[(jobs_t['Giới tính'] == 'Nữ') | (jobs_t['Giới tính'] == 'Không yêu cầu')]
+        jobs_g = jobs_t[(jobs_t['gender'] == 'Nữ') | (jobs_t['gender'] == 'Không yêu cầu')]
     elif gender == 'Nam':
-        jobs_g = jobs_t[(jobs_t['Giới tính'] == 'Nam') | (jobs_t['Giới tính'] == 'Không yêu cầu')]
+        jobs_g = jobs_t[(jobs_t['gender'] == 'Nam') | (jobs_t['gender'] == 'Không yêu cầu')]
     else:
         jobs_g = jobs_t
 
@@ -718,11 +772,11 @@ def recommend_job(id: int, categories: str = None):
     jobs_ex = jobs_a[(jobs_a['min_yoe'].isin(min_yoe_condition)) & (jobs_a['max_yoe'].isin(max_yoe_condition))]
     
     jobs_ex['title'] = jobs_ex['title'].fillna('')
-    jobs_ex['Mô tả công việc'] = jobs_ex['Mô tả công việc'].fillna('')
+    jobs_ex['description'] = jobs_ex['description'].fillna('')
     jobs_ex['skills'] = jobs_ex['skills'].fillna('')
-    jobs_ex['Yêu cầu ứng viên'] = jobs_ex['Yêu cầu ứng viên'].fillna('')
+    jobs_ex['requirement'] = jobs_ex['requirement'].fillna('')
     # new column
-    jobs_ex['combine'] = jobs_ex['title'] + " " + jobs_ex['Mô tả công việc'] + " " + jobs_ex['skills'] + " " + jobs_ex['Yêu cầu ứng viên']
+    jobs_ex['combine'] = jobs_ex['title'] + " " + jobs_ex['description'] + " " + jobs_ex['skills'] + " " + jobs_ex['requirement']
 
     jobs_ex['combine'] = jobs_ex['combine'].map(str).apply(clean_txt)
 
@@ -758,38 +812,8 @@ def recommend_job(id: int, categories: str = None):
     for job in recommended_jobs_df.itertuples():
         similarity_score = next(score[1] for score in recommended_jobs if score[0] == job.Index)
         job_info = job._asdict()
-
-        # Create a new dictionary with the renamed columns
-        renamed_job_info = {
-            'job_id': job_info['job_id'],
-            'title': job_info['title'],
-            'categories': job_info['categories'],
-            'company_link': job_info['company_link'],
-            'company': job_info['company'],
-            'deadline': job_info['deadline'],
-            'addresses': job_info['addresses'],
-            'skills': job_info['skills'],
-            'Số lượng tuyển': job_info['_9'],
-            'Hình thức làm việc': job_info['_10'],
-            'Cấp bậc': job_info['_11'],
-            'Giới tính': job_info['_12'],
-            'min_yoe': job_info['min_yoe'],
-            'max_yoe': job_info['max_yoe'],
-            'Mô tả công việc': job_info['_15'],
-            'Yêu cầu ứng viên': job_info['_16'],
-            'Quyền lợi': job_info['_17'],
-            'min_salary': job_info['min_salary'],
-            'max_salary': job_info['max_salary'],
-            'company_logo': job_info['company_logo'],
-            'company_size': job_info['company_size'],
-            'company_address': job_info['company_address'],
-            'company_des': job_info['company_des'],
-            'company_phone': job_info['company_phone'],
-            'company_email': job_info['company_email'],
-            'Similarity Score': similarity_score
-        }
-
-        job_data.append(renamed_job_info)
+        job_info['Similarity Score'] = similarity_score
+        job_data.append(job_info)
 
     # Create a DataFrame from the job_data list
     recommended_jobs_data_sorted = pd.DataFrame(job_data)
@@ -799,7 +823,7 @@ def recommend_job(id: int, categories: str = None):
     highest_score = recommended_jobs_data_sorted['Similarity Score'].max()
 
     # Calculate the minimum score threshold
-    min_score = highest_score * 0.94
+    min_score = highest_score * 0.92
 
     # Filter the recommended jobs based on the minimum score threshold
     filtered_jobs = recommended_jobs_data_sorted[recommended_jobs_data_sorted['Similarity Score'] > min_score]
@@ -868,89 +892,112 @@ def recommend_job_mongo(
     page: int = Query(1, description="Page number"),
     limit: int = Query(10, description="Number of results per page"),
 ):
-    recommended_jobs = process_user(user_id, missing_ids, updated_user_ids, categories)
+    try:
+        recommended_jobs = process_user(user_id, missing_ids, updated_user_ids, categories)
 
-    if isinstance(recommended_jobs, str):  # Kiểm tra xem kết quả là chuỗi thông báo lỗi hay không
-        error_response = {
-            "error": True,
-            "message": recommended_jobs,
-            "data": None,
-            "status_code": 400
-        }
-        return JSONResponse(status_code=400, content=error_response)
+        if isinstance(recommended_jobs, str):  # Kiểm tra xem kết quả là chuỗi thông báo lỗi hay không
+            error_response = {
+                "error": False,
+                "message": recommended_jobs,
+                "data": None,
+                "status_code": 400
+            }
+            return JSONResponse(status_code=400, content=error_response)
 
-    # Apply pagination
-    total_jobs = len(recommended_jobs)
-    total_pages = math.ceil(total_jobs / limit)
-    start_index = (page - 1) * limit
-    end_index = start_index + limit
-    paginated_jobs = recommended_jobs[start_index:end_index]
+        # Apply pagination
+        total_jobs = len(recommended_jobs)
+        total_pages = math.ceil(total_jobs / limit)
+        start_index = (page - 1) * limit
+        end_index = start_index + limit
+        paginated_jobs = recommended_jobs[start_index:end_index]
 
-    # Create pagination links
-    base_url = f"http://localhost:8001/recommend-job/{user_id}"
-    first_page_url = f"{base_url}?categories={categories}&page=1"
-    last_page_url = f"{base_url}?categories={categories}&page={total_pages}"
-    next_page_url = f"{base_url}?categories={categories}&page={page + 1}" if page < total_pages else None
-    prev_page_url = f"{base_url}?categories={categories}&page={page - 1}" if page > 1 else None
+        # Create pagination links
+        base_url = f"http://localhost:8001/recommend-job/{user_id}"
+        first_page_url = f"{base_url}?categories={categories}&page=1"
+        last_page_url = f"{base_url}?categories={categories}&page={total_pages}"
+        next_page_url = f"{base_url}?categories={categories}&page={page + 1}" if page < total_pages else None
+        prev_page_url = f"{base_url}?categories={categories}&page={page - 1}" if page > 1 else None
 
-    links = [
-        {
-            "url": prev_page_url,
-            "label": "&laquo; Previous",
-            "active": False
-        },
-        {
-            "url": first_page_url,
-            "label": "1",
-            "active": page == 1
-        }
-    ]
+        links = [
+            {
+                "url": prev_page_url,
+                "label": "&laquo; Previous",
+                "active": False
+            },
+            {
+                "url": first_page_url,
+                "label": "1",
+                "active": page == 1
+            }
+        ]
 
-    for i in range(2, total_pages + 1):
+        for i in range(2, total_pages + 1):
+            links.append({
+                "url": f"{base_url}?categories={categories}&page={i}",
+                "label": str(i),
+                "active": page == i
+            })
+
         links.append({
-            "url": f"{base_url}?categories={categories}&page={i}",
-            "label": str(i),
-            "active": page == i
+            "url": next_page_url,
+            "label": "Next &raquo;",
+            "active": False
         })
 
-    links.append({
-        "url": next_page_url,
-        "label": "Next &raquo;",
-        "active": False
-    })
-
-    # Create pagination info
-    pagination_info = {
-        "first_page_url": first_page_url,
-        "last_page_url": last_page_url,
-        "links": links,
-        "next_page_url": next_page_url,
-        "prev_page_url": prev_page_url,
-        "current_page": page,
-        "total_pages": total_pages,
-        "total_jobs": total_jobs
-    }
-
-    if len(paginated_jobs) == 0:
-        return {
-            "error": False,
-            "message": "Không tìm thấy công việc",
-            "data": None,
-            "status_code": 400
+        # Create pagination info
+        pagination_info = {
+            "first_page_url": first_page_url,
+            "last_page_url": last_page_url,
+            "links": links,
+            "next_page_url": next_page_url,
+            "prev_page_url": prev_page_url,
+            "current_page": page,
+            "total_pages": total_pages,
+            "total_jobs": total_jobs
         }
 
-    return {
-        "error": False,
-        "message": "Xử lí thành công",
-        "data": {
-            "jobs": {
-                "current_page": page,
-                "data": paginated_jobs.to_dict(orient="records"),
-                "pagination_info": pagination_info
+        if len(paginated_jobs) == 0:
+            return {
+                "error": False,
+                "message": "Không tìm thấy công việc",
+                "data": None,
+                "status_code": 404
             }
-        },
-        "status_code": 200
-    }
+
+        return {
+            "error": False,
+            "message": "Xử lí thành công",
+            "data": {
+                "jobs": {
+                    "current_page": page,
+                    "data": paginated_jobs.to_dict(orient="records"),
+                    "pagination_info": pagination_info
+                }
+            },
+            "status_code": 200
+        }
+
+    except (ConnectionError, TimeoutError, Timeout) as e:
+        # Xử lý lỗi kết nối mạng hoặc timeout
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Lỗi kết nối mạng hoặc timeout: " + str(e),
+            headers={"error": True}
+        )
+    except ValueError as e:
+        # Xử lý lỗi giá trị không hợp lệ
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Lỗi giá trị không hợp lệ: " + str(e),
+            headers={"error": True}
+        )
+    except Exception as e:
+        # Xử lý các lỗi khác không xác định
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Lỗi không xác định: " + str(e),
+            headers={"error": True}
+        )
 
 # Hoang
 # Define vietnamese component in list
@@ -1318,7 +1365,9 @@ def ExtractTextFromPDF(path):
 def cleanup_temp_directory():
     if os.path.exists(UPLOAD_DIRECTORY):
         shutil.rmtree(UPLOAD_DIRECTORY)
+
 UPLOAD_DIRECTORY = "temp_uploads"
+
 @app.post("/read-cv")
 async def read_cv(file: UploadFile = File(...)):
     try:
