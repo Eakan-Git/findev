@@ -48,11 +48,9 @@ collection = db['test']
 
 # Establish MySQL connection
 cnx = mysql.connector.connect(
-    user='root',
-    database='recommend',
-    password='123456',
-    host='mysql',
-    port=3306
+    user=os.environ.get("MYSQL_USER"),
+    database=os.environ.get("MYSQL_DATABASE"),
+    password=os.environ.get("MYSQL_PASSWORD")
 )
 cursor = cnx.cursor()
 
