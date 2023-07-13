@@ -273,26 +273,27 @@ def search_jobs(
 
     except (ConnectionError, TimeoutError, Timeout) as e:
         # Xử lý lỗi mạng
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Lỗi kết nối mạng: " + str(e),
-            headers={"error": True}
-        )
+        return {
+            "error": True,
+            "message": "Lỗi mạng",
+            "data": [],
+            "status_code": HTTP_503_SERVICE_UNAVAILABLE
+        }
     except (ValueError, TypeError) as e:
         # Xử lý lỗi đầu vào gây crash hoặc lỗi xử lý không mong muốn
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Lỗi không xác định: " + str(e),
-            headers={"error": True}
-        )
+        return {
+            "error": True,
+            "message": "Lỗi đầu vào gây crash",
+            "data": [],
+            "status_code": status.HTTP_400_BAD_REQUEST
+        }
     except Exception as e:
-        # Xử lý các lỗi khác không xác định
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Lỗi không xác định: " + str(e),
-            headers={"error": True}
-        )
-
+        return {
+            "error": True,
+            "message": "Lổi đầu vào không hợp lệ/ Lỗi website đang gặp sự cố",
+            "data": [],
+            "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR
+        }
 
 def find_user_ids_by_job_title(job_title: str = Query(...)):
     pipeline = [
@@ -470,26 +471,28 @@ def get_user_profiles(job_title: str = Query(...), page: int = 1, limit: int = 1
         }
     
     except (ConnectionError, TimeoutError, Timeout) as e:
-        # Xử lý lỗi kết nối mạng hoặc timeout
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Lỗi kết nối mạng hoặc timeout: " + str(e),
-            headers={"error": True}
-        )
-    except ValueError as e:
-        # Xử lý lỗi giá trị không hợp lệ
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Lỗi không xác định: " + str(e),
-            headers={"error": True}
-        )
+        # Xử lý lỗi mạng
+        return {
+            "error": True,
+            "message": "Lỗi mạng",
+            "data": [],
+            "status_code": HTTP_503_SERVICE_UNAVAILABLE
+        }
+    except (ValueError, TypeError) as e:
+        # Xử lý lỗi đầu vào gây crash hoặc lỗi xử lý không mong muốn
+        return {
+            "error": True,
+            "message": "Lỗi đầu vào gây crash",
+            "data": [],
+            "status_code": status.HTTP_400_BAD_REQUEST
+        }
     except Exception as e:
-        # Xử lý các lỗi khác không xác định
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Lỗi không xác định: " + str(e),
-            headers={"error": True}
-        )
+        return {
+            "error": True,
+            "message": "Lổi đầu vào không hợp lệ/ Lỗi website đang gặp sự cố",
+            "data": [],
+            "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR
+        }
 
 # recommned job
 
@@ -978,26 +981,28 @@ def recommend_job_mongo(
         }
 
     except (ConnectionError, TimeoutError, Timeout) as e:
-        # Xử lý lỗi kết nối mạng hoặc timeout
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Lỗi kết nối mạng hoặc timeout: " + str(e),
-            headers={"error": True}
-        )
-    except ValueError as e:
-        # Xử lý lỗi giá trị không hợp lệ
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Lỗi giá trị không hợp lệ: " + str(e),
-            headers={"error": True}
-        )
+        # Xử lý lỗi mạng
+        return {
+            "error": True,
+            "message": "Lỗi mạng",
+            "data": [],
+            "status_code": HTTP_503_SERVICE_UNAVAILABLE
+        }
+    except (ValueError, TypeError) as e:
+        # Xử lý lỗi đầu vào gây crash hoặc lỗi xử lý không mong muốn
+        return {
+            "error": True,
+            "message": "Lỗi đầu vào gây crash",
+            "data": [],
+            "status_code": status.HTTP_400_BAD_REQUEST
+        }
     except Exception as e:
-        # Xử lý các lỗi khác không xác định
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Lỗi không xác định: " + str(e),
-            headers={"error": True}
-        )
+        return {
+            "error": True,
+            "message": "Lổi đầu vào không hợp lệ/ Lỗi website đang gặp sự cố",
+            "data": [],
+            "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR
+        }
 
 # Hoang
 # Define vietnamese component in list
