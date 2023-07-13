@@ -12,3 +12,5 @@ front-end/findev/.next/
 api_job_ocr/__pycache__/
 front-end/findev/yarn.lock
 .env
+*.gz
+recommend/__pycache__/*
