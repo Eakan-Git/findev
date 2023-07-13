@@ -1,5 +1,6 @@
 import os
 import urllib.parse
+from dotenv import load_dotenv
 from paginate_sqlalchemy import SqlalchemyOrmPage
 import math
 import pandas as pd
@@ -8,6 +9,7 @@ from elasticsearch import Elasticsearch
 from pymongo import MongoClient
 from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse
+from fastapi import HTTPException, status
 from requests.exceptions import ConnectionError, Timeout
 import numpy as np
 import warnings
@@ -28,6 +30,9 @@ import datetime
 from bson.regex import Regex
 import warnings; warnings.simplefilter('ignore')
 
+# Load environment variables from .env file
+load_dotenv()
+
 app = FastAPI()
 
 # Enable CORS
@@ -39,10 +44,10 @@ app.add_middleware(
 )
 
 # Define Elasticsearch connection
-es = Elasticsearch("http://localhost:9201")
+es = Elasticsearch([os.environ.get("ELASTICSEARCH_HOST")])
 
 # Connect to MongoDB
-client = MongoClient("mongodb+srv://tuansoi19127084:tuansoi19127084@cluster0.n8shx9d.mongodb.net/test?retryWrites=true&w=majority")
+client = MongoClient(os.environ.get("MONGODB_CONNECTION_STRING"))
 db = client['BaseOnAL']
 collection = db['test']
 
@@ -57,7 +62,7 @@ cursor = cnx.cursor()
 index_name = "jobs_index"
 
 # Đường dẫn đến tệp trên Google Drive
-file_stpwd = "https://drive.google.com/uc?id=1AQrnIFnqzPQbXXbYRADj5yh1I3_E_YMt"
+file_stpwd = os.environ.get("GOOGLE_DRIVE_FILE_URL")
 
 # Tên biến toàn cục để lưu trữ nội dung của tệp
 stopwords_vn = None
@@ -75,7 +80,7 @@ def load_stopwords():
 # Gọi hàm load_stopwords() để đảm bảo tệp đã được tải trước khi sử dụng
 stop_words = load_stopwords()
 
-file_url = "https://drive.google.com/uc?id=1kAK11AE9FIsLge78Ih9vzYCrGCxqOkOf"
+file_url = os.environ.get("JOB_FILE_URL")
 
 df = pd.read_csv(file_url)
 
@@ -227,7 +232,7 @@ def search_jobs(
                 "error": False,
                 "message": "Không tìm thấy công việc",
                 "data": None,
-                "status_code": 404
+                "status_code": 400
             }
         
         pagination_info = {
@@ -254,7 +259,7 @@ def search_jobs(
                     "pagination_info": pagination_info
                 }
             },
-            "status_code": 200
+            "status_code": status.HTTP_200_OK
         }
 
     except (ConnectionError, TimeoutError, Timeout) as e:
@@ -263,7 +268,7 @@ def search_jobs(
             "error": True,
             "message": "Lỗi mạng",
             "data": [],
-            "status_code": 503
+            "status_code": HTTP_503_SERVICE_UNAVAILABLE
         }
     except (ValueError, TypeError) as e:
         # Xử lý lỗi đầu vào gây crash hoặc lỗi xử lý không mong muốn
@@ -271,14 +276,14 @@ def search_jobs(
             "error": True,
             "message": "Lỗi đầu vào gây crash",
             "data": [],
-            "status_code": 400
+            "status_code": status.HTTP_400_BAD_REQUEST
         }
     except Exception as e:
         return {
             "error": True,
             "message": "Lổi đầu vào không hợp lệ/ Lỗi website đang gặp sự cố",
             "data": [],
-            "status_code": 500
+            "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR
         }
 
 
@@ -463,7 +468,7 @@ def get_user_profiles(job_title: str = Query(...), page: int = 1, limit: int = 1
             "error": True,
             "message": "Lỗi mạng",
             "data": [],
-            "status_code": 503
+            "status_code": HTTP_503_SERVICE_UNAVAILABLE
         }
     except (ValueError, TypeError) as e:
         # Xử lý lỗi đầu vào gây crash hoặc lỗi xử lý không mong muốn
@@ -471,14 +476,14 @@ def get_user_profiles(job_title: str = Query(...), page: int = 1, limit: int = 1
             "error": True,
             "message": "Lỗi đầu vào gây crash",
             "data": [],
-            "status_code": 400
+            "status_code": status.HTTP_400_BAD_REQUEST
         }
     except Exception as e:
         return {
             "error": True,
             "message": "Lổi đầu vào không hợp lệ/ Lỗi website đang gặp sự cố",
             "data": [],
-            "status_code": 500
+            "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR
         }
 
 # recommned job
@@ -494,7 +499,7 @@ users = None
 jobs = None
 user_acc = None
 
-file_url = "https://drive.google.com/uc?id=1kAK11AE9FIsLge78Ih9vzYCrGCxqOkOf"
+file_url = os.environ.get("JOB_FILE_URL")
 
 jobs = pd.read_csv(file_url)
 
@@ -973,7 +978,7 @@ def recommend_job_mongo(
             "error": True,
             "message": "Lỗi mạng",
             "data": [],
-            "status_code": 503
+            "status_code": HTTP_503_SERVICE_UNAVAILABLE
         }
     except (ValueError, TypeError) as e:
         # Xử lý lỗi đầu vào gây crash hoặc lỗi xử lý không mong muốn
@@ -981,12 +986,12 @@ def recommend_job_mongo(
             "error": True,
             "message": "Lỗi đầu vào gây crash",
             "data": [],
-            "status_code": 400
+            "status_code": status.HTTP_400_BAD_REQUEST
         }
     except Exception as e:
         return {
             "error": True,
             "message": "Lổi đầu vào không hợp lệ/ Lỗi website đang gặp sự cố",
             "data": [],
-            "status_code": 500
+            "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR
         }
