@@ -1,214 +1,251 @@
-import React from 'react';
-import { Page, Document, StyleSheet, View, Text, Image, Font} from '@react-pdf/renderer';
-
+import { Page, Document, StyleSheet, View, Text, Image, Font } from '@react-pdf/renderer';
+import { useEffect, useState, React } from 'react';
 const CVTemplate = ({ profile }) => {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (profile) {
+      setLoading(!loading);
+    }
+  }, [profile]);
+  if (loading === false) {
+    console.log(profile);
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View style={styles.headerSection}>
-          <View style={styles.avatarColumn}>
-            <View style={styles.avatar}>
-              <Image src={profile?.avatar} alt="" />
-            </View>
-          </View>
-          <View style={styles.infoWrapColumn}>
-            <View style={styles.name}>
-              <Text>{profile?.full_name}</Text>
-            </View>
-            <View style={styles.position}>
-              <Text>{profile?.good_at_position}</Text>
-            </View>
-            <View style={styles.aboutMe}>
-              <Text>{profile?.about_me}</Text>
-            </View>
-          </View>
+        
+      <View style={styles.top}>
+        <View style={styles.imgBox}>
+          <Image src={profile?.avatar} style={styles.img} />
         </View>
+        <View style={styles.topBox}>
+          <Text style={styles.name}>{profile?.full_name}</Text>
+          <Text style={styles.position}>{profile?.good_at_position}</Text>
+          <Text style={styles.text}>{profile?.about_me}</Text>
+        </View>
+      </View>
 
-        <View className="body-section">
-          <View className="left-section">
-            <View className="contact">
-              <View className="title">
-                <Text>CONTACT</Text>
-              </View>
-              <View className="contact-content">
-                <View className="contact-item">
-                  <View className="icon">
-                    <i className="la la-calendar"></i>
-                  </View>
-                  <View className="text">
-                    {profile?.date_of_birth}
-                  </View>
 
-                  <View className="icon">
-                    <i className="la la-phone"></i>
-                  </View>
-                  <View className="text">
-                    {profile?.phone}
-                  </View>
-
-                  <View className="icon">
-                    <i className="la la-home"></i>
-                  </View>
-                  <View className="text">
-                    {profile?.address}
-                  </View>
-
-                  <View className="icon">
-                    <i className="la la-envelope"></i>
-                  </View>
-                  <View className="text">
-                    {profile?.email}
-                  </View>
-                </View>
-              </View>
+        <View style={styles.body}>
+          <View style={styles.left}>
+            <View style={styles.box}>
+              <Text style={styles.title}>LIÊN HỆ</Text>
+              <Text style={styles.text}>Email: {profile?.email}</Text>
+              <Text style={styles.text}>SĐT: {profile?.phone}</Text>
+              <Text style={styles.text}>Địa chỉ: {profile?.address}</Text>
+              <Text style={styles.text}>Ngày sinh: {profile?.date_of_birth && new Date(profile.date_of_birth).toLocaleDateString('en-GB')}</Text>
             </View>
-
-            <View className="education">
-              <View className="title">
-                EDUCATION
-              </View>
-              <View className="content">
-                <View className="item">
-                  <View className="time">
-                    2015 - 2019 (Fixed)
-                  </View>
-                  <View className="sub-title">
-                    {profile?.education?.university}
-                  </View>
-                  <View className="sub-title2">
-                    {profile?.education?.major}
-                  </View>
-                  <View className="text">
-                    {profile?.education?.description}
-                  </View>
+            <View style={styles.box}>
+              <Text style={styles.title}>HỌC VẤN</Text>
+              {profile?.educations.map((edu) => (
+                <View>
+                  <Text style={styles.time}>{edu.start} - {edu.end}</Text>
+                  <Text style={styles.subtitle}>{edu.university}</Text>
+                  <Text style={styles.additional_text}>{edu.major}</Text>
                 </View>
-              </View>
+              ))}
             </View>
-
-            <View className="skills">
-              <View className="title">
-                SKILLS
-              </View>
-              <View className="content">
-                <ul>
-                  {profile?.skills.map((skill) => (
-                    <li key={skill.id}>
-                      {skill.name}
-                    </li>
-                  ))}
-                </ul>
-              </View>
+            <View style={styles.box}>
+              <Text style={styles.title}>KĨ NĂNG</Text>
+              {/* map skills */}
+              {profile?.skills.map((skill) => (
+                <Text style={styles.textLower}>{skill.skill}</Text>
+              ))}
+            </View>
+            <View style={styles.boxLast}>
+              <Text style={styles.title}>THÀNH TỰU</Text>
+              {profile?.achievements.map((ach) => (
+                <View>
+                  {/* <Text style={styles.time}>{ach?.start}</Text> */}
+                  <Text style={styles.textLower}>{ach.description}</Text>
+                </View>
+                ))}
             </View>
           </View>
-
-          <View className="right-section">
-            <View className="experience">
-              <View className="title">
-                EXPERIENCE
-              </View>
-              <View className="content">
-                {profile?.experiences.map((exp) => (
-                  <View className="item" key={exp.id}>
-                    <View className="time">
-                      {exp.start} - {exp.end}
-                    </View>
-                    <View className="sub-title">
-                      {exp?.position}
-                    </View>
-                    <View className="sub-title2">
-                      {exp?.title}
-                    </View>
-                    <View className="text">
-                      {exp?.description}
-                    </View>
-                  </View>
-                ))}
-              </View>
+          <View style={styles.right}>
+            <View style={styles.boxLast}>
+              <Text style={styles.title}>KINH NGHIỆM LÀM VIỆC</Text>
+              {profile?.experiences.map((exp) => (
+                <View>
+                  <Text style={styles.time}>{exp?.start && new Date(exp.start).toLocaleDateString('en-GB')} - {exp.end && new Date(exp.end).toLocaleDateString('en-GB')}</Text>
+                  <Text style={styles.subtitle}>{exp.position}</Text>
+                  <Text style={styles.textLower}>{exp.title}</Text>
+                  <Text style={styles.text}>{exp.description}</Text>
+                </View>
+              ))
+              }
             </View>
           </View>
         </View>
       </Page>
     </Document>
   );
+  }
+  return (
+    <a>Loading...</a>
+  );
 };
+
 Font.register({
-    family: 'Roboto',
-    src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-light-webfont.ttf',
-  });
+  family: 'Roboto Light',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-light-webfont.ttf',
+});
+Font.register({
+  family: 'Roboto',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-regular-webfont.ttf',
+});
+Font.register({
+  family: 'Roboto Medium',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-medium-webfont.ttf',
+});
+Font.register({
+  family: 'Roboto Bold',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bold-webfont.ttf',
+});
+Font.register({
+  family: 'Roboto Italic',
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-italic-webfont.ttf',
+});
 // Create styles
 const styles = StyleSheet.create({
   page: {
-    flexDirection: 'row',
+    display: 'flex',
+    // justifyContent: 'center',
+    // alignItems: 'center',
     padding: 20,
     fontFamily: 'Roboto',
   },
-  headerSection: {
+  top: {
     flexDirection: 'row',
-    width: '100%',
-    height: 200,
-    padding: 20,
-    // borderBottom: '1px solid #ccc',
+    borderBottomWidth: 1,
+    borderBottomColor: '#112131',
+    borderBottomStyle: 'solid',
+    alignItems: 'stretch',
+    paddingBottom: 20,
   },
-  avatarColumn: {
-    width: 120,
-    marginRight: 20,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatar: {
-    width: '100%',
-    height: '100%',
-    borderRadius: '50%',
-    overflow: 'hidden',
-  },
-  infoWrapColumn: {
-    flex: 1,
+  topBox: {
+    flex: 1, // Take up all available space
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
+    alignItems: 'flex-start',
+    paddingLeft: 20,
+    paddingBottom: 20,
+  },
+  imgBox: {
+    width: 200,
+    height: 200,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    border: 0.5,
+    borderRadius: '50%',
+    overflow: 'hidden',
+  },
+  img: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
   },
   name: {
-    fontSize: 32,
-    fontWeight: 700,    
-    marginBottom: 10,
-    color: '#2971cf',
+    fontSize: 30,
+    fontWeight: 'bold',
+    // textTransform: 'uppercase',
+    fontFamily: 'Roboto Bold',
   },
   position: {
-    fontSize: 20,
-    fontWeight: 500,
-    marginBottom: 10,
-    textTransform: 'uppercase',
-    color: 'green',
-  },
-  aboutMe: {
     fontSize: 16,
-    fontWeight: 400,
+    fontWeight: 'bold',
+    // textTransform: 'uppercase',
+    color: '#12b012',
+  },
+  title: {
+    paddingTop: 10,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    color: '#12b012',
+    fontFamily: 'Roboto Bold',
+    marginBottom: 5,
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textTransform: 'capitalize',
+  },
+  additional_text: {
+    fontSize: 12,
+    textTransform: 'capitalize',
     marginBottom: 10,
   },
-    bodySection: {
-    display: 'flex',
+  textLower: {
+    fontSize: 12,
+    textTransform: 'lowercase',
+    marginBottom: 10,
+  },
+  textCap: {
+    fontSize: 12,
+    textTransform: 'capitalize',
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 12,
+    marginBottom: 5,
+  },
+  textBold: {
+    fontSize: 12,
+    // fontWeight: 'bold',
+    fontFamily: 'Roboto Bold',
+  },
+  bullet: {
+    content: '•',
+    color: '#12b012',
+    fontSize: 20,
+    fontWeight: 'bold',
+    display: 'inline-block',
+    width: 10,
+    marginLeft: -10,
+  },
+  time: {
+    fontSize: 12,
+    fontFamily: 'Roboto Italic',
+    marginBottom: 5,
+    marginTop: 5,
+    // fontStyle: 'italic',
+  },
+  body: {
+    flex: 1,
     flexDirection: 'row',
-    width: '100%',
-    padding: 20,
-    },
-    title: {
-    fontSize: 24,
-    fontWeight: 700,
-    marginBottom: 10,
-    textTransform: 'uppercase',
-    },
-    subtitle: {
-    fontSize: 20,
-    fontWeight: 500,
-    marginBottom: 10,
-    },
-    subtitle2: {
-    fontSize: 16,
-    fontWeight: 500,
-    marginBottom: 10,
-    fontStyle: 'bold',
-    },
+  },
+  left: {
+    flexDirection: 'column',
+    width: '50%',
+    paddingRight: 15,
+    borderRightWidth: 1,
+    borderRightColor: '#112131',
+    borderRightStyle: 'solid',
+  },
+  right: {
+    flexDirection: 'column',
+    width: '50%',
+    paddingRight: 15,
+    marginLeft: 15,
+  },
+  box: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    borderBottomWidth: 1,
+    borderBottomColor: '#112131',
+    borderBottomStyle: 'solid',
+    paddingBottom: 10,
+  },
+  boxLast: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+  },
 });
 
 export default CVTemplate;

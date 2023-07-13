@@ -22,7 +22,7 @@ const index = () => {
       const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
       if (fetchedProfile.error === false) {
           setProfile(fetchedProfile.data.user_profile);
-          console.log("Profile:", fetchedProfile.data.user_profile);
+          // console.log("Profile:", fetchedProfile.data.user_profile);
       }
       else {
           console.log("Failed to fetch profile data");
@@ -30,7 +30,7 @@ const index = () => {
   }
   useEffect(() => {
       fetchUser();
-      console.log(profile);
+      // console.log(profile);
   }
   , []);
   if (!user) {
@@ -101,7 +101,7 @@ const index = () => {
       {/* <!-- End Dashboard --> */}
 
       <CopyrightFooter />
-      <CVTemplate profile={profile}/>
+      {/* <CVTemplate profile={profile}/> */}
       {/* <!-- End Copyright --> */}
     </div>
     // End page-wrapper
