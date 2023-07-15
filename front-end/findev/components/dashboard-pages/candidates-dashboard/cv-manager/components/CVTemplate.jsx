@@ -1,12 +1,17 @@
-import { Page, Document, StyleSheet, View, Text, Image, Font } from '@react-pdf/renderer';
-import { useEffect, useState, React } from 'react';
-const CVTemplate = ({ profile }) => {
+import { Page, Document, StyleSheet, View, Text, Image, Font, Svg } from '@react-pdf/renderer';
+import { useEffect, useState, React} from 'react';
+// import html2canvas from 'html2canvas';
+
+// import {logo} from '/public/images/logo.png';
+const CVTemplate = ({ profile, avatar }) => {
+  // console.log(avatar);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (profile) {
       setLoading(!loading);
     }
   }, [profile]);
+
   if (loading === false) {
     console.log(profile);
   return (
@@ -16,6 +21,13 @@ const CVTemplate = ({ profile }) => {
       <View style={styles.top}>
         <View style={styles.imgBox}>
           <Image src={profile?.avatar} style={styles.img} />
+          {/* <Image src={{ uri: profile?.avatar,
+          method: 'GET', 
+          headers: {"Content-Type": "application/json",
+                    "Accept":"application/json"}, 
+          body: '',
+          mode:'no-cors' }} 
+          style={styles.img} /> */}
         </View>
         <View style={styles.topBox}>
           <Text style={styles.name}>{profile?.full_name}</Text>
@@ -39,40 +51,52 @@ const CVTemplate = ({ profile }) => {
               {profile?.educations.map((edu) => (
                 <View>
                   <Text style={styles.time}>{edu.start} - {edu.end}</Text>
-                  <Text style={styles.subtitle}>{edu.university}</Text>
+                  <Text style={styles.subtitle}>{edu.university.toLowerCase()}</Text>
                   <Text style={styles.additional_text}>{edu.major}</Text>
                 </View>
               ))}
             </View>
             <View style={styles.box}>
-              <Text style={styles.title}>KĨ NĂNG</Text>
-              {/* map skills */}
-              {profile?.skills.map((skill) => (
-                <Text style={styles.textLower}>{skill.skill}</Text>
-              ))}
+              {profile?.skills.length > 0 ? (
+                <>
+                <Text style={styles.title}>KĨ NĂNG</Text>
+                {profile?.skills.map((skill) => (
+                  <Text style={styles.text}>• {skill.skill}</Text>
+                ))}
+                </>
+              ):null}
             </View>
             <View style={styles.boxLast}>
-              <Text style={styles.title}>THÀNH TỰU</Text>
-              {profile?.achievements.map((ach) => (
-                <View>
-                  {/* <Text style={styles.time}>{ach?.start}</Text> */}
-                  <Text style={styles.textLower}>{ach.description}</Text>
-                </View>
+            {profile?.achievements.length > 0 ? (
+              <>
+                <Text style={styles.title}>THÀNH TỰU</Text>
+                {profile?.achievements.map((ach, index) => (
+                  <View key={index}>
+                    <Text style={styles.text}>• {ach.description}</Text>
+                  </View>
                 ))}
-            </View>
+              </>
+            ) : null}
+          </View>
           </View>
           <View style={styles.right}>
-            <View style={styles.boxLast}>
-              <Text style={styles.title}>KINH NGHIỆM LÀM VIỆC</Text>
-              {profile?.experiences.map((exp) => (
-                <View>
-                  <Text style={styles.time}>{exp?.start && new Date(exp.start).toLocaleDateString('en-GB')} - {exp.end && new Date(exp.end).toLocaleDateString('en-GB')}</Text>
-                  <Text style={styles.subtitle}>{exp.position}</Text>
-                  <Text style={styles.textLower}>{exp.title}</Text>
-                  <Text style={styles.text}>{exp.description}</Text>
-                </View>
-              ))
-              }
+          <View style={styles.boxLast}>
+              {profile?.experiences.length > 0 ? (
+                <>
+                  <Text style={styles.title}>KINH NGHIỆM LÀM VIỆC</Text>
+                  {profile?.experiences.map((exp) => (
+                    <View key={exp.id}>
+                      <Text style={styles.time}>
+                        {exp?.start && new Date(exp.start).toLocaleDateString('en-GB')} -{' '}
+                        {exp.end && new Date(exp.end).toLocaleDateString('en-GB')}
+                      </Text>
+                      <Text style={styles.subtitle}>{exp.position}</Text>
+                      <Text style={styles.text}>• {exp.title}</Text>
+                      <Text style={styles.text}>{exp.description}</Text>
+                    </View>
+                  ))}
+                </>
+              ) : null}
             </View>
           </View>
         </View>
@@ -154,9 +178,10 @@ const styles = StyleSheet.create({
   },
   position: {
     fontSize: 16,
-    fontWeight: 'bold',
-    // textTransform: 'uppercase',
+    // fontWeight: 'bold',
+    textTransform: 'uppercase',
     color: '#12b012',
+    fontFamily: 'Roboto Bold',
   },
   title: {
     paddingTop: 10,
@@ -191,19 +216,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 5,
   },
+  textUpper: {
+    fontSize: 12,
+    textTransform: 'uppercase',
+    marginBottom: 5,
+  },
   textBold: {
     fontSize: 12,
     // fontWeight: 'bold',
     fontFamily: 'Roboto Bold',
-  },
-  bullet: {
-    content: '•',
-    color: '#12b012',
-    fontSize: 20,
-    fontWeight: 'bold',
-    display: 'inline-block',
-    width: 10,
-    marginLeft: -10,
   },
   time: {
     fontSize: 12,
