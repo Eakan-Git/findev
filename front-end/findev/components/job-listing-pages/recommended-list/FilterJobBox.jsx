@@ -29,15 +29,15 @@ const FilterJobBox = () => {
         useEffect(() => {
         // construct query url
         let queryUrl = `${recommendUrl}${user.userAccount.id}`;
-        if(currentPage !== 1) {
-            queryUrl = `${queryUrl}?page=${currentPage}`;
-            // update browser url
-            router.push(`${router.pathname}?page=${currentPage}`);
-        }
+        // if(currentPage !== 1) {
+        //     queryUrl = `${queryUrl}?page=${currentPage}`;
+        //     // update browser url
+        //     router.push(`${router.pathname}?page=${currentPage}`);
+        // }
         // console.log(queryUrl);
         // call api to get jobs with keyword and location as params
         const getJobs = async () => {
-        // console.log(queryUrl);
+        console.log(queryUrl);
         const res = await fetch(queryUrl);
         const data = await res.json();
         // console.log(data.data);
@@ -119,6 +119,7 @@ const FilterJobBox = () => {
     let content = undefined;
 
     if (jobs !== undefined && jobs !== null) {
+        console.log(jobs);
         const filteredJobs = jobs.data.jobs.data;
         // console.log(filteredJobs);
             // .filter(keywordFilter)
@@ -140,11 +141,11 @@ const FilterJobBox = () => {
                             <span className="company-logo">
                                 <Link href={`/job/${item.job_id}`}>
                                 <img src={item?.company_logo || "/images/logo.png"}
-                                title={item?.company_name || "Company Logo"} 
-                                alt={item?.company_name || "Company Logo"}
+                                title={item?.company || "Company Logo"} 
+                                alt={item?.company || "Company Logo"}
                                 />
                                 </Link>
-                                {/* <img src={item?.employer_profile.company_profile.logo} alt={item?.company_name} /> */}
+                                {/* <img src={item?.employer_profile.company_profile.logo} alt={item?.company} /> */}
                             </span>
                             <h4>
                                 <Link href={`/job/${item.id}`}
@@ -162,10 +163,10 @@ const FilterJobBox = () => {
                                 <li>
                                     <span className="icon flaticon-briefcase"></span>
                                     <Link href={`/employer/${item?.company_id || 1}`}
-                                    alt={item?.company_name}
-                                    title={item?.company_name}
+                                    alt={item?.company}
+                                    title={item?.company}
                                     >
-                                    {item?.company_name.length > 12 ? item?.company_name.slice(0, 12) + "..." : item?.company_name}
+                                    {item?.company.length > 12 ? item?.company.slice(0, 12) + "..." : item?.company}
                                     </Link>
                                 </li>
                                 <li>
@@ -323,7 +324,7 @@ const FilterJobBox = () => {
 
             <div className="row">{content}</div>
 
-            <Pagination jobs={jobs} handlePageChange={handlePageChange}/>
+            {/* <Pagination jobs={jobs} handlePageChange={handlePageChange}/> */}
         </>
     );
 };
