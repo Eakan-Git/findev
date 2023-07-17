@@ -28,7 +28,7 @@ const FilterJobBox = () => {
     if(user) {
         useEffect(() => {
         // construct query url
-        let queryUrl = `${recommendUrl}${user.userAccount.id}`;
+        let queryUrl = `${recommendUrl}/${user.userAccount.id}`;
         // if(currentPage !== 1) {
         //     queryUrl = `${queryUrl}?page=${currentPage}`;
         //     // update browser url
