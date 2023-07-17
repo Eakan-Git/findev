@@ -8,12 +8,116 @@ import ContactInfoBox from "./components/ContactInfoBox";
 import CopyrightFooter from "../../CopyrightFooter";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
-
+import {useState, useEffect} from "react";
+import axios from 'axios';
+import localUrl from "../../../../utils/path.js"
+import { useSelector } from "react-redux";
 const index = () => {
-  const handleUploadCV = (e) => {
+  const { user } = useSelector((state) => state.user);
+  const handleUploadCV = async (e) => {
     const file = e.target.files[0];
-    console.log(file);
+
+    // Tạo một đối tượng FormData để đính kèm file
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      // Gửi yêu cầu POST đến API với file đính kèm
+      const response = await axios.post(
+        'http://20.242.247.247/api/cv/read-cv',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      const data = response?.data.user_profile;
+      const newEducation = {
+        university : data?.educations.university,
+        major : data?.educations.major,
+        start : data?.educations.start,
+        end : data?.educations.end,
+      };
+      await axios.post(`${localUrl}/user-educations/`, newEducation,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': user.token
+        }
+      })
+
+      const newProfile = {
+        full_name: data?.full_name,
+        avatar: data?.avatar,
+        about_me: data?.about_me,
+        good_at_position: data?.good_at_position,
+        date_of_birth: data?.date_of_birth,
+        address: data?.address,
+        email: data?.email,
+        phone: data?.phone,
+      };
+      await axios.put(`${localUrl}/user-profiles/`, newProfile,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': user.token
+        }
+      })
+
+    const experiences = data?.experience; 
+      for (const experience of experiences) {
+        await axios.post(`${localUrl}/user-experiences`, 
+        {
+          tittle : achievement.description,
+          position: achievement.position,
+          description: achievement.description,
+          start: achievement.start,
+          end: achievement.end,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': user.token,
+          }
+        }
+        )
+      }
+
+      const achievements = data?.achievements; 
+      for (const achievement of achievements) {
+        await axios.post(`${localUrl}/user-achievements`, 
+        {
+          description : achievement.description
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': user.token,
+          }
+        }
+        )
+      }
+
+      const skills = data?.skills; 
+      for (const skill of skills) {
+        await axios.post(`${localUrl}/user-achievements`, 
+        {
+          skill : skill.skill
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': user.token,
+          }
+        }
+        )
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
+
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
