@@ -3,17 +3,111 @@ import LoginPopup from "../../../common/form/login/LoginPopup";
 import DashboardCandidatesSidebar from "../../../header/DashboardCandidatesSidebar";
 import BreadCrumb from "../../BreadCrumb";
 import MyProfile from "./components/my-profile";
-import SocialNetworkBox from "./components/SocialNetworkBox";
-import ContactInfoBox from "./components/ContactInfoBox";
+// import SocialNetworkBox from "./components/SocialNetworkBox";
+// import ContactInfoBox from "./components/ContactInfoBox";
 import CopyrightFooter from "../../CopyrightFooter";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
-
+import { readCVUrl } from "/utils/path";
+import { useState, useEffect } from "react";
+// import { Modal } from "@mui/material";
+import { useSelector } from "react-redux";
+import { localUrl } from "/utils/path";
 const index = () => {
-  const handleUploadCV = (e) => {
-    const file = e.target.files[0];
-    console.log(file);
+  const { user } = useSelector((state) => state.user);
+  const [profile, setProfile] = useState(null);
+  const [defaultProfile, setDefaultProfile] = useState(null);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [modifiedFields, setModifiedFields] = useState({});
+  const openModal = () => {
+    setIsOpenModal(true);
   };
+
+  const closeModal = () => {
+    setIsOpenModal(false);
+  };
+
+  const handleUploadCV = async (e) => {
+    // e.preventDefault();
+    const file = e.target.files[0];
+    // console.log(file);
+    const formData = new FormData();
+    formData.append("file", file);
+  
+    try {
+      const res = await fetch(readCVUrl, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      // console.log(data);
+      delete data.data.user_profile.avatar;
+      delete data.data.user_profile.github;
+      delete data.data.user_profile.link;
+      delete data.data.user_profile.date_of_birth;
+      setProfile(data.data.user_profile);
+      // ask user to confirm
+      if (window.confirm("Bạn có muốn thay đổi thông tin không?")) {
+        setIsEdit(!isEdit);
+      }
+    } catch (error) {
+      console.log("An error occurred:", error);
+    }
+  };
+  
+  useEffect(() => {
+    // console.log(profile);
+    bulkUpdateProfile();
+  }, [isEdit]);
+  
+  const bulkUpdateProfile = async () => {
+    try {
+      const updatedFields = {};
+      Object.entries(profile).forEach(([key, value]) => {
+        updatedFields[key] = value;
+      });
+  
+      setModifiedFields(updatedFields);
+      console.log(updatedFields);
+      const msg = await putProfile(user.token, updatedFields);
+      console.log(msg);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  const putProfile = async (token, updatedFields) => {
+    try {
+      // Serialize the updatedFields object into x-www-form-urlencoded format
+      const formData = new URLSearchParams();
+  
+      Object.entries(updatedFields).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+  
+      const response = await fetch(`${localUrl}/user-profiles/`, {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString(), // Pass the serialized form data as the request body
+      });
+  
+      if (response.error === true) {
+        console.error(response.message);
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+  
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>

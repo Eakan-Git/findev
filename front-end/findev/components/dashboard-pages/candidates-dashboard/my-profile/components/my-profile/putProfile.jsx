@@ -19,8 +19,8 @@ const putProfile = async (token, updatedFields) => {
       body: formData.toString(), // Pass the serialized form data as the request body
     });
 
-    if (!response.ok) {
-      console.error('Failed to update profile');
+    if (response.error === true) {
+      console.error(response.message);
     }
 
     const data = await response.json();
