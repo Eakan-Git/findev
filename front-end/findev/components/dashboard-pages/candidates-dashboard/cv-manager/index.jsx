@@ -118,7 +118,7 @@ const index = () => {
                     />
                     &nbsp;&nbsp;
                     {profile && (
-                      <PDFDownloadLink document={<CVTemplate profile={profile} />} fileName="CV.pdf">
+                      <PDFDownloadLink document={<CVTemplate profile={profile} />} fileName={`${profile.full_name.replace(/ /g, '-')}_CV.pdf`}>
                         <button className="theme-btn btn-style-one">
                           Tạo CV tự động&nbsp;<i className="la la-download"></i>
                         </button>
