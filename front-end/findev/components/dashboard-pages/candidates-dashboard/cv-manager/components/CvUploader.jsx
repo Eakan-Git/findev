@@ -83,11 +83,11 @@ const CvUploader = ({ user, onFileUpload }) => {
               onChange={cvManagerHandler}
             />
             <label className="cv-uploadButton" htmlFor="upload">
-              <span className="title">Drop files here to upload</span>
+              <span className="title">Bỏ tệp CV của bạn vào đây</span>
               <span className="text">
-                To upload file size is (Max 5Mb) and allowed file types are (.doc, .docx, .pdf)
+              Kích thước tệp tải lên là (Tối đa 5Mb) và loại tệp cho phép là (.doc, .docx, .pdf).
               </span>
-              <span className="theme-btn btn-style-one">Upload Resume</span>
+              <span className="theme-btn btn-style-one">Đăng tải</span>
               {getError !== "" ? <p className="ui-danger mb-0">{getError}</p> : undefined}
             </label>
           </div>
