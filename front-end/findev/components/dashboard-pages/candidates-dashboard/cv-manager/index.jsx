@@ -76,13 +76,21 @@ const Index = () => {
                       Đăng tải CV&nbsp;<i className="la la-cloud-upload"></i>
                     </button>
                     &nbsp;&nbsp;
+<<<<<<< HEAD
+                    <PDFDownloadLink document={<CVTemplate profile={profile} />} fileName="CV.pdf">
+                      <button className="theme-btn btn-style-one">
+                        Tạo CV tự động&nbsp;<i className="la la-download"></i>
+                      </button>
+                    </PDFDownloadLink>
+=======
                     {profile && (
-                      <PDFDownloadLink document={<CVTemplate profile={profile} />} fileName="CV.pdf">
+                      <PDFDownloadLink document={<CVTemplate profile={profile} />} fileName={`${profile.full_name.replace(/ /g, '-')}_CV.pdf`}>
                         <button className="theme-btn btn-style-one">
                           Tạo CV tự động&nbsp;<i className="la la-download"></i>
                         </button>
                       </PDFDownloadLink>
                     )}
+>>>>>>> eakan-2
                   </div>
                 </div>
                 {isUploaderVisible && <CvUploader user={user} onFileUpload={handleFileUpload} />}
