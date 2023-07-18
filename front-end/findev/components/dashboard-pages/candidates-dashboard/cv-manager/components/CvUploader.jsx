@@ -1,123 +1,129 @@
 import { useState } from "react";
+import axios from "axios"
+import { localUrl } from "/utils/path";
 
-// validation chaching
-function checkFileTypes(files) {
-    const allowedTypes = [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ];
-    for (let i = 0; i < files.length; i++) {
-        if (!allowedTypes.includes(files[i].type)) {
-            return false;
-        }
-    }
-    return true;
+// validation checking
+function checkFileType(file) {
+  const allowedTypes = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
+  return allowedTypes.includes(file.type);
 }
 
-const CvUploader = () => {
-    const [getManager, setManager] = useState([]);
-    const [getError, setError] = useState("");
+const CvUploader = ({ user, onFileUpload }) => {
+  const [getCvFile, setCvFile] = useState(null);
+  const [cvTitle, setCvTitle] = useState("");
+  const [cvNote, setCvNote] = useState("");
+  const [getError, setError] = useState("");
 
-    const cvManagerHandler = (e) => {
-        const data = Array.from(e.target.files);
+  const cvManagerHandler = (e) => {
+    const file = e.target.files[0];
+    if (!file) return; // If no file is selected, do nothing
 
-        const isExist = getManager?.some((file1) =>
-            data.some((file2) => file1.name === file2.name)
-        );
-        if (!isExist) {
-            if (checkFileTypes(data)) {
-                setManager(getManager.concat(data));
-                setError("");
-            } else {
-                setError("Only accept  (.doc, .docx, .pdf) file");
-            }
-        } else {
-            setError("File already exists");
+    if (checkFileType(file)) {
+      setCvFile(file);
+      setError("");
+      // Call the file upload handler function passed from the parent component
+      onFileUpload(file);
+    } else {
+      setError("Only accept (.doc, .docx, .pdf) file");
+    }
+  };
+
+  const deleteHandler = () => {
+    setCvFile(null);
+  };
+
+  const saveCvHandler = async () => {
+    const formData = new FormData();
+    formData.append("user_id", user.userAccount.id);
+    formData.append("cv_name", cvTitle);
+    formData.append("cv_note", cvNote);
+    formData.append("cv_path", getCvFile);
+    try
+    {
+        const res = await axios.post(`${localUrl}/cvs`, formData,
+        {
+        headers: {
+            "Content-Type": "multipart/form-data",
+            'Authorization': user.token
+          }
         }
-    };
+        )
+        if (res.message === "Unauthenticated.") {
+            alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+            router.push("/");
+            dispatch(logoutUser());
+        }
+        setCvFile(null); // Reset the selected file
+        setCvTitle(""); // Clear the title input
+        setCvNote(""); // Clear the note input
+    }
+    catch (err)
+    {
+        console.log(err)
+    }
+  };
 
-    // delete image
-    const deleteHandler = (name) => {
-        const deleted = getManager?.filter((file) => file.name !== name);
-        setManager(deleted);
-    };
-
-    return (
-        <>
-            {/* Start Upload resule */}
-            <div className="uploading-resume">
-                <div className="uploadButton">
-                    <input
-                        className="uploadButton-input"
-                        type="file"
-                        name="attachments[]"
-                        accept=".doc,.docx,.xml,application/msword,application/pdf, image/*"
-                        id="upload"
-                        multiple
-                        onChange={cvManagerHandler}
-                    />
-                    <label className="cv-uploadButton" htmlFor="upload">
-                        <span className="title">Drop files here to upload</span>
-                        <span className="text">
-                            To upload file size is (Max 5Mb) and allowed file
-                            types are (.doc, .docx, .pdf)
-                        </span>
-                        <span className="theme-btn btn-style-one">
-                            Upload Resume
-                        </span>
-                        {getError !== "" ? (
-                            <p className="ui-danger mb-0">{getError}</p>
-                        ) : undefined}
-                    </label>
-                    <span className="uploadButton-file-name"></span>
-                </div>
+  return (
+    <>
+      {/* Start Upload resule */}
+      <div className="uploading-resume">
+        {!getCvFile ? (
+          // Show the drop file section if no file is selected or after saving
+          <div className="uploadButton">
+            <input
+              className="uploadButton-input"
+              type="file"
+              name="attachments[]"
+              accept=".doc,.docx,.xml,application/msword,application/pdf, image/*"
+              id="upload"
+              onChange={cvManagerHandler}
+            />
+            <label className="cv-uploadButton" htmlFor="upload">
+              <span className="title">Bỏ tệp CV của bạn vào đây</span>
+              <span className="text">
+              Kích thước tệp tải lên là (Tối đa 5Mb) và loại tệp cho phép là (.doc, .docx, .pdf).
+              </span>
+              <span className="theme-btn btn-style-one">Đăng tải</span>
+              {getError !== "" ? <p className="ui-danger mb-0">{getError}</p> : undefined}
+            </label>
+          </div>
+        ) : (
+          // Show the selected file section if a file is uploaded
+          <div className="cv-review-box">
+            <span className="title">{getCvFile.name}</span>
+            <div className="edit-btns">
+              <button onClick={deleteHandler}>
+                <span className="la la-trash"></span>
+              </button>
             </div>
-            {/* End upload-resume */}
 
-            {/* Start resume Preview  */}
-            <div className="files-outer">
-                {getManager?.map((file, i) => (
-                    <div key={i} className="file-edit-box">
-                        <span className="title">{file.name}</span>
-                        <div className="edit-btns">
-                            <button>
-                                <span className="la la-pencil"></span>
-                            </button>
-                            <button onClick={() => deleteHandler(file.name)}>
-                                <span className="la la-trash"></span>
-                            </button>
-                        </div>
-                    </div>
-                ))}
-
-                {/* <div className="file-edit-box">
-                    <span className="title">Sample CV</span>
-                    <div className="edit-btns">
-                        <button>
-                            <span className="la la-pencil"></span>
-                        </button>
-                        <button>
-                            <span className="la la-trash"></span>
-                        </button>
-                    </div>
-                </div>
-
-                <div className="file-edit-box">
-                    <span className="title">Sample CV</span>
-                    <div className="edit-btns">
-                        <button>
-                            <span className="la la-pencil"></span>
-                        </button>
-                        <button>
-                            <span className="la la-trash"></span>
-                        </button>
-                    </div>
-                </div>*/}
+            {/* Title and Note input */}
+            <div className="cv-input-section">
+              <input
+                type="text"
+                placeholder="Tên CV"
+                value={cvTitle}
+                onChange={(e) => setCvTitle(e.target.value)}
+              />
+              <textarea
+                placeholder="Ghi chú"
+                value={cvNote}
+                onChange={(e) => setCvNote(e.target.value)}
+              />
+              <button className="theme-btn btn-style-one" onClick={saveCvHandler}>
+                Lưu CV
+              </button>
             </div>
-            {/* End resume Preview  */}
-        </>
-    );
+          </div>
+        )}
+      </div>
+      {/* End upload-resume */}
+    </>
+  );
 };
 
 export default CvUploader;
