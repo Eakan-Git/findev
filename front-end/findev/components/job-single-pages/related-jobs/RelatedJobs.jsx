@@ -1,27 +1,28 @@
 import Link from "next/link";
-import { searchUrl } from "../../../utils/path";
+import { relevantUrl } from "../../../utils/path";
 import { useState, useEffect } from "react";
-
+import axios from "axios"
 const RelatedJobs = ({ title }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const queryUrl = `${searchUrl}?keyword=${encodeURIComponent(title)}&limit=6`;
+  const queryUrl = `${relevantUrl}/${encodeURIComponent(title)}`;
   useEffect(() => {
     const getJob = async () => {
       try {
-        // console.log(queryUrl);
-        const res = await fetch(`${queryUrl}`);
-        if (res.error) {
-          throw new Error("Failed to fetch job");
-        }
-        const resData = await res.json();
-        // console.log(resData);
-        const fetchedJob = resData?.data?.jobs.data;
+        console.log(queryUrl);
+        const res = await axios.get(`${queryUrl}`);
+        // if (res.error) {
+        //   console.log(res.error)
+        // }
+        // const resData = await res.json();
+        console.log(res);
+        const fetchedJob = res?.data.data;
         // console.log(fetchedJob);
         setJobs(fetchedJob || null);
       } catch (err) {
         setError(err.message);
+        console.log(err)
       } finally {
         setLoading(false);
       }

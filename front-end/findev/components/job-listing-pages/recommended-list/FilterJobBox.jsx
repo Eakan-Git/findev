@@ -28,7 +28,7 @@ const FilterJobBox = () => {
     if(user) {
         useEffect(() => {
         // construct query url
-        let queryUrl = `${recommendUrl}${user.userAccount.id}`;
+        let queryUrl = `${recommendUrl}/${user.userAccount.id}`;
         // if(currentPage !== 1) {
         //     queryUrl = `${queryUrl}?page=${currentPage}`;
         //     // update browser url
@@ -119,7 +119,7 @@ const FilterJobBox = () => {
     let content = undefined;
 
     if (jobs !== undefined && jobs !== null) {
-        console.log(jobs);
+        // console.log(jobs);
         const filteredJobs = jobs.data.jobs.data;
         // console.log(filteredJobs);
             // .filter(keywordFilter)
@@ -135,6 +135,7 @@ const FilterJobBox = () => {
 
         if (filteredJobs.length > 0) {
             content = filteredJobs.map((item) => (
+                console.log(item),
                 <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
                     <div className="inner-box">
                         <div className="content">
@@ -148,7 +149,7 @@ const FilterJobBox = () => {
                                 {/* <img src={item?.employer_profile.company_profile.logo} alt={item?.company} /> */}
                             </span>
                             <h4>
-                                <Link href={`/job/${item.id}`}
+                                <Link href={`/job/${item.job_id}`}
                                 alt={item.title}
                                 title={item.title}
                                 >
@@ -175,8 +176,8 @@ const FilterJobBox = () => {
                                         and get text before ':' using split
                                     */}
                                     {/* {item.location[0].split(":")[0]} */}
-                                    {/* {item.location.split(":")[0] || "Không xác định"}
-                                     */}
+                                    {item.addresses.split(":")[0] || "Không xác định"}
+                                    
                                 </li>
                                 <li>
                                     <span className="icon flaticon-clock-3"></span> {item.deadline}
