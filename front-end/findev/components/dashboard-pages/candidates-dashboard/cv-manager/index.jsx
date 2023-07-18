@@ -1,149 +1,105 @@
-import React, { useRef, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useRouter } from "next/router";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MobileMenu from "../../../header/MobileMenu";
 import LoginPopup from "../../../common/form/login/LoginPopup";
 import DashboardCandidatesSidebar from "../../../header/DashboardCandidatesSidebar";
 import BreadCrumb from "../../BreadCrumb";
+import CopyrightFooter from "../../CopyrightFooter";
+import CvUploader from "./components/CvUploader"; // Import the CvUploader component here
+import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 import CVListingsTable from "./components/CVListingsTable";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import CVTemplate from "./components/CVTemplate";
 import { fetchProfile } from "./components/fetchProfile";
-import {localUrl} from "/utils/path";
-const index = () => {
+import { useEffect, useState } from "react";
+
+const Index = () => {
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
-
+  // get user's profile
   const [profile, setProfile] = useState(null);
-
-  const fileInputRef = useRef(null);
-
-  const handleUpload = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileChange = async (event) => {
-    const selectedFile = event.target.files[0];
-    console.log(selectedFile);
-    // Create a new FormData object
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-  
-    try {
-      const response = await fetch(`${localUrl}/cvs/createCV`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-        },
-        body: formData,
-      });
-  
-      if (response.error === false) {
-        // Request succeeded, handle the response
-        const data = await response.json();
-        console.log(data); // Handle the response data accordingly
-      } else {
-        // Request failed, handle the error
-        console.log('Request failed:', response.status);
-      }
-    } catch (error) {
-      console.log('An error occurred:', error);
-    }
-  };
-  
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
-      if (fetchedProfile.error === false) {
-        setProfile(fetchedProfile.data.user_profile);
-      } else {
-        console.log("Failed to fetch profile data");
-      }
-    };
-
-    if (!user) {
-      // show notification that user must login first
-      alert("Bạn cần đăng nhập để xem thông tin cá nhân");
-      router.push("/");
+  const fetchUser = async () => {
+    const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
+    if (fetchedProfile.error === false) {
+      setProfile(fetchedProfile.data.user_profile);
     } else {
-      fetchUser();
+      console.log("Failed to fetch profile data");
     }
-  }, [user, router]);
+  };
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  if (!user) {
+    // show notification that the user must log in first
+    alert("Bạn cần đăng nhập để xem thông tin cá nhân");
+    router.push("/");
+    return null;
+  }
+
+  const [isUploaderVisible, setIsUploaderVisible] = useState(false);
+
+  const toggleUploader = () => {
+    setIsUploaderVisible(!isUploaderVisible);
+  };
+
+  const handleFileUpload = (files) => {
+    // Here you can write the code to handle the file upload process
+    // For example, you can use APIs to save the files, titles, and notes in the database.
+    console.log("Uploaded files:", files);
+  };
 
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
-      {/* Header Span for height */}
 
       <LoginPopup />
-      {/* End Login Popup Modal */}
 
       <DashboardCandidatesHeader />
-      {/* End Header */}
 
       <MobileMenu />
-      {/* End MobileMenu */}
 
       <DashboardCandidatesSidebar />
-      {/* End Candidates Sidebar Menu */}
 
-      {/* Dashboard */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
           <BreadCrumb title="Quản lý CV!" />
-          {/* BreadCrumb */}
 
           <MenuToggler />
-          {/* Collapsible sidebar button */}
 
           <div className="row">
             <div className="col-lg-12">
-              {/* Ls widget */}
               <div className="cv-manager-widget ls-widget">
                 <div className="widget-title">
                   <h4>Danh sách CV của bạn</h4>
                   <div className="CV-button-wrapper">
-                    <button className="theme-btn btn-style-one" onClick={handleUpload}>
+                    <button className="theme-btn btn-style-one" onClick={toggleUploader}>
                       Đăng tải CV&nbsp;<i className="la la-cloud-upload"></i>
                     </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      style={{ display: "none" }}
-                      accept=".pdf"
-                      onChange={handleFileChange}
-                    />
                     &nbsp;&nbsp;
-                    {profile && (
-                      <PDFDownloadLink document={<CVTemplate profile={profile} />} fileName="CV.pdf">
-                        <button className="theme-btn btn-style-one">
-                          Tạo CV tự động&nbsp;<i className="la la-download"></i>
-                        </button>
-                      </PDFDownloadLink>
-                    )}
+                    <PDFDownloadLink document={<CVTemplate profile={profile} />} fileName="CV.pdf">
+                      <button className="theme-btn btn-style-one">
+                        Tạo CV tự động&nbsp;<i className="la la-download"></i>
+                      </button>
+                    </PDFDownloadLink>
                   </div>
                 </div>
-                {/* End widget-title */}
+                {isUploaderVisible && <CvUploader user={user} onFileUpload={handleFileUpload} />}
+                &nbsp;&nbsp;
                 <div className="widget-content">
                   <CVListingsTable user={user} />
                 </div>
-                {/* End widget-content */}
               </div>
-              {/* End Ls widget */}
             </div>
-            {/* End .col */}
           </div>
-          {/* End .row */}
         </div>
-        {/* End dashboard-outer */}
       </section>
-      {/* End Dashboard */}
+
+
+      <CopyrightFooter />
     </div>
-    // End page-wrapper
   );
 };
 
-export default index;
+export default Index;
