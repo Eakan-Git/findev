@@ -123,10 +123,16 @@ const Timetable = () => {
   const handleSave = async () => {
     // alert('Đã lưu thay đổi');
     let coordinate = selectedCells.map((cell) => `${cell.columnIndex},${cell.rowIndex}`).join(';');
-  
+    // console.log(activatedCells);
+    // console.log(selectedCells);
+    //check if activatedCells is different from selectedCells
+    
     try {
-      const response = await fetch(`${localUrl}/api/timetables/`, {
-        method: 'POST',
+      // console.log(user);
+      const queryUrl = `${localUrl}/time-tables/${user.userAccount.id}`;
+      console.log(queryUrl);
+      const response = await fetch(`${queryUrl}`, {
+        method: 'PUT',
         headers: {
           'Accept': 'application/json',
           'Authorization': `Bearer ${user.token}`,
@@ -143,6 +149,7 @@ const Timetable = () => {
         // Handle error response
         console.log('Error:', response.status);
       }
+      setOriginalActivatedCells(selectedCells); // Update original activated cells
     } catch (error) {
       // Handle network error
       console.log('Error:', error);

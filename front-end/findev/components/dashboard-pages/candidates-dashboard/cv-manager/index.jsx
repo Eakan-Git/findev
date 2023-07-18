@@ -1,48 +1,82 @@
+import React, { useRef, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MobileMenu from "../../../header/MobileMenu";
 import LoginPopup from "../../../common/form/login/LoginPopup";
 import DashboardCandidatesSidebar from "../../../header/DashboardCandidatesSidebar";
 import BreadCrumb from "../../BreadCrumb";
-import CopyrightFooter from "../../CopyrightFooter";
-import CvUploader from "./components/CvUploader";
-import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
-import { useSelector } from "react-redux";
-import { useRouter } from "next/router";
 import CVListingsTable from "./components/CVListingsTable";
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import CVTemplate from "./components/CVTemplate";
 import { fetchProfile } from "./components/fetchProfile";
-import { useEffect, useState } from "react";
+import {localUrl} from "/utils/path";
 const index = () => {
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
-  // get user's profile
+
   const [profile, setProfile] = useState(null);
-  const fetchUser = async () => {
+
+  const fileInputRef = useRef(null);
+
+  const handleUpload = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (event) => {
+    const selectedFile = event.target.files[0];
+    console.log(selectedFile);
+    // Create a new FormData object
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+  
+    try {
+      const response = await fetch(`${localUrl}/cvs/createCV`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+        body: formData,
+      });
+  
+      if (response.error === false) {
+        // Request succeeded, handle the response
+        const data = await response.json();
+        console.log(data); // Handle the response data accordingly
+      } else {
+        // Request failed, handle the error
+        console.log('Request failed:', response.status);
+      }
+    } catch (error) {
+      console.log('An error occurred:', error);
+    }
+  };
+  
+
+  useEffect(() => {
+    const fetchUser = async () => {
       const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
       if (fetchedProfile.error === false) {
-          setProfile(fetchedProfile.data.user_profile);
-          // console.log("Profile:", fetchedProfile.data.user_profile);
+        setProfile(fetchedProfile.data.user_profile);
+      } else {
+        console.log("Failed to fetch profile data");
       }
-      else {
-          console.log("Failed to fetch profile data");
-      }
-  }
-  useEffect(() => {
+    };
+
+    if (!user) {
+      // show notification that user must login first
+      alert("Bạn cần đăng nhập để xem thông tin cá nhân");
+      router.push("/");
+    } else {
       fetchUser();
-      // console.log(profile);
-  }
-  , []);
-  if (!user) {
-    // show notification that user must login first
-    alert("Bạn cần đăng nhập để xem thông tin cá nhân");
-    router.push("/");
-    return null;
-  }
+    }
+  }, [user, router]);
+
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
-      {/* <!-- Header Span for hight --> */}
+      {/* Header Span for height */}
 
       <LoginPopup />
       {/* End Login Popup Modal */}
@@ -54,39 +88,47 @@ const index = () => {
       {/* End MobileMenu */}
 
       <DashboardCandidatesSidebar />
-      {/* <!-- End Candidates Sidebar Menu --> */}
+      {/* End Candidates Sidebar Menu */}
 
-      {/* <!-- Dashboard --> */}
+      {/* Dashboard */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
           <BreadCrumb title="Quản lý CV!" />
-          {/* breadCrumb */}
+          {/* BreadCrumb */}
 
           <MenuToggler />
           {/* Collapsible sidebar button */}
 
           <div className="row">
             <div className="col-lg-12">
-              {/* <!-- Ls widget --> */}
+              {/* Ls widget */}
               <div className="cv-manager-widget ls-widget">
-              <div className="widget-title">
+                <div className="widget-title">
                   <h4>Danh sách CV của bạn</h4>
                   <div className="CV-button-wrapper">
-                    <button className="theme-btn btn-style-one">
+                    <button className="theme-btn btn-style-one" onClick={handleUpload}>
                       Đăng tải CV&nbsp;<i className="la la-cloud-upload"></i>
                     </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      style={{ display: "none" }}
+                      accept=".pdf"
+                      onChange={handleFileChange}
+                    />
                     &nbsp;&nbsp;
-                    <PDFDownloadLink document={<CVTemplate profile={profile}/>} fileName="CV.pdf">
-                      <button className="theme-btn btn-style-one">
-                        Tạo CV tự động&nbsp;<i className="la la-download"></i>
-                      </button>
-                    </PDFDownloadLink>
+                    {profile && (
+                      <PDFDownloadLink document={<CVTemplate profile={profile} />} fileName="CV.pdf">
+                        <button className="theme-btn btn-style-one">
+                          Tạo CV tự động&nbsp;<i className="la la-download"></i>
+                        </button>
+                      </PDFDownloadLink>
+                    )}
                   </div>
                 </div>
                 {/* End widget-title */}
                 <div className="widget-content">
                   <CVListingsTable user={user} />
-                  {/* <CvUploader /> */}
                 </div>
                 {/* End widget-content */}
               </div>
@@ -98,11 +140,7 @@ const index = () => {
         </div>
         {/* End dashboard-outer */}
       </section>
-      {/* <!-- End Dashboard --> */}
-
-      <CopyrightFooter />
-      {/* <CVTemplate profile={profile}/> */}
-      {/* <!-- End Copyright --> */}
+      {/* End Dashboard */}
     </div>
     // End page-wrapper
   );
