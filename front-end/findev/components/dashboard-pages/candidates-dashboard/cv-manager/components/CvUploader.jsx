@@ -38,25 +38,22 @@ const CvUploader = ({ user, onFileUpload }) => {
 
   const saveCvHandler = async () => {
     const formData = new FormData();
-    formData.append("user_id", user.userAccount.id);
     formData.append("cv_name", cvTitle);
     formData.append("cv_note", cvNote);
+    formData.append("user_id", user.userAccount.id);
     formData.append("cv_path", getCvFile);
     try
     {
-        const res = await axios.post(`${localUrl}/cvs`, formData,
-        {
+      const response = await fetch(`${localUrl}/cvs/`, {
+        method: 'POST',
         headers: {
-            "Content-Type": "multipart/form-data",
-            'Authorization': user.token
-          }
-        }
-        )
-        if (res.message === "Unauthenticated.") {
-            alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
-            router.push("/");
-            dispatch(logoutUser());
-        }
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${user.token}`,
+          'Content-Type': 'multipart/form-data', 
+        },
+        body: formData // Pass the serialized form data as the request body
+      });
+        console.log(response)
         setCvFile(null); // Reset the selected file
         setCvTitle(""); // Clear the title input
         setCvNote(""); // Clear the note input
@@ -64,6 +61,11 @@ const CvUploader = ({ user, onFileUpload }) => {
     catch (err)
     {
         console.log(err)
+        if (err.message === "Unauthenticated.") {
+          alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+          router.push("/");
+          dispatch(logoutUser());
+      }
     }
   };
 

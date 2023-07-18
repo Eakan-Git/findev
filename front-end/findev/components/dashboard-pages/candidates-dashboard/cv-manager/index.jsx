@@ -45,8 +45,6 @@ const Index = () => {
   };
 
   const handleFileUpload = (files) => {
-    // Here you can write the code to handle the file upload process
-    // For example, you can use APIs to save the files, titles, and notes in the database.
     console.log("Uploaded files:", files);
   };
 
