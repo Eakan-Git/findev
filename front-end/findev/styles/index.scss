@@ -2,3 +2,79 @@
 @import "slick-carousel/slick/slick-theme.css";
 @import "~bootstrap/scss/bootstrap";
 @import "public/scss/main.scss";
+
+/* Add the following styles to your CSS file */
+
+.uploading-resume {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.uploadButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  border: 2px dashed #ccc;
+  border-radius: 6px;
+  padding: 20px;
+  width: 300px;
+  height: 200px;
+}
+
+.cv-uploadButton {
+  margin-top: 10px;
+}
+
+.cv-review-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  border: 2px solid #007bff; /* Change border color to blue */
+  border-radius: 6px;
+  padding: 20px;
+  width: 300px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 20px; /* Add some margin at the top to separate from the section below */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle box shadow */
+}
+
+.cv-review-box .edit-btns {
+  margin-top: 10px;
+}
+
+.cv-input-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.cv-input-section input,
+.cv-input-section textarea {
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 250px;
+}
+
+.cv-input-section button {
+  padding: 8px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+
+
+
+
