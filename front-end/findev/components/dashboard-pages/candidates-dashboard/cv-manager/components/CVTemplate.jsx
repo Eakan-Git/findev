@@ -21,6 +21,15 @@ const CVTemplate = ({ profile, avatar }) => {
       <View style={styles.top}>
         <View style={styles.imgBox}>
           <Image src={profile?.avatar} style={styles.img} />
+          {/* <Image
+            src={ profile?.avatar }
+            // style={styles.img}
+            source={{
+              header: {
+                'Access-Control-Allow-Origin': '*'
+              }
+            }}
+          /> */}
           {/* <Image src={{ uri: profile?.avatar,
           method: 'GET', 
           headers: {"Content-Type": "application/json",

@@ -1,8 +1,11 @@
 import topCompany from "../../data/topCompany";
 import Slider from "react-slick";
 import Link from "next/link";
-
+import { useEffect, useState } from "react";
+import axios from 'axios'
+import { localUrl } from "/utils/path.js";
 const TopCompany = () => {
+  const [topCompaies, setTopCompanies] = useState([]);
   const settings = {
     dots: true,
     speed: 500,
@@ -36,6 +39,22 @@ const TopCompany = () => {
       },
     ],
   };
+
+  const getTopComs = async () => {
+    try {
+      const res = await axios.get(`${localUrl}/user-educations/user/${user.userAccount.id}`, 
+      {
+        headers: 
+        {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        }})
+      setTopCompanies(res.data.data.user_educations.data);
+    } catch (error) {
+      if(error.response.data.message === "Không tìm thấy")
+        setEducations([])
+    }
+  }
 
   return (
     <Slider {...settings} arrows={false}>
