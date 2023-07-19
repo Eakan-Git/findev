@@ -4,17 +4,23 @@ const Pagination = ({ jobs, handlePageChange }) => {
     return (
       <nav className="ls-pagination">
         <ul>
-          <a href="#" className="current-page">
-            1
-          </a>
+          <li>
+            <a href="#" className="current-page">
+              1
+            </a>
+          </li>
         </ul>
       </nav>
     );
   }
 
   // Access the pagination links from jobs.links
-  const paginationLinks = jobs.data.jobs.pagination_info.links;
-  console.log(paginationLinks);
+  const paginationLinks = jobs?.data.jobs.pagination_info.links;
+  // console.log(paginationLinks);
+  // Check if paginationLinks is null or undefined
+  if (paginationLinks.length <= 3) {
+    return null;
+  }
 
   return (
     <nav className="ls-pagination">

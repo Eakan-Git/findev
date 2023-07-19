@@ -70,7 +70,6 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
             placeholder="Chuyên ngành (nếu có)"
             value={major}
             onChange={(e) => setMajor(e.target.value)}
-            required
           ></input>
         </div>
 

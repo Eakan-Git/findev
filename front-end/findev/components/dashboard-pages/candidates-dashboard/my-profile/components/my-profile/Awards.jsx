@@ -37,7 +37,8 @@ const Awards = ({user }) => {
     getAwards();
   };
 
-  const handleModalOpen = () => {
+  const handleModalOpen = (e) => {
+    e.preventDefault();
     if (awards.length >= MAX_AWARDS) {
       alert("Bạn chỉ có thể cập nhật tối đa " + MAX_AWARDS + " giải thưởng!");
     } else {

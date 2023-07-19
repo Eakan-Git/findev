@@ -38,7 +38,8 @@ const Education = ({ user }) => {
     getEDUS();
   };
 
-  const handleModalOpen = () => {
+  const handleModalOpen = (e) => {
+    e.preventDefault();
       if (educations.length >= MAX_EDU) {
         alert("Bạn chỉ có thể cập nhật tối đa " + MAX_EDU + " thông tin học vấn của bản thân!");
       } else {

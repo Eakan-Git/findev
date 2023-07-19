@@ -119,7 +119,7 @@ const FilterJobBox = () => {
     let content = undefined;
 
     if (jobs !== undefined && jobs !== null) {
-        // console.log(jobs);
+        console.log(jobs);
         const filteredJobs = jobs.data.jobs.data;
         // console.log(filteredJobs);
             // .filter(keywordFilter)
@@ -142,8 +142,8 @@ const FilterJobBox = () => {
                             <span className="company-logo">
                                 <Link href={`/job/${item.job_id}`}>
                                 <img src={item?.company_logo || "/images/logo.png"}
-                                title={item?.company || "Company Logo"} 
-                                alt={item?.company || "Company Logo"}
+                                title={item?.company_name || "Company Logo"} 
+                                alt={item?.company_name || "Company Logo"}
                                 />
                                 </Link>
                                 {/* <img src={item?.employer_profile.company_profile.logo} alt={item?.company} /> */}
@@ -164,10 +164,10 @@ const FilterJobBox = () => {
                                 <li>
                                     <span className="icon flaticon-briefcase"></span>
                                     <Link href={`/employer/${item?.company_id || 1}`}
-                                    alt={item?.company}
-                                    title={item?.company}
+                                    alt={item?.company_name}
+                                    title={item?.company_name}
                                     >
-                                    {item?.company.length > 12 ? item?.company.slice(0, 12) + "..." : item?.company}
+                                    {item?.company_name.length > 12 ? item?.company_name.slice(0, 12) + "..." : item?.company_name}
                                     </Link>
                                 </li>
                                 <li>
@@ -176,7 +176,7 @@ const FilterJobBox = () => {
                                         and get text before ':' using split
                                     */}
                                     {/* {item.location[0].split(":")[0]} */}
-                                    {item.addresses.split(":")[0] || "Không xác định"}
+                                    {item.location.split(":")[0] || "Không xác định"}
                                     
                                 </li>
                                 <li>

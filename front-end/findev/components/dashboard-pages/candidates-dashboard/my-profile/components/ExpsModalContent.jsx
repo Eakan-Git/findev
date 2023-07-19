@@ -59,7 +59,7 @@ const ExpsModalContent = ({ user, onClose, reloadData  }) => {
           <input
             type="text"
             className="form-control"
-            placeholder="Tên kinh nghiệm"
+            placeholder="Tên kinh nghiệm/công ty (vd: Công ty VNG, Đồ án tốt nghiệp,...)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
@@ -70,7 +70,7 @@ const ExpsModalContent = ({ user, onClose, reloadData  }) => {
           <input
             type="text"
             className="form-control"
-            placeholder="Vị trí (vd: Project Manager)"
+            placeholder="Vị trí/Tên đồ án (vd: Project Manager, Hệ thống gợi ý việc làm,...)"
             value={position}
             onChange={(e) => setPosition(e.target.value)}
             required
