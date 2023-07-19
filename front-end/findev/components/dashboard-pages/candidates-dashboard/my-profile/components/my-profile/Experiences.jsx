@@ -39,7 +39,8 @@ const Experiences = ({ user }) => {
     getExps();
   };
 
-  const handleModalOpen = () => {
+  const handleModalOpen = (e) => {
+    e.preventDefault();
     if (exps.length >= MAX_EXPS) {
       alert("Bạn chỉ có thể cập nhật tối đa " + MAX_EXPS + " kinh nghiệm của bản thân!");
     } else {
