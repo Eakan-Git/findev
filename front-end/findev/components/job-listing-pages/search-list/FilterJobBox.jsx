@@ -54,7 +54,7 @@ const FilterJobBox = () => {
         const getJobs = async () => {
         const res = await fetch(queryUrl);
         const data = await res.json();
-        console.log(data.data);
+        // console.log(data.data);
         if(data.length !== 0){
             setJobs(data);
         }
@@ -132,8 +132,7 @@ const FilterJobBox = () => {
     let content = undefined;
 
     if (jobs !== undefined && jobs !== null) {
-        console.log(jobs);
-        const filteredJobs = jobs.data.jobs.data;
+        const filteredJobs = jobs?.data.jobs.data;
         // console.log(filteredJobs);
             // .filter(keywordFilter)
             // .filter(locationFilter)
@@ -161,7 +160,7 @@ const FilterJobBox = () => {
                                 {/* <img src={item?.employer_profile.company_profile.logo} alt={item?.company} /> */}
                             </span>
                             <h4>
-                                <Link href={`/job/${item.id}`}
+                                <Link href={`/job/${item.job_id}`}
                                 alt={item.title}
                                 title={item.title}
                                 >
@@ -176,10 +175,10 @@ const FilterJobBox = () => {
                                 <li>
                                     <span className="icon flaticon-briefcase"></span>
                                     <Link href={`/employer/${item?.company_id || 1}`}
-                                    alt={item?.company}
-                                    title={item?.company}
+                                    alt={item?.company_name}
+                                    title={item?.company_name}
                                     >
-                                    {item?.company.length > 12 ? item?.company.slice(0, 12) + "..." : item?.company}
+                                    {item?.company_name.length > 12 ? item?.company_name.slice(0, 12) + "..." : item?.company_name}
                                     </Link>
                                 </li>
                                 <li>
@@ -188,7 +187,7 @@ const FilterJobBox = () => {
                                         and get text before ':' using split
                                     */}
                                     {/* {item.location[0].split(":")[0]} */}
-                                    {item.addresses.split(":")[0] || "Không xác định"}
+                                    {item.location.split(":")[0] || "Không xác định"}
                                     
                                 </li>
                                 <li>
@@ -236,7 +235,7 @@ const FilterJobBox = () => {
                 </div>
             ));
         } else {
-            content = <h1>Không tìm thấy công việc</h1>;
+            content = <h1>Không tìm thấy công việc thỏa yêu cầu</h1>;
         }
     }
 

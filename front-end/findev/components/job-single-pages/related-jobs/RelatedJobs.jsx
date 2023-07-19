@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { relevantUrl } from "../../../utils/path";
+import { relatedUrl } from "../../../utils/path";
 import { useState, useEffect } from "react";
 import axios from "axios"
 const RelatedJobs = ({ title }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const queryUrl = `${relevantUrl}/${encodeURIComponent(title)}`;
+  const queryUrl = `${relatedUrl}${encodeURIComponent(title)}`;
   useEffect(() => {
     const getJob = async () => {
       try {
@@ -16,8 +16,8 @@ const RelatedJobs = ({ title }) => {
         //   console.log(res.error)
         // }
         // const resData = await res.json();
-        console.log(res);
-        const fetchedJob = res?.data.data;
+        // console.log(res);
+        const fetchedJob = res?.data.data.jobs.data;
         // console.log(fetchedJob);
         setJobs(fetchedJob || null);
       } catch (err) {
@@ -39,7 +39,8 @@ const RelatedJobs = ({ title }) => {
   }
   return (
     <>
-      {jobs.slice(1,6).map((item) => (
+    {/* console.log(jobs); */}
+      {jobs.slice(0, 4).map((item) => (
         <div className="job-block" key={item.job_id}>
           <div className="inner-box">
             <div className="content">
