@@ -198,7 +198,7 @@ const JobSingleDynamicV1 = () => {
                                         ? "Không lương"
                                         : job?.min_salary === 0 && job?.max_salary > 0
                                         ? `Lên đến ${job.max_salary} triệu`
-                                        : `${job?.min_salary} - ${job?.max_salary} triệu`}
+                                        : `${job.min_salary} - ${job.max_salary} triệu`}
                           </li>
                           {/* salary info */}
                         </ul>
