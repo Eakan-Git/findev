@@ -45,13 +45,13 @@ const JobSingleDynamicV1 = () => {
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
-  
   useEffect(() => {
     const getJob = async () => {
       try {
         const res = await axios.get(`${localUrl}/jobs/${id}`, {
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': user?.token
           }
         });
   
@@ -59,6 +59,7 @@ const JobSingleDynamicV1 = () => {
         setJob(fetchedJob || null);
         setCompany(fetchedJob?.employer_profile || null);
         const isJobSaved = res.data?.data?.job.is_saved;
+        console.log("isJobSaved: ",isJobSaved);
         setIsSaved(isJobSaved);
       } catch (err) {
         router.push('/404');
@@ -83,7 +84,11 @@ const JobSingleDynamicV1 = () => {
 
 
    const handleSaveJob = async () => {
-    console.log("user: ",user)
+    // console.log("user: ",user)
+    // if(!user) {
+    //   alert("Bạn cần đăng nhập để lưu công việc này");
+    //   return;
+    // }
 
     if (isSaved === true) {
       try {
@@ -264,12 +269,13 @@ const JobSingleDynamicV1 = () => {
 
               <div className="sidebar-column col-lg-4 col-md-12 col-sm-12">
                 <aside className="sidebar">
-                  <div className="btn-box">
+                  <div className="btn-box"
+                  >
                     <a
                       href="#"
                       className="theme-btn btn-style-one"
-                      data-bs-toggle="modal"
-                      data-bs-target="#applyJobModal"
+                      data-bs-toggle={user ? "modal" : "modal"}
+                      data-bs-target={user ? "#applyJobModal" : "#loginPopupModal"}
                     >
                       Ứng tuyển ngay
                     </a>
@@ -287,7 +293,11 @@ const JobSingleDynamicV1 = () => {
                           <i className="flaticon-bookmark"></i>
                         </button>
                       ) : (
-                        <button className="bookmark-btn" onClick={handleSaveJob}>
+                        <button className="bookmark-btn" 
+                        onClick={handleSaveJob}
+                        data-bs-toggle={user ? "" : "modal"}
+                        data-bs-target={user ? "" : "#loginPopupModal"}
+                        >
                           <i className="flaticon-bookmark"></i>
                         </button>
                       )
