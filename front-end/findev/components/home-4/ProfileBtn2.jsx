@@ -22,7 +22,9 @@ const ProfileBtn = ({textColor}) => {
     };
   
     useEffect(() => {
-      fetchUser();
+      if(user !== null){
+        fetchUser();
+      }
     }, []);
     // console.log(user);
     const router = useRouter();
