@@ -16,10 +16,9 @@ import { localUrl } from "/utils/path";
 const index = () => {
   const { user } = useSelector((state) => state.user);
   const [profile, setProfile] = useState(null);
-  const [defaultProfile, setDefaultProfile] = useState(null);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [modifiedFields, setModifiedFields] = useState({});
+
   const openModal = () => {
     setIsOpenModal(true);
   };
@@ -45,7 +44,14 @@ const index = () => {
       delete data.data.user_profile.avatar;
       delete data.data.user_profile.github;
       delete data.data.user_profile.link;
-      delete data.data.user_profile.date_of_birth;
+      // delete data.data.user_profile.date_of_birth;
+      // change date_of_birth to yyyy/dd/mm
+      const date = new Date(data.data.user_profile.date_of_birth);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const dt = date.getDate();
+      const newDate = `${year}/${month}/${dt}`;
+      data.data.user_profile.date_of_birth = newDate;
       setProfile(data.data.user_profile);
       // ask user to confirm
       if (window.confirm("Bạn có muốn thay đổi thông tin không?")) {
@@ -57,7 +63,6 @@ const index = () => {
   };
   
   useEffect(() => {
-    // console.log(profile);
     bulkUpdateProfile();
   }, [isEdit]);
   
@@ -67,11 +72,11 @@ const index = () => {
       Object.entries(profile).forEach(([key, value]) => {
         updatedFields[key] = value;
       });
-  
-      setModifiedFields(updatedFields);
       console.log(updatedFields);
       const msg = await putProfile(user.token, updatedFields);
       console.log(msg);
+      window.location.reload();
+      alert("Cập nhật thông tin thành công!");
     } catch (error) {
       console.error(error);
     }

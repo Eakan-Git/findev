@@ -13,7 +13,7 @@ const CVTemplate = ({ profile, avatar }) => {
   }, [profile]);
 
   if (loading === false) {
-    console.log(profile);
+    // console.log(profile);
   return (
     <Document>
       <Page size="A4" style={styles.page}>

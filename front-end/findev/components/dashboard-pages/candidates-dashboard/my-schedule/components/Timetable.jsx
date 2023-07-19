@@ -122,16 +122,17 @@ const Timetable = () => {
 
   const handleSave = async () => {
     // alert('Đã lưu thay đổi');
+    //check if selectedCells is empty
     let coordinate = selectedCells.map((cell) => `${cell.columnIndex},${cell.rowIndex}`).join(';');
-    // console.log(activatedCells);
-    // console.log(selectedCells);
-    //check if activatedCells is different from selectedCells
-    
+    if (coordinate.includes("NaN,NaN;")) {
+      coordinate = coordinate.replace("NaN,NaN;", "");
+    }
+    if (coordinate.includes("NaN,NaN")) {
+      coordinate = coordinate.replace("NaN,NaN", "");
+    }
+    // console.log("coordinate", coordinate);
     try {
-      // console.log(user);
-      const queryUrl = `${localUrl}/time-tables/${user.userAccount.id}`;
-      console.log(queryUrl);
-      const response = await fetch(`${queryUrl}`, {
+      const response = await fetch(`${localUrl}/time-tables/${user.userAccount.id}`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
@@ -149,7 +150,6 @@ const Timetable = () => {
         // Handle error response
         console.log('Error:', response.status);
       }
-      setOriginalActivatedCells(selectedCells); // Update original activated cells
     } catch (error) {
       // Handle network error
       console.log('Error:', error);

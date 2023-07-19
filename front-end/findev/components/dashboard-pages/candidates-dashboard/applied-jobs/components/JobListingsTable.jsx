@@ -143,7 +143,7 @@ const JobListingsTable = ({ user }) => {
                               </span>
                               <h4>
                                 <Link
-                                  href={`/job/${item.id}`}
+                                  href={`/job/${item.job.id}`}
                                   title={item.job.title}
                                 >
                                   {item.job.title.length > 50

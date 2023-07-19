@@ -1,22 +1,24 @@
+import React, { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 import MobileMenu from "../../../header/MobileMenu";
 import LoginPopup from "../../../common/form/login/LoginPopup";
 import DashboardCandidatesSidebar from "../../../header/DashboardCandidatesSidebar";
 import BreadCrumb from "../../BreadCrumb";
-import CopyrightFooter from "../../CopyrightFooter";
-import CvUploader from "./components/CvUploader"; // Import the CvUploader component here
+import CvUploader from "./components/CvUploader";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
-import { useSelector } from "react-redux";
-import { useRouter } from "next/router";
 import CVListingsTable from "./components/CVListingsTable";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import CVTemplate from "./components/CVTemplate";
 import { fetchProfile } from "./components/fetchProfile";
-import { useEffect, useState } from "react";
 
 const Index = () => {
   const { user } = useSelector((state) => state.user);
+  const [selectedFile, setSelectedFile] = useState(null);
   const router = useRouter();
+  const fileInputRef = useRef(null); // Create a ref for the file input element
+  
   // get user's profile
   const [profile, setProfile] = useState(null);
   const fetchUser = async () => {
@@ -27,6 +29,7 @@ const Index = () => {
       console.log("Failed to fetch profile data");
     }
   };
+  
   useEffect(() => {
     fetchUser();
   }, []);
@@ -44,8 +47,14 @@ const Index = () => {
     setIsUploaderVisible(!isUploaderVisible);
   };
 
-  const handleFileUpload = (files) => {
-    console.log("Uploaded files:", files);
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    setSelectedFile(file);
+    setIsUploaderVisible(true);
+  };
+
+  const openFileInput = () => {
+    fileInputRef.current.click(); // Programmatically trigger the file input element
   };
 
   return (
@@ -72,7 +81,7 @@ const Index = () => {
                 <div className="widget-title">
                   <h4>Danh sách CV của bạn</h4>
                   <div className="CV-button-wrapper">
-                    <button className="theme-btn btn-style-one" onClick={toggleUploader}>
+                    <button className="theme-btn btn-style-one" onClick={openFileInput}>
                       Đăng tải CV&nbsp;<i className="la la-cloud-upload"></i>
                     </button>
                     &nbsp;&nbsp;
@@ -85,7 +94,14 @@ const Index = () => {
                     )}
                   </div>
                 </div>
-                {isUploaderVisible && <CvUploader user={user} onFileUpload={handleFileUpload} />}
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  style={{ display: "none" }}
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                />
+                {isUploaderVisible && <CvUploader user={user} file={selectedFile} />}
                 &nbsp;&nbsp;
                 <div className="widget-content">
                   <CVListingsTable user={user} />
@@ -95,9 +111,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-
-      <CopyrightFooter />
     </div>
   );
 };

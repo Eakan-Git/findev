@@ -7,21 +7,24 @@ const ApplyJobModalContent = ( user ) => {
   const router = useRouter();
   const id = router.query.id;
   const [cvList, setCvList] = useState([]);
-  const [checkBoxTb, setCheckBoxTb] = useState(false);
+  const [checkBoxTb, setCheckBoxTb] = useState(true);
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
   const [selectedCvPath, setSelectedCvPath] = useState("");
   const [isCheckedError, setIsCheckedError] = useState(false);
-  const [isChecked, setIsChecked] = useState(false)
+  const [isChecked, setIsChecked] = useState(true)
+  const [timeTable, setTimeTable] = useState([]);
   const handleDropdownChange = (event) => {
     setSelectedCvPath(event.target.value);
   };
 
   const handleCheckBoxChange = (event) => {
     setIsChecked(event.target.checked);
-  };
+    console.log(isChecked);
+  };  
 
   const handleCheckBoxTbChange = (event) => {
     setCheckBoxTb(event.target.checked);
+    console.log(checkBoxTb);
   };
 
   const fetchCvList = async () => {
@@ -37,24 +40,44 @@ const ApplyJobModalContent = ( user ) => {
       console.log(error);
     }
   };
-
+  const fetchTimeTable = async () => {
+    try {
+      let url = `${localUrl}/time-tables/${user.user.userAccount.id}`;
+      const res = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: user.user.token,
+        },
+      });
+  
+      const data = await res.json(); // Assuming the response is in JSON format
+  
+      setTimeTable(data.data.time_table.coordinate);
+      // console.log("timeTable", data.data.time_table.coordinate);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
   useEffect(() => {
     fetchCvList();
+    fetchTimeTable();
   }, []);
 //select_timetable: checkBoxTb,
 const handleSubmit = async (event) => {
   event.preventDefault();
-
   // Kiểm tra ô checkbox đã được tích vào hay chưa
   if (!isChecked) {
     setIsCheckedError(true);
     return; // Dừng xử lý nếu ô checkbox chưa được tích vào
   }
     try {
+      console.log("timeTable", timeTable);
       const response = await axios.post(
         `${localUrl}/applications`,
         {
-          select_timetable: checkBoxTb,
+          time_table: timeTable,
           job_id: id,
           user_id: user.user.userAccount.id,
           cv_path: selectedCvPath,
@@ -67,7 +90,7 @@ const handleSubmit = async (event) => {
         }
       );
 
-      // Xử lý phản hồi từ API nếu cần
+      console.log(response);
       alert("Đơn ứng tuyển của bạn đã được gửi thành công");
     } catch (error) {
       // Xử lý lỗi nếu cần
@@ -109,7 +132,6 @@ const handleSubmit = async (event) => {
             type="checkbox"
             name="remember-me"
             id="rememberMe1"
-            checked={checkBoxTb}
             onChange={handleCheckBoxTbChange}
           />
           <label htmlFor="rememberMe1" className="remember">

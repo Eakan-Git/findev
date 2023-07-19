@@ -27,7 +27,7 @@ const CVListingsTable = ({ user }) => {
       } else if (!response.error) {
         const data = await response.json();
         if (data.error === false) {
-          console.log(data.data);
+          // console.log(data.data);
           setCvListings(data.data.cv);
         } else {
           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");

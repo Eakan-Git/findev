@@ -1,8 +1,7 @@
-import { useState } from "react";
-import axios from "axios"
+import React, { useState } from "react";
 import { localUrl } from "/utils/path";
 
-// validation checking
+// Validation checking
 function checkFileType(file) {
   const allowedTypes = [
     "application/pdf",
@@ -12,91 +11,54 @@ function checkFileType(file) {
   return allowedTypes.includes(file.type);
 }
 
-const CvUploader = ({ user, onFileUpload }) => {
-  const [getCvFile, setCvFile] = useState(null);
+const CvUploader = ({ user, file, onFileUpload }) => {
   const [cvTitle, setCvTitle] = useState("");
   const [cvNote, setCvNote] = useState("");
-  const [getError, setError] = useState("");
-
-  const cvManagerHandler = (e) => {
-    const file = e.target.files[0];
-    if (!file) return; // If no file is selected, do nothing
-
-    if (checkFileType(file)) {
-      setCvFile(file);
-      setError("");
-      // Call the file upload handler function passed from the parent component
-      onFileUpload(file);
-    } else {
-      setError("Only accept (.doc, .docx, .pdf) file");
-    }
-  };
+  const [selectedFile, setSelectedFile] = useState(file);
 
   const deleteHandler = () => {
-    setCvFile(null);
+    setSelectedFile(null);
   };
 
   const saveCvHandler = async () => {
+    // console.log(selectedFile);
+    if (!selectedFile) return; // Do nothing if no file is selected
+
     const formData = new FormData();
     formData.append("cv_name", cvTitle);
     formData.append("cv_note", cvNote);
     formData.append("user_id", user.userAccount.id);
-    formData.append("cv_path", getCvFile);
-    try
-    {
+    formData.append("cv_path", selectedFile);
+
+    try {
       const response = await fetch(`${localUrl}/cvs/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'multipart/form-data', 
+          Authorization: `Bearer ${user.token}`,
         },
-        body: formData // Pass the serialized form data as the request body
+        body: formData,
       });
-        console.log(response)
-        setCvFile(null); // Reset the selected file
-        setCvTitle(""); // Clear the title input
-        setCvNote(""); // Clear the note input
-    }
-    catch (err)
-    {
-        console.log(err)
-        if (err.message === "Unauthenticated.") {
-          alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
-          router.push("/");
-          dispatch(logoutUser());
+
+      console.log(response);
+      setSelectedFile(null); // Reset the selected file
+      setCvTitle(""); // Clear the title input
+      setCvNote(""); // Clear the note input
+    } catch (err) {
+      console.log(err);
+      if (err.message === "Unauthenticated.") {
+        alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+        router.push("/");
+        // dispatch(logoutUser());
       }
     }
   };
 
   return (
     <>
-      {/* Start Upload resule */}
+      {/* Start Upload result */}
       <div className="uploading-resume">
-        {!getCvFile ? (
-          // Show the drop file section if no file is selected or after saving
-          <div className="uploadButton">
-            <input
-              className="uploadButton-input"
-              type="file"
-              name="attachments[]"
-              accept=".doc,.docx,.xml,application/msword,application/pdf, image/*"
-              id="upload"
-              onChange={cvManagerHandler}
-            />
-            <label className="cv-uploadButton" htmlFor="upload">
-              <span className="title">Bỏ tệp CV của bạn vào đây</span>
-              <span className="text">
-              Kích thước tệp tải lên là (Tối đa 5Mb) và loại tệp cho phép là (.doc, .docx, .pdf).
-              </span>
-              <span className="theme-btn btn-style-one">Đăng tải</span>
-              {getError !== "" ? <p className="ui-danger mb-0">{getError}</p> : undefined}
-            </label>
-          </div>
-        ) : (
-          // Show the selected file section if a file is uploaded
           <div className="cv-review-box">
-            <span className="title">{getCvFile.name}</span>
+            <span className="title">{selectedFile.name}</span>
             <div className="edit-btns">
               <button onClick={deleteHandler}>
                 <span className="la la-trash"></span>
@@ -121,7 +83,6 @@ const CvUploader = ({ user, onFileUpload }) => {
               </button>
             </div>
           </div>
-        )}
       </div>
       {/* End upload-resume */}
     </>
