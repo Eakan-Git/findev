@@ -1,8 +1,6 @@
 import { Page, Document, StyleSheet, View, Text, Image, Font, Svg } from '@react-pdf/renderer';
 import { useEffect, useState, React} from 'react';
-// import html2canvas from 'html2canvas';
 
-// import {logo} from '/public/images/logo.png';
 const CVTemplate = ({ profile, avatar }) => {
   // console.log(avatar);
   const [loading, setLoading] = useState(true);
@@ -20,7 +18,7 @@ const CVTemplate = ({ profile, avatar }) => {
         
       <View style={styles.top}>
         <View style={styles.imgBox}>
-          <Image src={profile?.avatar} style={styles.img} />
+        <Image src="/eakan.jpeg" style={styles.img} />
           {/* <Image
             src={ profile?.avatar }
             // style={styles.img}
