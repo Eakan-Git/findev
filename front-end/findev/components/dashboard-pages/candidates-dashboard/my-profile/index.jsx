@@ -65,22 +65,48 @@ const index = () => {
   useEffect(() => {
     bulkUpdateProfile();
   }, [isEdit]);
+
+  const updateUniversity = async (data) => {
+    try {
+      const res = await fetch(`${localUrl}/user-educations/`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          'user_id': user?.userAccount.id,
+          'university': data?.university,
+          'major': data?.major,
+          'start': data?.start,
+          'end': data?.end,
+        })
+      });
+      if (res.error) {
+        alert(res.message);
+      }
+      const responseData = await res.json();
+      console.log(responseData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   
   const bulkUpdateProfile = async () => {
     try {
-      const updatedFields = {};
-      Object.entries(profile).forEach(([key, value]) => {
-        updatedFields[key] = value;
-      });
+      const updatedFields = { ...profile };
+      delete updatedFields.educations;
       console.log(updatedFields);
       const msg = await putProfile(user.token, updatedFields);
-      console.log(msg);
+      // console.log(profile.educations);
+      // for each education, update to database with updateUniversity(data=item)
+      profile.educations.forEach(async (item) => {
+        await updateUniversity(item);
+      });
       window.location.reload();
       alert("Cập nhật thông tin thành công!");
     } catch (error) {
       console.error(error);
     }
   };
+  
   
   const putProfile = async (token, updatedFields) => {
     try {
