@@ -16,6 +16,7 @@ import {
 import Pagination from "../components/Pagination2";
 import JobSelect from "../components/JobSelect";
 import {recommendUrl} from "../../../utils/path";
+import { AlignHorizontalCenter } from "@mui/icons-material";
 
 const FilterJobBox = () => {
     const {user} = useSelector((state) => state.user);
@@ -25,30 +26,60 @@ const FilterJobBox = () => {
     const [jobsPerPage, setJobsPerPage] = useState(10);
     const router = useRouter();
     // console.log(keyword, location);
-    if(user) {
+    // if(user) {
+    //     useEffect(() => {
+    //     // construct query url
+    //     let queryUrl = `${recommendUrl}/${user.userAccount.id}`;
+    //     // if(currentPage !== 1) {
+    //     //     queryUrl = `${queryUrl}?page=${currentPage}`;
+    //     //     // update browser url
+    //     //     router.push(`${router.pathname}?page=${currentPage}`);
+    //     // }
+    //     // console.log(queryUrl);
+    //     // call api to get jobs with keyword and location as params
+    //     const getJobs = async () => {
+    //     console.log(queryUrl);
+    //     const res = await fetch(queryUrl);
+    //     const data = await res.json();
+    //     // console.log(data.data);
+    //     if(data.length !== 0){
+    //         setJobs(data);
+    //     }
+    //     };
+    //     getJobs();
+    // }, [currentPage, jobsPerPage]);
+    // }
+    if (user) {
         useEffect(() => {
-        // construct query url
-        let queryUrl = `${recommendUrl}/${user.userAccount.id}`;
-        // if(currentPage !== 1) {
-        //     queryUrl = `${queryUrl}?page=${currentPage}`;
-        //     // update browser url
-        //     router.push(`${router.pathname}?page=${currentPage}`);
-        // }
-        // console.log(queryUrl);
-        // call api to get jobs with keyword and location as params
-        const getJobs = async () => {
-        console.log(queryUrl);
-        const res = await fetch(queryUrl);
-        const data = await res.json();
-        // console.log(data.data);
-        if(data.length !== 0){
-            setJobs(data);
-        }
-        };
-        getJobs();
-    }, [currentPage, jobsPerPage]);
-    }
-
+          const recommendJobsDataKey = "recommendJobsData";
+          const recommendJobsData = localStorage.getItem(recommendJobsDataKey);
+      
+          if (!recommendJobsData) {
+            const queryUrl = `${recommendUrl}/${user.userAccount.id}`;
+      
+            const getJobs = async () => {
+              try {
+                const res = await fetch(queryUrl);
+                const data = await res.json();
+      
+                if (data.length !== 0) {
+                  setJobs(data);
+      
+                  // Save data to localStorage
+                  localStorage.setItem(recommendJobsDataKey, JSON.stringify(data));
+                }
+              } catch (error) {
+                console.error("Error fetching jobs:", error);
+              }
+            };
+      
+            getJobs();
+          } else {
+            setJobs(JSON.parse(recommendJobsData));
+          }
+        }, [user, currentPage, jobsPerPage]);
+      }
+      
     const handlePageChange = (page) => {
         // check page is a number
         if (!isNaN(page)) {
@@ -118,7 +149,7 @@ const FilterJobBox = () => {
     // Jobs content
     let content = undefined;
 
-    if (jobs !== undefined && jobs !== null) {
+    if (jobs?.data !== undefined && jobs?.data !== null) {
         console.log(jobs);
         const filteredJobs = jobs.data.jobs.data;
         // console.log(filteredJobs);
@@ -224,8 +255,17 @@ const FilterJobBox = () => {
                 </div>
             ));
         } else {
-            content = <h1>Không tìm thấy công việc, bạn hãy cập nhật thông tin cá nhân của mình</h1>;
+            content = <h1 style={{ textAlign: 'center' }}>Không tìm thấy công việc, bạn hãy cập nhật thông tin cá nhân của mình</h1>;
         }
+    }
+    else{
+        content = <h1 style={{ textAlign: 'center' }}>Bạn hãy cập nhật
+            {" "}
+            <Link href="/profile/my-profile">
+                thông tin cá nhân
+            </Link>
+            {" "}
+            của mình</h1>;
     }
 
     // Event Handlers

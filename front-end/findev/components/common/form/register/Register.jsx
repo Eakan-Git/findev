@@ -26,7 +26,8 @@ const Register = () => {
     if (
       data.username.length === 0 ||
       data.password.length === 0 ||
-      data.confirm_password.length === 0
+      data.confirm_password.length === 0 ||
+      data.full_name.length === 0
     ) {
       alert("Vui lòng nhập đầy đủ thông tin");
     } else if (data.password !== data.confirm_password) {

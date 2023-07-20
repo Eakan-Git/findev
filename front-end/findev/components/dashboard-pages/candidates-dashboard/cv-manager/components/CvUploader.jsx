@@ -58,7 +58,7 @@ const CvUploader = ({ user, file, onFileUpload }) => {
       {/* Start Upload result */}
       <div className="uploading-resume">
           <div className="cv-review-box">
-            <span className="title">{selectedFile.name}</span>
+            <span className="title">{selectedFile?.name}</span>
             <div className="edit-btns">
               <button onClick={deleteHandler}>
                 <span className="la la-trash"></span>

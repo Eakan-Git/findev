@@ -3,23 +3,32 @@ const FormContent = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const [fullName, setFullName] = useState("");
   return (
     <form method="post" action="add-parcel.html">
       <div className="form-group">
-        <label>Địa chỉ Email</label>
+        <label>Tên đăng nhập</label>
         <input
           type="email"
           name="username"
-          placeholder="Nhập Email của bạn"
+          placeholder="Nhập tên đăng nhập"
           required
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
       {/* name */}
-
       <div className="form-group">
-        <label>Mật khẩu</label>
+        <label>Họ và tên</label>
+        <input
+          type="email"
+          name="full_name"
+          placeholder="Nhập họ và tên của bạn"
+          required
+          onChange={(e) => setFullName(e.target.value)}
+        />
+      </div>
+      <div className="form-group">
+        <label>Mật Khẩu</label>
         <input
           id="password-field"
           type="password"
@@ -48,6 +57,7 @@ const FormContent = (props) => {
               username: email,
               password,
               confirm_password: confirmPassword,
+              full_name: fullName,
             })
           }
           type="button"
