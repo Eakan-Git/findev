@@ -32,8 +32,8 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
           'end': end,
         })
       });
-      if (!res.ok) {
-        console.error('Phiên làm việc đã hết hạn, vui lòng đăng nhập lại');
+      if (res.error) {
+        alert(res.message);
       }
       const data = await res.json();
       console.log(data); 

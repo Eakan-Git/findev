@@ -52,6 +52,7 @@ const FilterJobBox = () => {
         // console.log(queryUrl);
         // call api to get jobs with keyword and location as params
         const getJobs = async () => {
+            // console.log(queryUrl);
         const res = await fetch(queryUrl);
         const data = await res.json();
         // console.log(data.data);
@@ -132,7 +133,7 @@ const FilterJobBox = () => {
     let content = undefined;
 
     if (jobs !== undefined && jobs !== null) {
-        const filteredJobs = jobs?.data.jobs.data;
+        const filteredJobs = jobs?.data?.jobs?.data;
         // console.log(filteredJobs);
             // .filter(keywordFilter)
             // .filter(locationFilter)
@@ -145,7 +146,7 @@ const FilterJobBox = () => {
             // .sort(sortFilter)
             // .slice(perPage.start, perPage.end !== 0 ? perPage.end : 16);
 
-        if (filteredJobs.length > 0) {
+        if (filteredJobs?.length > 0) {
             content = filteredJobs.map((item) => (
                 <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
                     <div className="inner-box">

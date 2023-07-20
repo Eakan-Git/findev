@@ -15,17 +15,17 @@ const Pagination = ({ jobs, handlePageChange }) => {
   }
 
   // Access the pagination links from jobs.links
-  const paginationLinks = jobs?.data.jobs.pagination_info.links;
+  const paginationLinks = jobs?.data?.jobs?.pagination_info?.links;
   // console.log(paginationLinks);
   // Check if paginationLinks is null or undefined
-  if (paginationLinks.length <= 3) {
+  if (paginationLinks?.length <= 3) {
     return null;
   }
 
   return (
     <nav className="ls-pagination">
       <ul>
-        {paginationLinks.map((link, index) => {
+        {paginationLinks?.map((link, index) => {
           if (link.active) {
             return (
               <li key={index}>
