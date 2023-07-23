@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { localUrl } from "/utils/path";
 const Index = () => {
-  const { user } = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user);
   const [profile, setProfile] = useState(null);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
