@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 const JobFavouriteTable = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user);
   const [SavedJobs, setSavedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);

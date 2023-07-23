@@ -19,7 +19,7 @@ import {recommendUrl} from "../../../utils/path";
 import { AlignHorizontalCenter } from "@mui/icons-material";
 
 const FilterJobBox = () => {
-    const {user} = useSelector((state) => state.user);
+    const user = useSelector((state) => state.user);
     // console.log(user.userAccount.id);
     const [jobs, setJobs] = useState(undefined);
     const [currentPage, setCurrentPage] = useState(1);

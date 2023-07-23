@@ -14,7 +14,7 @@ import { catOptions } from "./catOptions";
 
 const FormInfoBox = () => {
   // fetch user profile data with ID from state
-  const { user } = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user);
   const router = useRouter();
   const dispatch = useDispatch();
   const [profile, setProfile] = useState(null);

@@ -9,7 +9,7 @@ import Image from "next/image"
 import ProfileBtn from "./ProfileBtn";
 const Header = () => {
   const [navbar, setNavbar] = useState(false);
-  const { user } = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user);
   const router = useRouter();
 
   const changeBackground = () => {
