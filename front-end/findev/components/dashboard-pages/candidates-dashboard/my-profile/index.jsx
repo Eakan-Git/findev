@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 // import { Modal } from "@mui/material";
 import { useSelector } from "react-redux";
 import { localUrl } from "/utils/path";
-const index = () => {
+const Index = () => {
   const { user } = useSelector((state) => state.user);
   const [profile, setProfile] = useState(null);
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -223,4 +223,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

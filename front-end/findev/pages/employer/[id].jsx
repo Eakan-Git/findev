@@ -138,7 +138,7 @@ const EmployersSingleV3 = ({}) => {
                       <div className="btn-box">
                         <a
                           href={employer?.site || null}
-                          target="_blank"
+                          rel="noopener noreferrer"
                           className="theme-btn btn-style-three"
                         >
                           Website công ty

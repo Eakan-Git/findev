@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import Seo from "../components/common/Seo";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       <Seo pageTitle="Trang không tồn tại" />
@@ -34,4 +34,4 @@ const index = () => {
   );
 };
 
-export default dynamic(() => Promise.resolve(index), { ssr: false });
+export default dynamic(() => Promise.resolve(Index), { ssr: false });

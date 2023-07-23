@@ -2,7 +2,7 @@ import BillingDetails from "./BillingDetails";
 import OrderDetails from "./OrderDetails";
 import PaymentOptions from "./PaymentOptions";
 
-const index = () => {
+const Index = () => {
   return (
     <div className="row">
       <div className="column col-lg-8 col-md-12 col-sm-12">
@@ -28,4 +28,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

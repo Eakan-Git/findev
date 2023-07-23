@@ -5,7 +5,7 @@ import DefaulHeader from "../../header/DefaulHeader";
 import MobileMenu from "../../header/MobileMenu";
 import Pricing from "../../pricing/Pricing";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -44,4 +44,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

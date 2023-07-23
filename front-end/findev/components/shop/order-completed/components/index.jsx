@@ -1,7 +1,7 @@
 import OrderInfo from "./OrderInfo";
 import OrderTable from "./OrderTable";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       <div className="upper-box">
@@ -24,4 +24,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

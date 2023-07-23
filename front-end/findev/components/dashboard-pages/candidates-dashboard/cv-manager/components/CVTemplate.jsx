@@ -18,16 +18,16 @@ const CVTemplate = ({ profile, avatar }) => {
         
       <View style={styles.top}>
         <View style={styles.imgBox}>
-        <Image src="/eakan.jpeg" style={styles.img} />
-          {/* <Image
+        {/* <Image src="/eakan.jpeg" style={styles.img} /> */}
+          <Image
             src={ profile?.avatar }
-            // style={styles.img}
-            source={{
-              header: {
-                'Access-Control-Allow-Origin': '*'
-              }
-            }}
-          /> */}
+            style={styles.img}
+            // source={{
+            //   header: {
+            //     'Access-Control-Allow-Origin': '*'
+            //   }
+            // }}
+          />
           {/* <Image src={{ uri: profile?.avatar,
           method: 'GET', 
           headers: {"Content-Type": "application/json",
@@ -55,8 +55,8 @@ const CVTemplate = ({ profile, avatar }) => {
             </View>
             <View style={styles.box}>
               <Text style={styles.title}>HỌC VẤN</Text>
-              {profile?.educations.map((edu) => (
-                <View>
+              {profile?.educations.map((edu, index) => (
+                <View key={index}>
                   <Text style={styles.time}>{edu.start} - {edu.end}</Text>
                   <Text style={styles.subtitle}>{edu.university.toLowerCase()}</Text>
                   <Text style={styles.additional_text}>{edu.major}</Text>
@@ -67,8 +67,8 @@ const CVTemplate = ({ profile, avatar }) => {
               {profile?.skills.length > 0 ? (
                 <>
                 <Text style={styles.title}>KĨ NĂNG</Text>
-                {profile?.skills.map((skill) => (
-                  <Text style={styles.text}>• {skill.skill}</Text>
+                {profile?.skills.map((skill, index) => (
+                  <Text style={styles.text} key={index}>• {skill.skill}</Text>
                 ))}
                 </>
               ):null}
@@ -91,8 +91,8 @@ const CVTemplate = ({ profile, avatar }) => {
               {profile?.experiences.length > 0 ? (
                 <>
                   <Text style={styles.title}>KINH NGHIỆM LÀM VIỆC</Text>
-                  {profile?.experiences.map((exp) => (
-                    <View key={exp.id}>
+                  {profile?.experiences.map((exp, index) => (
+                    <View key={index}>
                       <Text style={styles.time}>
                         {exp?.start && new Date(exp.start).toLocaleDateString('en-GB')} -{' '}
                         {exp.end && new Date(exp.end).toLocaleDateString('en-GB')}

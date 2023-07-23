@@ -18,7 +18,8 @@ const Index = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const router = useRouter();
   const fileInputRef = useRef(null); // Create a ref for the file input element
-  
+  const [isUploaderVisible, setIsUploaderVisible] = useState(false);
+
   // get user's profile
   const [profile, setProfile] = useState(null);
   const fetchUser = async () => {
@@ -38,11 +39,7 @@ const Index = () => {
     // show notification that the user must log in first
     alert("Bạn cần đăng nhập để xem thông tin cá nhân");
     router.push("/");
-    return null;
   }
-
-  const [isUploaderVisible, setIsUploaderVisible] = useState(false);
-
   const toggleUploader = () => {
     setIsUploaderVisible(!isUploaderVisible);
   };

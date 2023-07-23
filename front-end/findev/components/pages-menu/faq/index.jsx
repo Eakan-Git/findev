@@ -5,7 +5,7 @@ import DefaulHeader from "../../header/DefaulHeader";
 import MobileMenu from "../../header/MobileMenu";
 import FaqChild from "./FaqChild";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -51,4 +51,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

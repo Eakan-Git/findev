@@ -8,7 +8,7 @@ import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader
 import MenuToggler from "../../MenuToggler";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
-const index = () => {
+const Index = () => {
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
 
@@ -75,4 +75,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;
