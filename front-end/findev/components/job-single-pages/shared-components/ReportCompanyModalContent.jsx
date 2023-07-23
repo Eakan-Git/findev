@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { localUrl } from '../../../utils/path';
 
 const ReportCompanyModalContent = ({ id, onClose }) => {
-  const user = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const [message, setMessage] = useState('');
   const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
 

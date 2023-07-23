@@ -14,7 +14,7 @@ const Timetable = () => {
   const [selectedCells, setSelectedCells] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [activatedCells, setActivatedCells] = useState([]);
-  const user = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const router = useRouter();
 
   const fetchUser = async () => {

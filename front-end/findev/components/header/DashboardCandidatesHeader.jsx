@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../../app/actions/userActions";
 const DashboardCandidatesHeader = () => {
-    const user = useSelector((state) => state.user);
+    const { user } = useSelector((state) => state.user);
     const [navbar, setNavbar] = useState(false);
     const [profile, setProfile] = useState(null);
     const fetchUser = async () => {

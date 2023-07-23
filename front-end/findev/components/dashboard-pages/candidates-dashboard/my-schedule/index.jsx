@@ -9,7 +9,7 @@ import MenuToggler from "../../MenuToggler";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 const Index = () => {
-  const user = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const router = useRouter();
 
   if (!user) {
