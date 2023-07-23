@@ -14,7 +14,7 @@ const ProfileBtn = ({textColor}) => {
     const [profile, setProfile] = useState(false);
     // get profile data
     const fetchUser = async () => {
-      const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
+      const fetchedProfile = await fetchProfile(user?.userAccount?.id, user?.token);
       if (fetchedProfile?.error === false) {
         setProfile(fetchedProfile.data.user_profile);
         // console.log("Profile:", fetchedProfile.data.user_profile);
