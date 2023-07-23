@@ -6,7 +6,7 @@ import Address from "./Address";
 import ContactForm from "./ContactForm";
 import MapBox from "./MapBox";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -55,4 +55,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

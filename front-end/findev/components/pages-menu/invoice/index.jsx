@@ -2,7 +2,7 @@ import Link from "next/link";
 import InfoBox from "./InfoBox";
 import TableInvoice from "./TableInvoice";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <!-- Invoice Section --> */}
@@ -71,4 +71,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

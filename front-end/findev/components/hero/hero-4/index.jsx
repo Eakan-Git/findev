@@ -1,7 +1,7 @@
 import SearchForm3 from "../../common/job-search/SearchForm3";
 import PopularSearch from "../PopularSearch";
 import RecommendedJobsBtn from "../RecommendedJobsBtn";
-const index = () => {
+const Index = () => {
   return (
     <section
       className="banner-section-four"
@@ -33,4 +33,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

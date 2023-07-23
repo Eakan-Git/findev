@@ -5,7 +5,7 @@ import Breadcrumb from "../../../components/shop/Breadcrumb";
 import BillingAll from "./components";
 import ShopHeader from "../../header/ShopHeader";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -37,4 +37,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

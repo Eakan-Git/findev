@@ -5,12 +5,10 @@ import JobFilterTab from "../job-featured/JobFilterTab";
 import Block2 from "../block/Block2";
 import TopCompany from "../top-company/TopCompany";
 import JobCategories from "../job-categories/JobCategorie1";
-import Blog from "../blog/Blog";
-import Partner from "../common/partner/Partner";
 import LoginPopup from "../common/form/login/LoginPopup";
 import MobileMenu from "../header/MobileMenu";
 
-const index = () => {
+const Index = () => {
     return (
         <>
             <LoginPopup />
@@ -128,4 +126,4 @@ const index = () => {
     );
 };
 
-export default index;
+export default Index;

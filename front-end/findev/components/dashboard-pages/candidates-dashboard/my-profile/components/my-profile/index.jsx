@@ -2,7 +2,7 @@ import { use } from "react";
 import FormInfoBox from "./FormInfoBox";
 import LogoUpload from "./LogoUpload";
 
-const index = () => {
+const Index = () => {
   return (
     <div className="widget-content">
       <LogoUpload />
@@ -14,4 +14,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

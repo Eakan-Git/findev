@@ -4,7 +4,7 @@ import MyProfile from "../../../components/dashboard-pages/candidates-dashboard/
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 
-const index = () => {
+const Index = () => {
   // check if user is logged in
   // if not, redirect to home page and show login modal
   const { user } = useSelector((state) => state.user);
@@ -25,4 +25,4 @@ const index = () => {
   );
 };
 
-export default dynamic(() => Promise.resolve(index), { ssr: false });
+export default dynamic(() => Promise.resolve(Index), { ssr: false });

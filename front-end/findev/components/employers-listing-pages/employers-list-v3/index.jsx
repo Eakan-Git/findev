@@ -5,7 +5,7 @@ import MobileMenu from "../../header/MobileMenu";
 import FilterTopBox from "./FilterTopBox";
 import CompanySearchForm from "./CompanySearchForm";
 
-const index = () => {
+const Index = () => {
     return (
         <>
             {/* <!-- Header Span --> */}
@@ -50,4 +50,4 @@ const index = () => {
     );
 };
 
-export default index;
+export default Index;

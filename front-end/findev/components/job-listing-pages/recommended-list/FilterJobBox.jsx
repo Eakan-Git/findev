@@ -25,6 +25,7 @@ const FilterJobBox = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [jobsPerPage, setJobsPerPage] = useState(10);
     const router = useRouter();
+    const { jobList, jobSort } = useSelector((state) => state.filter);
     // console.log(keyword, location);
     // if(user) {
     //     useEffect(() => {
@@ -49,36 +50,35 @@ const FilterJobBox = () => {
     //     getJobs();
     // }, [currentPage, jobsPerPage]);
     // }
-    if (user) {
-        useEffect(() => {
+    useEffect(() => {
+        if (user) {
           const recommendJobsDataKey = "recommendJobsData";
           const recommendJobsData = localStorage.getItem(recommendJobsDataKey);
-      
+    
           if (!recommendJobsData) {
             const queryUrl = `${recommendUrl}/${user.userAccount.id}`;
-      
+    
             const getJobs = async () => {
               try {
                 const res = await fetch(queryUrl);
                 const data = await res.json();
-      
+    
                 if (data.length !== 0) {
                   setJobs(data);
-      
-                  // Save data to localStorage
-                  localStorage.setItem(recommendJobsDataKey, JSON.stringify(data));
+    
+                  // Save data to localStorage with lifetime of 1 day
+                //   localStorage.setItem(recommendJobsDataKey, JSON.stringify(data));
                 }
               } catch (error) {
                 console.error("Error fetching jobs:", error);
               }
             };
-      
             getJobs();
           } else {
-            setJobs(JSON.parse(recommendJobsData));
+            // setJobs(JSON.parse(recommendJobsData));
           }
-        }, [user, currentPage, jobsPerPage]);
-      }
+        }
+      }, [user]);
       
     const handlePageChange = (page) => {
         // check page is a number
@@ -92,7 +92,6 @@ const FilterJobBox = () => {
         setCurrentPage(currentPage + 1);
         }
     };
-    const { jobList, jobSort } = useSelector((state) => state.filter);
     const {
         // keyword,
         // location,

@@ -3,7 +3,6 @@ import Partner from "../../common/partner/Partner";
 import FooterDefault from "../../footer/common-footer";
 import DefaulHeader from "../../header/DefaulHeader";
 import MobileMenu from "../../header/MobileMenu";
-import Funfact from "../../fun-fact-counter/Funfact";
 import ImgBox from "./ImgBox";
 import IntroDescriptions from "./IntroDescriptions";
 import CallToAction2 from "../../call-to-action/CallToAction2";
@@ -11,7 +10,7 @@ import Testimonial2 from "../../testimonial/Testimonial2";
 import Block1 from "../../block/Block1";
 import Breadcrumb from "../../common/Breadcrumb";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -36,7 +35,7 @@ const index = () => {
           {/* <!-- Fun Fact Section --> */}
           <div className="fun-fact-section">
             <div className="row">
-              <Funfact />
+              {/* <Funfact /> */}
             </div>
           </div>
           {/* <!-- Fun Fact Section --> */}
@@ -113,4 +112,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

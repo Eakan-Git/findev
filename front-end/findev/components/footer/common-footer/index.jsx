@@ -1,7 +1,7 @@
 import CopyrightFooter from "./CopyrightFooter";
 import FooterContent from "./FooterContent";
 
-const index = ({ footerStyle = "" }) => {
+const Index = ({ footerStyle = "" }) => {
   return (
     <footer className={`main-footer ${footerStyle}`}>
       <div className="auto-container">
@@ -48,4 +48,4 @@ const index = ({ footerStyle = "" }) => {
   );
 };
 
-export default index;
+export default Index;

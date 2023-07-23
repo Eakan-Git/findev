@@ -7,7 +7,7 @@ import JobSearchForm from "./JobSearchForm";
 // import Header from "../../home-4/Header";
 import { useRouter } from "next/router";
 import { searchUrl } from "/utils/path";
-const index = () => {
+const Index = () => {
   const router = useRouter();
   const { keyword, location } = router.query;
   // console.log(keyword, location);
@@ -55,4 +55,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

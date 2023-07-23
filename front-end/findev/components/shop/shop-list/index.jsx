@@ -6,7 +6,7 @@ import Breadcrumb from "../../common/Breadcrumb";
 import ShopItems from "./components/ShopItems";
 import Pagination from "./components/Pagination";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -44,4 +44,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

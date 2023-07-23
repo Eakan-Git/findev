@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import Seo from "../../components/common/Seo";
 import AppliedJobs from "../../components/dashboard-pages/candidates-dashboard/applied-jobs";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       <Seo pageTitle="Công việc đã lưu" />
@@ -11,4 +11,4 @@ const index = () => {
   );
 };
 
-export default dynamic(() => Promise.resolve(index), { ssr: false });
+export default dynamic(() => Promise.resolve(Index), { ssr: false });

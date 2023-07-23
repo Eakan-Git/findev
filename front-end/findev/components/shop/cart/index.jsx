@@ -7,7 +7,7 @@ import Coupon from "./components/Coupon";
 import CartTotal from "./components/CartTotal";
 import ShopHeader from "../../header/ShopHeader";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -61,4 +61,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

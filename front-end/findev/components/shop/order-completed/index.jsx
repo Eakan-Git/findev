@@ -5,7 +5,7 @@ import MobileMenu from "../../header/MobileMenu";
 import Breadcrumb from "../Breadcrumb";
 import CompleteOrder from "./components";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -37,4 +37,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

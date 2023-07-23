@@ -3,7 +3,7 @@ import LoginPopup from "../../common/form/login/LoginPopup";
 import MobileMenu from "../../header/MobileMenu";
 import Header from "./Header";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <Header /> */}
@@ -33,4 +33,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

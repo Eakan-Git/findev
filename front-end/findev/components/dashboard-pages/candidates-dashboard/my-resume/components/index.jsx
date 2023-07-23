@@ -4,7 +4,7 @@ import Education from "./Education";
 import Experiences from "./Experiences";
 import SkillsMultiple from "./SkillsMultiple";
 
-const index = () => {
+const Index = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
   };
@@ -64,4 +64,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

@@ -6,7 +6,7 @@ import FilterJobBox from "./FilterJobBox";
 import JobSearchForm from "./JobSearchForm";
 // import Header from "../../home-4/Header";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -51,4 +51,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;
