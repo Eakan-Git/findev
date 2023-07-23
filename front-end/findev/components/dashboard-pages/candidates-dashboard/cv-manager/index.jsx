@@ -14,7 +14,7 @@ import CVTemplate from "./components/CVTemplate";
 import { fetchProfile } from "./components/fetchProfile";
 
 const Index = () => {
-  const user = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const [selectedFile, setSelectedFile] = useState(null);
   const router = useRouter();
   const fileInputRef = useRef(null); // Create a ref for the file input element

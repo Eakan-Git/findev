@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 const Index = () => {
   // check if user is logged in
   // if not, redirect to home page and show login modal
-  const user = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const router = useRouter();
 
   if (!user) {

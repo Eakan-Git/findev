@@ -35,7 +35,7 @@ const JobSingleDynamicV1 = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const id = router.query.id;
-  const user = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleModalOpen = () => {

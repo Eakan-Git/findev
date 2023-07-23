@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { fetchProfile } from "./fetchProfile";
 
 const ProfileBtn = ({textColor}) => {
-    const user = useSelector((state) => state.user);
+    const { user } = useSelector((state) => state.user);
     const [profile, setProfile] = useState(false);
     // get profile data
     const fetchUser = async () => {

@@ -9,7 +9,7 @@ import { logoutUser } from "../../app/actions/userActions";
 import { useEffect, useState } from "react";
 import { fetchProfile } from "./fetchProfile";
 const ProfileBtn = ({textColor}) => {
-    const user = useSelector((state) => state.user);
+    const { user } = useSelector((state) => state.user);
     // console.log(user);
     const [profile, setProfile] = useState(null);
     const fetchUser = async () => {

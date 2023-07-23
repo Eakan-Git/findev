@@ -17,7 +17,7 @@ import {
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 const HeaderNavContent = () => {
-    const user = useSelector((state) => state.user);
+    const { user } = useSelector((state) => state.user);
     // console.log(user);
     const router = useRouter();
 
