@@ -6,7 +6,7 @@ const Index = () => {
   return (
     <>
       <Seo pageTitle="Terms" />
-      <Terms />
+      <Terms/>
     </>
   );
 };
