@@ -26,7 +26,7 @@ const FormInfoBox = () => {
   const handlePrivateChange = (event) => {
     event.preventDefault();
     const selectedValue = event.target.value;
-    console.log(selectedValue);
+    // console.log(selectedValue);
     setPrivateOption(selectedValue);
     setModifiedFields({ ...modifiedFields, is_private: selectedValue });
   };
@@ -37,22 +37,37 @@ const FormInfoBox = () => {
       [name]: value,
     }));
   };
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  //   console.log(modifiedFields);
+  //   if (Object.keys(modifiedFields).length > 0) {
+  //     // console.log("Modified fields:", modifiedFields);
+  //     const msg = await putProfile(user.token, modifiedFields);
+  //     // console.log(msg);
+  //     if (msg?.error === false) {
+  //       alert(msg.message);
+  //       setProfile((prevProfile) => ({ ...prevProfile, ...modifiedFields }));
+  //       setModifiedFields({});
+  //     }
+  //     else
+  //     {
+  //       // alert("Cập nhật thông tin thất bại");
+  //       // console.log(msg);
+  //       alert(msg.message);
+  //     }
+  //   }
+  // };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(modifiedFields);
+    // console.log(modifiedFields);
     if (Object.keys(modifiedFields).length > 0) {
-      // console.log("Modified fields:", modifiedFields);
       const msg = await putProfile(user.token, modifiedFields);
-      // console.log(msg);
       if (msg?.error === false) {
+        const updatedProfile = { ...profile, ...modifiedFields };
+        setProfile(updatedProfile);
         alert(msg.message);
-        setProfile((prevProfile) => ({ ...prevProfile, ...modifiedFields }));
         setModifiedFields({});
-      }
-      else
-      {
-        // alert("Cập nhật thông tin thất bại");
-        // console.log(msg);
+      } else {
         alert(msg.message);
       }
     }
@@ -71,7 +86,7 @@ const fetchUser = async () => {
       setProfile(fetchedProfile.data.user_profile);
       setDefaultProfile(fetchedProfile.data.user_profile);
       setPrivateOption(fetchedProfile.data.user_profile.is_private);
-      console.log("Profile:", fetchedProfile.data.user_profile);
+      // console.log("Profile:", fetchedProfile.data.user_profile);
       setLoading(!loading);
     } else if (fetchedProfile.message === "Unauthenticated.") {
       alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");

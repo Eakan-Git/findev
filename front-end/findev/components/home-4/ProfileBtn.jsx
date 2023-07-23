@@ -15,13 +15,10 @@ const ProfileBtn = ({textColor}) => {
     // get profile data
     const fetchUser = async () => {
       const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
-      if (fetchedProfile?.error === false) {
+      if (fetchedProfile.error === false) {
         setProfile(fetchedProfile.data.user_profile);
         // console.log("Profile:", fetchedProfile.data.user_profile);
         // setLoading(!loading);
-      }
-      else{
-        alert(fetchedProfile?.message || "Có lỗi xảy ra");
       }
     };
   
