@@ -7,7 +7,7 @@ import BlogSidebar from "../blog-sidebar";
 import Blog7 from "../../blog/Blog7";
 import Breadcrumb from "../../common/Breadcrumb";
 
-const index = () => {
+const Index = () => {
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -55,4 +55,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;
