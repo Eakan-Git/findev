@@ -31,7 +31,7 @@ const CvUploader = ({ user, file, onFileUpload }) => {
     formData.append("cv_path", selectedFile);
 
     try {
-      const response = await fetch(`${localUrl}/cvs/`, {
+      const response = await fetch(`${localUrl}/cvs`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${user.token}`,

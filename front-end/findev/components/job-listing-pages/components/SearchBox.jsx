@@ -26,7 +26,7 @@ const SearchBox = () => {
                 type="text"
                 name="listing-search"
                 placeholder="Tên công việc, kỹ năng hoặc công ty..."
-                value={keyword}
+                defaultValue={keyword}
                 onChange={keywordHandler}
             />
             <span className="icon flaticon-search-3"></span>

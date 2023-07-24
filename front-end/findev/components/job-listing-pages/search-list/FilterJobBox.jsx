@@ -35,19 +35,20 @@ const FilterJobBox = () => {
         queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}`;
         } else if (location !== undefined && keyword === undefined) {
         // queryUrl = `${searchUrl}?location=${encodeURIComponent(location)}`;
-        alert("Chức năng tìm kiếm theo địa điểm đang được phát triển");
+        alert("Hãy nhập từ khóa");
+        return;
         } else if (keyword !== undefined && location !== undefined) {
-        queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}&location=${encodeURIComponent(location)}`;
+        queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}&addresses=${encodeURIComponent(location)}`;
         }
         if(currentPage !== 1) {
             queryUrl = `${queryUrl}&page=${currentPage}`;
             // update browser url
-            router.push(`${router.pathname}?keyword=${keyword}&location=${location}&page=${currentPage}`);
+            router.push(`${router.pathname}?keyword=${keyword}&addresses=${location}&page=${currentPage}`);
         }
         if(jobsPerPage !== 10) {
             queryUrl = `${queryUrl}&limit=${jobsPerPage}`;
             // update browser url
-            router.push(`${router.pathname}?keyword=${keyword}&location=${location}&page=${currentPage}&limit=${jobsPerPage}`);
+            router.push(`${router.pathname}?keyword=${keyword}&addresses=${location}&page=${currentPage}&limit=${jobsPerPage}`);
         }
         // console.log(queryUrl);
         // call api to get jobs with keyword and location as params

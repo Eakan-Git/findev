@@ -9,7 +9,7 @@ const putProfile = async (token, updatedFields) => {
       formData.append(key, value);
     });
 
-    const response = await fetch(`${localUrl}/user-profiles/`, {
+    const response = await fetch(`${localUrl}/user-profiles`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',

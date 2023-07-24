@@ -17,7 +17,7 @@ const ReportCompanyModalContent = ({ id, onClose }) => {
 
     try {
       await axios.post(
-        `${localUrl}/company-reports/`,
+        `${localUrl}/company-reports`,
         {
           reason: message,
           company_id: id,
