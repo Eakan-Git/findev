@@ -22,7 +22,7 @@ const ExpsModalContent = ({ user, onClose, reloadData  }) => {
       return;
     }
     try {
-      const res = await fetch(`${localUrl}/user-experiences/`, {
+      const res = await fetch(`${localUrl}/user-experiences`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify({

@@ -21,7 +21,7 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
       return;
     }
     try {
-      const res = await fetch(`${localUrl}/user-educations/`, {
+      const res = await fetch(`${localUrl}/user-educations`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify({

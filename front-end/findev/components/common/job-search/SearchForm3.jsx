@@ -18,9 +18,10 @@ const SearchForm3 = () => {
       }
       
       if (location) {
-        url += `location=${encodeURIComponent(location)}&`;
+        url += `addresses=${encodeURIComponent(location)}&`;
       }
-  
+      
+      console.log(url);
       Router.push(url.slice(0, -1));
     }
   };

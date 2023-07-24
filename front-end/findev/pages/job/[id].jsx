@@ -125,7 +125,7 @@ const JobSingleDynamicV1 = () => {
         setIsSaving(true);
         // Gửi request lưu công việc
         await axios.post(
-          `${localUrl}/saved-jobs/`,
+          `${localUrl}/saved-jobs`,
           {
             'user_id': `${user.userAccount.id}`,
             'job_id' : id

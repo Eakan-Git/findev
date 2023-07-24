@@ -14,7 +14,7 @@ const AwardsModalContent = ({ user, onClose, reloadData  }) => {
     event.preventDefault();
     
     try {
-      const res = await fetch(`${localUrl}/user-achievements/`, {
+      const res = await fetch(`${localUrl}/user-achievements`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify({

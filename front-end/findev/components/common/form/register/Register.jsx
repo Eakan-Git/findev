@@ -41,10 +41,12 @@ const Register = () => {
     //   alert("Email không hợp lệ");
     // } 
     else {
-      const url = `${localUrl}/auth-user/sign-up/`;
+      const url = `${localUrl}/auth-user/sign-up`;
+      console.log(url);
       const headers = {
         "Content-Type": "application/json",
       };
+      console.log(data);
   
       try {
         const response = await fetch(url, {
