@@ -51,57 +51,26 @@ const JobListingsTable = ({ user }) => {
 
     fetchJobListings();
   }, []);
-
+  const handleCVView = (cv_path) => {
+    console.log(cv_path);
+  }
   if (loading) {
     return <div>Đang tải dữ liệu...</div>;
   }
-  // const handleDeleteApplication = async (id) => {
-  //   const url = `${localUrl}/applications/${id}`;
-  //   const headers = {
-  //     Accept: "application/json",
-  //     Authorization: `Bearer ${user.token}`,
-  //   };
-  //   // ask for confirmation
-  //   const confirmation = confirm("Bạn có chắc chắn muốn xóa?");
-  //   if (confirmation) {
-  //     try {
-  //       const response = await fetch(url, { method: "DELETE", headers });
-  //       if (response.message === "Unauthenticated.") {
-  //         alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
-  //         router.push("/");
-  //         dispatch(logoutUser());
-  //       } else if (!response.error) {
-  //         const data = await response.json();
-  //         if (!data.error) {
-  //           setJobs(jobs.filter((item) => item.id !== id));
-  //           alert("Xóa thành công");
-  //         } else {
-  //           alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   }
-  // };
-  const handleViewApplication = async (id) => {
-    console.log(id);
-  };
   return (
     <div className="tabs-box">
       <div className="widget-title">
         <h4>Danh sách công việc đã ứng tuyển</h4>
 
-        <div className="chosen-outer">
-          {/* <!--Tabs Box--> */}
-          {/* <select className="chosen-single form-select">
+        {/* <div className="chosen-outer">
+          <select className="chosen-single form-select">
             <option>Last 6 Months</option>
             <option>Last 12 Months</option>
             <option>Last 16 Months</option>
             <option>Last 24 Months</option>
             <option>Last 5 year</option>
-          </select> */}
-        </div>
+          </select>
+        </div> */}
       </div>
       {/* End filter top bar */}
 
@@ -167,9 +136,6 @@ const JobListingsTable = ({ user }) => {
                                 </li>
                                 <li>
                                   <span className="icon flaticon-map-locator"></span>
-                                  {/* get substring before ':' of item.job.location 
-                                      else get 20 first characters of item.job.location
-                                  */}
                                   {item.job.location.split(":")[0] ||
                                   item.job.location.length > 30
                                     ? item.job.location.slice(0, 30) + "..."
@@ -201,15 +167,12 @@ const JobListingsTable = ({ user }) => {
                         <div className="option-box">
                           <ul className="option-list">
                             <li>
-                            <button data-text="Xem" onClick={() => handleViewApplication(item.id)}>
+                            <button data-text="Xem CV đã gửi"
+                            onClick={() => {handleCVView(item.cv_path)}}
+                            >
                                 <span className="la la-eye"></span>
-                              </button>
+                            </button>
                             </li>
-                            {/* <li>
-                              <button data-text="Xóa đơn ứng tuyển" onClick={() => handleDeleteApplication(item.id)}>
-                                <span className="la la-trash"></span>
-                              </button>
-                            </li> */}
                           </ul>
                         </div>
                       </td>
