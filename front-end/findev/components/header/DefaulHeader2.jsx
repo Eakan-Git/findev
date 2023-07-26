@@ -43,24 +43,7 @@ const DefaulHeader = () => {
         {/* End .nav-outer */}
 
         <div className="outer-box">
-          {/* <!-- Login/Register --> */}
           <ProfileBtn />
-          {/* <div className="btn-box">
-            <a
-              href="#"
-              className="theme-btn btn-style-three call-modal"
-              data-bs-toggle="modal"
-              data-bs-target="#loginPopupModal"
-            >
-              Đăng nhập
-            </a>
-            <Link
-              href="/employers-dashboard/post-jobs"
-              className="theme-btn btn-style-one"
-            >
-              Đăng tin tuyển dụng
-            </Link>
-          </div> */}
         </div>
       </div>
     </header>

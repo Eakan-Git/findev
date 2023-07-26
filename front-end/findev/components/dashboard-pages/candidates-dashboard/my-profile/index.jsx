@@ -52,9 +52,10 @@ const Index = () => {
       const dt = date.getDate();
       const newDate = `${year}/${month}/${dt}`;
       data.data.user_profile.date_of_birth = newDate;
-      setProfile(data.data.user_profile);
       // ask user to confirm
       if (window.confirm("Bạn có muốn thay đổi thông tin không?")) {
+        // Move the setProfile and setIsEdit calls after the if block
+        setProfile(data.data.user_profile);
         setIsEdit(!isEdit);
       }
     } catch (error) {
@@ -63,45 +64,20 @@ const Index = () => {
   };
   
   useEffect(() => {
-    bulkUpdateProfile();
-  }, [isEdit]);
-
-  const updateUniversity = async (data) => {
-    try {
-      const res = await fetch(`${localUrl}/user-educations/`, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-          'user_id': user?.userAccount.id,
-          'university': data?.university,
-          'major': data?.major,
-          'start': data?.start,
-          'end': data?.end,
-        })
-      });
-      if (res.error) {
-        alert(res.message);
-      }
-      const responseData = await res.json();
-      console.log(responseData);
-    } catch (error) {
-      console.error(error);
+    // Check if isEdit is true before calling bulkUpdateProfile
+    if (isEdit) {
+      bulkUpdateProfile();
     }
-  };
+  }, [isEdit]);
   
   const bulkUpdateProfile = async () => {
     try {
       const updatedFields = { ...profile };
-      delete updatedFields.educations;
-      console.log(updatedFields);
+      console.log("updatedFields",updatedFields);
       const msg = await putProfile(user.token, updatedFields);
-      // console.log(profile.educations);
-      // for each education, update to database with updateUniversity(data=item)
-      profile.educations.forEach(async (item) => {
-        await updateUniversity(item);
-      });
-      window.location.reload();
-      alert("Cập nhật thông tin thành công!");
+      // window.location.reload();
+      // alert("Cập nhật thông tin thành công!");
+      alert(msg.message);
     } catch (error) {
       console.error(error);
     }
@@ -109,26 +85,22 @@ const Index = () => {
   
   
   const putProfile = async (token, updatedFields) => {
+    const payload = { user_profile: updatedFields };
+    let bodyPayload = { object: payload};
+    console.log(JSON.stringify(bodyPayload, null, 2));
     try {
-      // Serialize the updatedFields object into x-www-form-urlencoded format
-      const formData = new URLSearchParams();
-  
-      Object.entries(updatedFields).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-  
-      const response = await fetch(`${localUrl}/user-profiles/`, {
+      const response = await fetch(`${localUrl}/user-profiles/import/${user.userAccount.id}`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json', // Set the proper content type header for JSON
         },
-        body: formData.toString(), // Pass the serialized form data as the request body
+        body: JSON.stringify(bodyPayload, null, 2), // Send the updatedFields object as a JSON string in the request body
       });
   
-      if (response.error === true) {
-        console.error(response.message);
+      if (response.error) {
+        throw new Error("Error updating profile.");
       }
   
       const data = await response.json();
@@ -138,6 +110,7 @@ const Index = () => {
       throw error;
     }
   };
+  
   
   return (
     <div className="page-wrapper dashboard">

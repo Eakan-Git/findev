@@ -35,12 +35,19 @@ const ProfileBtn = ({textColor}) => {
     const dispatch = useDispatch();
     // handle signout
     const handleSignOut = () => {
-        //show confirm dialog to confirm sign out
-        if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
-            dispatch(logoutUser());
-            router.push("/");
+      if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+        // check if current page is start with /profile
+        console.log(router.pathname);
+        if (router.pathname.startsWith("/profile")) {
+          dispatch(logoutUser());
+          router.push("/");
+          // console.log("sign out and redirect to home page");
         }
-        // console.log("sign out");
+        else{
+          dispatch(logoutUser());
+          // console.log("sign out and stay on current page");
+        }
+      }
       };
     const handleBtnClick = (id) => {
         if(id === 8){
@@ -94,7 +101,7 @@ const ProfileBtn = ({textColor}) => {
                             >
                                 <Image
                                     alt="avatar"
-                                    className="thumb"
+                                    className="navBar-avt"
                                     src= {profile?.avatar || "/images/resource/candidate-1.png"}
                                     width={90}
                                     height={90}

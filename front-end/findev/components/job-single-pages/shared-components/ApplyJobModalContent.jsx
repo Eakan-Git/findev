@@ -7,24 +7,24 @@ const ApplyJobModalContent = ( user ) => {
   const router = useRouter();
   const id = router.query.id;
   const [cvList, setCvList] = useState([]);
-  const [checkBoxTb, setCheckBoxTb] = useState(true);
-  const [isSubmitClicked, setIsSubmitClicked] = useState(false);
+  const [checkBoxTb, setCheckBoxTb] = useState(false);
   const [selectedCvPath, setSelectedCvPath] = useState("");
   const [isCheckedError, setIsCheckedError] = useState(false);
   const [isChecked, setIsChecked] = useState(true)
   const [timeTable, setTimeTable] = useState([]);
+  
   const handleDropdownChange = (event) => {
     setSelectedCvPath(event.target.value);
   };
 
   const handleCheckBoxChange = (event) => {
     setIsChecked(event.target.checked);
-    console.log(isChecked);
-  };  
+    // console.log(event.target.checked);
+  }; 
 
   const handleCheckBoxTbChange = (event) => {
     setCheckBoxTb(event.target.checked);
-    console.log(checkBoxTb);
+    // console.log(event.target.checked);
   };
 
   const fetchCvList = async () => {
@@ -73,11 +73,25 @@ const handleSubmit = async (event) => {
     return; // Dừng xử lý nếu ô checkbox chưa được tích vào
   }
     try {
+      console.log(checkBoxTb);
       console.log("timeTable", timeTable);
+      const formData = new FormData();
+      formData.append("time_table", checkBoxTb ? timeTable : null);
+      formData.append("job_id", id);
+      formData.append("user_id", user.user.userAccount.id);
+      formData.append("cv_path", selectedCvPath);
+      // const response = await fetch(`${localUrl}/applications`, {
+      //   method: "POST",
+      //   headers: {
+      //     Authorization: `Bearer ${user.user.token}`,
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: formData,
+      // });
       const response = await axios.post(
         `${localUrl}/applications`,
         {
-          time_table: timeTable,
+          time_table: checkBoxTb ? timeTable : "",
           job_id: id,
           user_id: user.user.userAccount.id,
           cv_path: selectedCvPath,
@@ -91,7 +105,7 @@ const handleSubmit = async (event) => {
       );
 
       console.log(response);
-      alert("Đơn ứng tuyển của bạn đã được gửi thành công");
+      alert(response.data.message);
     } catch (error) {
       // Xử lý lỗi nếu cần
       alert("Đã có lỗi xảy ra xin hãy thử lại sau");
@@ -104,22 +118,24 @@ const handleSubmit = async (event) => {
       <div className="row">
         <div className="col-lg-12 col-md-12 col-sm-12 form-group">
           <div className="uploading-outer apply-cv-outer">
-            <div className="uploadButton">
               {cvList.length === 0 ? (
-                <button className="uploadButton" onClick={() => (window.location.href = "/profile/cv-manager")}>
-                  Bạn chưa có CV. Bấm vào đây để tạo CV.
-                </button>
+                <>
+                  <button className="uploadButton" onClick={() => (window.location.href = "/profile/cv-manager")}>
+                    Bạn chưa có CV. Bấm vào đây để tạo CV.
+                  </button>
+                </>
               ) : (
-                <select className="uploadButton" required onChange={handleDropdownChange}>
+                <>
+                  <select className="uploadButton" required onChange={handleDropdownChange}>
                   <option value="">Chọn CV</option>
                   {cvList.map((cv) => (
                     <option key={cv.id} value={cv.cv_path}>
                       {cv.cv_name}
                     </option>
                   ))}
-                </select>
+              </select>
+                </>
               )}
-            </div>
           </div>
         </div>
       </div>
@@ -135,7 +151,11 @@ const handleSubmit = async (event) => {
             onChange={handleCheckBoxTbChange}
           />
           <label htmlFor="rememberMe1" className="remember">
-            <span className="custom-checkbox"></span> Tôi đồng ý gửi kèm thời gian biểu của mình
+            <span className="custom-checkbox"/> <span> Tôi đồng ý gửi kèm </span>
+              <span data-bs-dismiss="modal">
+                <Link href={"/profile/my-schedule"}>thời gian biểu </Link>
+                </span>
+            <span>của mình </span>
           </label>
         </div>
       </div>
@@ -162,7 +182,12 @@ const handleSubmit = async (event) => {
       </div> 
 
       <div className="col-lg-12 col-md-12 col-sm-12 form-group">
-        <button className="theme-btn btn-style-one w-100" type="submit" name="submit-form">
+        <button className="theme-btn btn-style-one w-100"
+        type="submit"
+        name="submit-form"
+        id="submit-form"
+        disabled={cvList.length === 0}
+        >
           Gửi đơn ứng tuyển
         </button>
       </div>

@@ -1,5 +1,4 @@
 import Select from "react-select";
-import ContactInfoBox from "../ContactInfoBox";
 import {fetchProfile} from "./fetchProfile"
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";

@@ -16,8 +16,6 @@ const ProfileBtn = ({textColor}) => {
       const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
       if (fetchedProfile.error === false) {
         setProfile(fetchedProfile.data.user_profile);
-        // console.log("Profile:", fetchedProfile.data.user_profile);
-        // setLoading(!loading);
       }
     };
   
@@ -32,12 +30,19 @@ const ProfileBtn = ({textColor}) => {
     const dispatch = useDispatch();
     // handle signout
     const handleSignOut = () => {
-        //show confirm dialog to confirm sign out
         if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+          // check if current page is start with /profile
+          console.log(router.pathname);
+          if (router.pathname.startsWith("/profile")) {
             dispatch(logoutUser());
             router.push("/");
+            // console.log("sign out and redirect to home page");
+          }
+          else{
+            dispatch(logoutUser());
+            // console.log("sign out and stay on current page");
+          }
         }
-        // console.log("sign out");
       };
     const handleBtnClick = (id) => {
         if(id === 8){

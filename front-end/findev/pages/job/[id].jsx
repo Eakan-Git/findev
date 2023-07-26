@@ -362,22 +362,23 @@ const JobSingleDynamicV1 = () => {
                     </div>
                     <br />
 
-                    <div className="btn-box">
-                      <button
-                        className="theme-btn btn-style-two"
-                        onClick={handleModalOpen}
-                      >
+                    <button
+                      className="theme-btn btn-style-two"
+                      onClick={user ? handleModalOpen : null}
+                      disabled={user ? false : true}
+                    >
                       <div className="text-center">
                         Báo cáo công việc không phù hợp
                       </div>
-                      </button>
-                    </div>
+                    </button>
+
 
                    {/* <!-- Modal --> */}
                    <Modal
                       show={isModalOpen}
                       onHide={handleModalClose}
                       dialogClassName="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+                      id="reportJobModal"
                     >
                       <Modal.Header closeButton={false}>
                       <div className="apply-modal-content modal-content">
