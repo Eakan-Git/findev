@@ -1,4 +1,4 @@
-import { localUrl } from '../../../../../../utils/path';
+import { localUrl } from '/utils/path';
 
 const putProfile = async (token, updatedFields) => {
   try {

@@ -1,5 +1,5 @@
 // fetchProfile.js
-import { localUrl } from '../../../../../../utils/path';
+import { localUrl } from '/utils/path';
 
 export const fetchProfile = async (id, token) => {
     const url = `${localUrl}/user-profiles/${id}`;
@@ -16,6 +16,7 @@ export const fetchProfile = async (id, token) => {
       }
   
       const data = await response.json();
+      // console.log("profile", data);
       return data;
     } catch (error) {
       console.error(error);

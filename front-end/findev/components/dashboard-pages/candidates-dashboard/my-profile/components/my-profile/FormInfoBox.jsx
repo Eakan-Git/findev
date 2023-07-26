@@ -70,7 +70,7 @@ const fetchUser = async () => {
       setProfile(fetchedProfile.data.user_profile);
       setDefaultProfile(fetchedProfile.data.user_profile);
       setPrivateOption(fetchedProfile.data.user_profile.is_private);
-      console.log("Profile:", fetchedProfile.data.user_profile);
+      // console.log("Profile:", fetchedProfile.data.user_profile);
       setLoading(!loading);
     } else if (fetchedProfile.message === "Unauthenticated.") {
       alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
@@ -95,7 +95,7 @@ const fetchUser = async () => {
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Họ và tên</label>
-          <input type="text" name="full_name" placeholder={profile?.full_name || "Vui lòng cập nhật thông tin"} 
+          <input type="text" name="full_name" placeholder={"Vui lòng cập nhật thông tin"} 
           value={modifiedFields.full_name !== undefined ? modifiedFields.full_name : (profile?.full_name || "")}
           onChange={handleInputChange}
            />
@@ -104,7 +104,7 @@ const fetchUser = async () => {
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Tên công việc</label>
-          <input type="text" name="good_at_position" placeholder={profile?.good_at_position || "Vui lòng cập nhật thông tin"} 
+          <input type="text" name="good_at_position" placeholder={"Vui lòng cập nhật thông tin"} 
           value={modifiedFields.good_at_position !== undefined ? modifiedFields.good_at_position : (profile?.good_at_position || "")}
           onChange={handleInputChange}
            />
@@ -116,7 +116,7 @@ const fetchUser = async () => {
           <input
             type="text"
             name="phone"
-            placeholder={modifiedFields.phone || profile?.phone || "Vui lòng cập nhật thông tin"}
+            placeholder={"Vui lòng cập nhật thông tin"}
             value={modifiedFields.phone !== undefined ? modifiedFields.phone : (profile?.phone || "")}
             onChange={handleInputChange}
           />
@@ -128,7 +128,7 @@ const fetchUser = async () => {
           <input
             type="text"
             name="email"
-            placeholder={modifiedFields.email || profile?.email || "Vui lòng cập nhật thông tin"}
+            placeholder={"Vui lòng cập nhật thông tin"}
             value={modifiedFields.email !== undefined ? modifiedFields.email : (profile?.email || "")}
             onChange={handleInputChange}
             
@@ -141,7 +141,7 @@ const fetchUser = async () => {
           <input
             type="text"
             name="address"
-            placeholder={modifiedFields.address || profile?.address || "Vui lòng cập nhật thông tin"}
+            placeholder={"Vui lòng cập nhật thông tin"}
             value={modifiedFields.address !== undefined ? modifiedFields.address : (profile?.address || "")}
             onChange={handleInputChange}
           />
@@ -166,7 +166,7 @@ const fetchUser = async () => {
         <div className="form-group col-lg-6 col-md-12">
           <label>Số năm kinh nghiệm</label>
           <input type="number" name="year_of_experience" 
-          placeholder={modifiedFields.year_of_experience || profile?.year_of_experience || "Vui lòng cập nhật thông tin"}
+          placeholder={"Vui lòng cập nhật thông tin"}
           value={modifiedFields.year_of_experience !== undefined ? modifiedFields.year_of_experience : (profile?.year_of_experience || "")}
           onChange={handleInputChange}
           min={0}

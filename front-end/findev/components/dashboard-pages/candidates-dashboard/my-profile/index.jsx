@@ -44,6 +44,7 @@ const Index = () => {
       delete data.data.user_profile.avatar;
       delete data.data.user_profile.github;
       delete data.data.user_profile.link;
+      console.log(data.data.user_profile.avatar);
       // delete data.data.user_profile.date_of_birth;
       // change date_of_birth to yyyy/dd/mm
       const date = new Date(data.data.user_profile.date_of_birth);
@@ -86,8 +87,9 @@ const Index = () => {
   
   const putProfile = async (token, updatedFields) => {
     const payload = { user_profile: updatedFields };
+    console.log(JSON.stringify(payload, null, 2));
     let bodyPayload = { object: payload};
-    console.log(JSON.stringify(bodyPayload, null, 2));
+    // console.log(JSON.stringify(bodyPayload, null, 2));
     try {
       const response = await fetch(`${localUrl}/user-profiles/import/${user.userAccount.id}`, {
         method: 'PUT',
@@ -96,7 +98,7 @@ const Index = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json', // Set the proper content type header for JSON
         },
-        body: JSON.stringify(bodyPayload, null, 2), // Send the updatedFields object as a JSON string in the request body
+        body: JSON.stringify(bodyPayload, null, 2), 
       });
   
       if (response.error) {
