@@ -10,3 +10,4 @@ export const relatedUrl = "http://20.242.247.247/api/server/recommendations/?tit
 // export const recommendUrl = process.env.recommendUrl;
 // export const readCVUrl = process.env.readCVUrl;
 // export const relatedUrl = process.env.relatedUrl;
+
