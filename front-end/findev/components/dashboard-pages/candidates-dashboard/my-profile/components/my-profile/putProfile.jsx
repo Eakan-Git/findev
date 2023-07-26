@@ -22,7 +22,6 @@ const putProfile = async (token, updatedFields) => {
     if (response.error === true) {
       console.error(response.message);
     }
-
     const data = await response.json();
     return data;
   } catch (error) {
