@@ -1,7 +1,7 @@
 import { Page, Document, StyleSheet, View, Text, Image, Font, Svg } from '@react-pdf/renderer';
 import { useEffect, useState, React} from 'react';
 
-const CVTemplate = ({ profile, avatar }) => {
+const CVTemplate = ({ profile }) => {
   // console.log(avatar);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -9,7 +9,23 @@ const CVTemplate = ({ profile, avatar }) => {
       setLoading(!loading);
     }
   }, [profile]);
-
+  // const imgUrl = "https://firebasestorage.googleapis.com/v0/b/findev-fde4d.appspot.com/o/face__130_95.jpg?alt=media" ;
+  // const imgUrl = profile?.avatar;
+  // console.log("avt", imgUrl);
+  // const getImg = async () => {
+  //   try{
+  //     const res = await fetch(imgUrl, {
+  //       method: 'GET',
+  //     });
+  //     const data = await res.blob();
+  //     console.log(res);
+  //     return data;
+  //   }
+  //   catch(error){
+  //     console.log(error);
+  //   }
+  // }
+  // getImg();
   if (loading === false) {
     // console.log(profile);
   return (
@@ -18,23 +34,10 @@ const CVTemplate = ({ profile, avatar }) => {
         
       <View style={styles.top}>
         <View style={styles.imgBox}>
-        {/* <Image src="/eakan.jpeg" style={styles.img} /> */}
           <Image
             src={ profile?.avatar }
             style={styles.img}
-            // source={{
-            //   header: {
-            //     'Access-Control-Allow-Origin': '*'
-            //   }
-            // }}
           />
-          {/* <Image src={{ uri: profile?.avatar,
-          method: 'GET', 
-          headers: {"Content-Type": "application/json",
-                    "Accept":"application/json"}, 
-          body: '',
-          mode:'no-cors' }} 
-          style={styles.img} /> */}
         </View>
         <View style={styles.topBox}>
           <Text style={styles.name}>{profile?.full_name}</Text>

@@ -13,6 +13,8 @@ const DashboardCandidatesHeader = () => {
     const { user } = useSelector((state) => state.user);
     const [navbar, setNavbar] = useState(false);
     const [profile, setProfile] = useState(null);
+    const dispatch = useDispatch();
+
     const fetchUser = async () => {
       const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
       if (fetchedProfile.error === false) {
@@ -21,7 +23,19 @@ const DashboardCandidatesHeader = () => {
         // setLoading(!loading);
       }
     };
-  
+    const handleSignOut = () => {
+        //show confirm dialog to confirm sign out
+        if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+            router.push("/");
+            dispatch(logoutUser());
+        }
+        // console.log("sign out");
+      };
+    const handleBtnClick = (id) => {
+        if(id === 8){
+            handleSignOut();
+        }
+    };
     useEffect(() => {
         if(user !== null)
         {
@@ -105,26 +119,20 @@ const DashboardCandidatesHeader = () => {
                             </a>
 
                             <ul className="dropdown-menu">
-                                {candidatesMenuData.slice(0, -1).map((item) => (
-                                    <li
-                                        className={`${
-                                            isActiveLink(
-                                                item.routePath,
-                                                router.asPath
-                                            )
-                                                ? "active"
-                                                : ""
-                                        } mb-1`}
-                                        key={item.id}
-                                    >
-                                        <Link href={item.routePath}>
-                                            <i
-                                                className={`la ${item.icon}`}
-                                            ></i>{" "}
-                                            {item.name}
-                                        </Link>
-                                    </li>
+                            {candidatesMenuData.slice(0, -1).map((item) => (
+                                <li
+                                    onClick={() => handleBtnClick(item.id)}
+                                    className={`${
+                                    isActiveLink(item.routePath, router.asPath) ? "active" : ""
+                                    } mb-1`}
+                                    key={item.id}
+                                >
+                                    <Link href={item.routePath}>
+                                        <i className={`la ${item.icon}`}></i> {item.name}
+                                    </Link>
+                                </li>
                                 ))}
+
                             </ul>
                         </div>
                         {/* End dropdown */}

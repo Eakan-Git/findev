@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { logoutUser } from "/app/actions/userActions";
 import axios from "axios";
 
-const CVListingsTable = ({ user }) => {
+const CVListingsTable = ({user}) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
@@ -45,7 +45,9 @@ const CVListingsTable = ({ user }) => {
   }, [user]);
 
   const handleDeleteCV = async (id) => {
-    try {
+    // ask for confirmation
+    if(confirm("Bạn có chắc chắn xóa CV này?")){
+      try {
       const res = await axios.delete(`${localUrl}/cvs/${id}`, {
         headers: {
           'Content-Type': 'application/json',
@@ -57,6 +59,7 @@ const CVListingsTable = ({ user }) => {
     } catch (err) {
       console.log(err);
     }
+    }
   };
 
   if (loading) {
@@ -65,7 +68,6 @@ const CVListingsTable = ({ user }) => {
 
   return (
     <div className="tabs-box">
-      {/* ... rest of the component ... */}
       <div className="table-outer">
         <div className="table-outer">
           <table className="default-table manage-job-table">

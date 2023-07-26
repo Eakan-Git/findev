@@ -1,25 +1,22 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import MobileMenu from "../../../header/MobileMenu";
 import LoginPopup from "../../../common/form/login/LoginPopup";
 import DashboardCandidatesSidebar from "../../../header/DashboardCandidatesSidebar";
 import BreadCrumb from "../../BreadCrumb";
-import CvUploader from "./components/CvUploader";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
 import CVListingsTable from "./components/CVListingsTable";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import CVTemplate from "./components/CVTemplate";
 import { fetchProfile } from "./components/fetchProfile";
+import UploadModal from "./components/UploadModal";
 
 const Index = () => {
   const { user } = useSelector((state) => state.user);
-  const [selectedFile, setSelectedFile] = useState(null);
   const router = useRouter();
-  const fileInputRef = useRef(null); // Create a ref for the file input element
-  const [isUploaderVisible, setIsUploaderVisible] = useState(false);
-
+  // const [isUploaded, setIsUploaded] = useState(false); // This state is used to trigger a re-render of the CVListingsTable component
   // get user's profile
   const [profile, setProfile] = useState(null);
   const fetchUser = async () => {
@@ -40,25 +37,14 @@ const Index = () => {
     alert("Bạn cần đăng nhập để xem thông tin cá nhân");
     router.push("/");
   }
-  const toggleUploader = () => {
-    setIsUploaderVisible(!isUploaderVisible);
-  };
-
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
-    setIsUploaderVisible(true);
-  };
-
-  const openFileInput = () => {
-    fileInputRef.current.click(); // Programmatically trigger the file input element
-  };
 
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
 
       <LoginPopup />
+
+      <UploadModal />
 
       <DashboardCandidatesHeader />
 
@@ -78,7 +64,10 @@ const Index = () => {
                 <div className="widget-title">
                   <h4>Danh sách CV của bạn</h4>
                   <div className="CV-button-wrapper">
-                    <button className="theme-btn btn-style-one" onClick={openFileInput}>
+                    <button className="theme-btn btn-style-one" 
+                            data-bs-toggle="modal"
+                            data-bs-target="#uploadModal"
+                            >
                       Đăng tải CV&nbsp;<i className="la la-cloud-upload"></i>
                     </button>
                     &nbsp;&nbsp;
@@ -91,17 +80,8 @@ const Index = () => {
                     )}
                   </div>
                 </div>
-                <input
-                  type="file"
-                  accept=".pdf,.doc,.docx"
-                  style={{ display: "none" }}
-                  ref={fileInputRef}
-                  onChange={handleFileUpload}
-                />
-                {isUploaderVisible && <CvUploader user={user} file={selectedFile} />}
-                &nbsp;&nbsp;
                 <div className="widget-content">
-                  <CVListingsTable user={user} />
+                  <CVListingsTable user={user}/>
                 </div>
               </div>
             </div>

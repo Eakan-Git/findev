@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import candidatesuData from "../../data/candidatesMenuData";
+import candidatesMenuData from "../../data/candidatesMenuData";
 import { isActiveLink } from "../../utils/linkActiveChecker";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { menuToggle } from "../../features/toggle/toggleSlice";
+import { logoutUser } from "../../app/actions/userActions";
 
 const DashboardCandidatesSidebar = () => {
     const { menu } = useSelector((state) => state.toggle);
@@ -17,7 +18,19 @@ const DashboardCandidatesSidebar = () => {
     const menuToggleHandler = () => {
         dispatch(menuToggle());
     };
-
+    const handleSignOut = () => {
+        //show confirm dialog to confirm sign out
+        if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+            router.push("/");
+            dispatch(logoutUser());
+        }
+        // console.log("sign out");
+      };
+    const handleBtnClick = (id) => {
+        if(id === 8){
+            handleSignOut();
+        }
+    };
     return (
         <div className={`user-sidebar ${menu ? "sidebar_open" : ""}`}>
             {/* Start sidebar close icon */}
@@ -29,24 +42,22 @@ const DashboardCandidatesSidebar = () => {
             {/* End sidebar close icon */}
 
             <div className="sidebar-inner">
-                <ul className="navigation">
-                    {candidatesuData.map((item) => (
-                        <li
-                            className={`${
-                                isActiveLink(item.routePath, router.asPath)
-                                    ? "active"
-                                    : ""
-                            } mb-1`}
-                            key={item.id}
-                            onClick={menuToggleHandler}
-                        >
-                            <Link href={item.routePath}>
-                                <i className={`la ${item.icon}`}></i>{" "}
-                                {item.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+            <ul className="navigation">
+                            {candidatesMenuData.map((item) => (
+                                <li
+                                    onClick={() => handleBtnClick(item.id)}
+                                    className={`${
+                                    isActiveLink(item.routePath, router.asPath) ? "active" : ""
+                                    } mb-1`}
+                                    key={item.id}
+                                >
+                                    <Link href={item.routePath}>
+                                        <i className={`la ${item.icon}`}></i> {item.name}
+                                    </Link>
+                                </li>
+                                ))}
+
+                            </ul>
                 {/* End navigation */}
 
                 <div className="skills-percentage">

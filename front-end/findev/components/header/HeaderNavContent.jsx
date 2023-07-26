@@ -352,7 +352,7 @@ const HeaderNavContent = () => {
                     <li>
                         <Link href="/employers">Công ty</Link>
                     </li>
-                    <li>
+                    {/* <li>
                         <Link href="/forum">Diễn đàn CV</Link>
                     </li>
                     <li>
@@ -360,7 +360,7 @@ const HeaderNavContent = () => {
                     </li>
                     <li>
                         <Link href="/contact">Liên hệ</Link>
-                    </li>
+                    </li> */}
                     {/* End Pages menu items */}
                 </ul>
             </nav>

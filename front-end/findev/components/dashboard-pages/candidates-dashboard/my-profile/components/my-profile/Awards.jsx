@@ -102,16 +102,17 @@ const Awards = ({user }) => {
         <div className="text">Bạn chưa cập nhật thành tựu.</div>
       ) : (
         awards.map((award, index) => (
+          console.log(award),
           <div className="resume-block" key={index}>
             <div className="inner">
               <span className="name">{index + 1}</span>
               <div className="title-box">
                 <div className="info-box">
                   <h3>{award.description}</h3>
-                  <span>{award.date}</span>
+                  {/* <span>{award.date}</span> */}
                 </div>
                 <div className="edit-box">
-                  <span className="year">{award.year}</span>
+                  {/* <span className="year">{award.year}</span> */}
                   <div className="edit-btns">
                     <button onClick={() => handleDelete(award.id)}>
                       <span className="la la-trash"></span>

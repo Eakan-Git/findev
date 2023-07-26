@@ -7,7 +7,7 @@ import TopCompany from "../top-company/TopCompany";
 import JobCategories from "../job-categories/JobCategorie1";
 import LoginPopup from "../common/form/login/LoginPopup";
 import MobileMenu from "../header/MobileMenu";
-
+import Link from "next/link";
 const Index = () => {
     return (
         <>
@@ -27,10 +27,13 @@ const Index = () => {
                 <div className="auto-container">
                     <div className="sec-title text-center">
                         <h2>🔥 Công việc HOT 🔥</h2>
-                        {/* <div className="text">
-                            Know your worth and find the job that qualify your
-                            life
-                        </div> */}
+                        <Link 
+                        href={"/find-jobs"}
+                        className="text"
+                        style={{fontSize: "1rem", fontWeight: "500", color: "blue", textDecoration: "underline",top: "0.5rem", right: "0.5rem", position: "absolute"}}
+                        >
+                            Xem thêm
+                        </Link>
                     </div>
                     {/* End sec-title */}
 
@@ -63,6 +66,13 @@ const Index = () => {
                         <div className="text">
                             Những công ty hàng đầu đang tuyển dụng tại FinDev
                         </div>
+                        <Link 
+                        href={"/find-jobs"}
+                        className="text"
+                        style={{fontSize: "1rem", fontWeight: "500", color: "blue", textDecoration: "underline",top: "4.5rem", right: "0.5rem", position: "absolute"}}
+                        >
+                            Xem thêm
+                        </Link>
                     </div>
 
                     <div className="carousel-outer" data-aos="fade-up">

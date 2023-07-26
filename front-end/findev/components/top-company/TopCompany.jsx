@@ -2,10 +2,9 @@ import topCompany from "../../data/topCompany";
 import Slider from "react-slick";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import axios from 'axios'
 import { localUrl } from "/utils/path.js";
 const TopCompany = () => {
-  const [topCompaies, setTopCompanies] = useState([]);
+  const [topCompaies, setTopCompanies] = useState(null);
   const settings = {
     dots: true,
     speed: 500,
@@ -42,41 +41,45 @@ const TopCompany = () => {
 
   const getTopComs = async () => {
     try {
-      const res = await axios.get(`${localUrl}/user-educations/user/${user.userAccount.id}`, 
-      {
-        headers: 
-        {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
-        }})
-      setTopCompanies(res.data.data.user_educations.data);
+      const res = await fetch(`${localUrl}/company-profiles`);
+      const data = await res.json();
+      setTopCompanies(data.data.company_profiles.data);
     } catch (error) {
-      if(error.response.data.message === "Không tìm thấy")
-        setEducations([])
+      console.log(error);
     }
   }
 
+  useEffect(() => {
+    getTopComs();
+  }, []);
   return (
     <Slider {...settings} arrows={false}>
-      {topCompany.slice(0, 12).map((company) => (
-        <div className="company-block" key={company.id}>
+      {topCompaies?.slice(0, 6).map((company) => (
+        <div className="company-block" key={company?.id}>
           <div className="inner-box">
             <figure className="image">
-              <img src={company.img} alt="top company" />
+              <img src={company?.logo} alt="top company" />
             </figure>
             <h4 className="name">
-              <Link href={`employer/${company.id}`}>
-                {company.name}
+              <Link href={`employer/${company?.id}`}>
+                {company?.name.length > 20 ? company?.name.slice(0, 20) + "..." : company?.name}
               </Link>
             </h4>
-            <div className="location">
-              <i className="flaticon-map-locator"></i> {company.location}
+            <div className="location"
+            title={company?.address}
+            >
+              <i className="flaticon-map-locator"></i> 
+              {company?.address 
+              && company?.address.split(',').length > 1 
+              && company?.address.split(',').slice(-2).join(',').length > 30 ? company?.address.split(',').slice(-2).join(',').slice(0, 30) + "..." : company?.address
+               ? company.address.split(',').slice(-2).join(',') : company?.address}
+
             </div>
             <Link
               href={`employer/${company.id}`}
               className="theme-btn btn-style-three"
             >
-              {company.jobNumber} vị trí đang tuyển
+              Xem ngay
             </Link>
           </div>
         </div>
