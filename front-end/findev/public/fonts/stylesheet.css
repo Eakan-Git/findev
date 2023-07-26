@@ -10,3 +10,28 @@
     font-style: normal;
     font-display: swap;
 }
+/* @font-face {
+    font-familu: 'Be Vietnam Pro';
+    src: url('BeVietnamPro-Regular.ttf') format('truetype'),
+        url('BeVietnamPro-Black.ttf') format('truetype'),
+        url('BeVietnamPro-BlackItalic.ttf') format('truetype'),
+        url('BeVietnamPro-Bold.ttf') format('truetype'),
+        url('BeVietnamPro-BoldItalic.ttf') format('truetype'),
+        url('BeVietnamPro-ExtraBold.ttf') format('truetype'),
+        url('BeVietnamPro-ExtraBoldItalic.ttf') format('truetype'),
+        url('BeVietnamPro-ExtraLight.ttf') format('truetype'),
+        url('BeVietnamPro-ExtraLightItalic.ttf') format('truetype'),
+        url('BeVietnamPro-Italic.ttf') format('truetype'),
+        url('BeVietnamPro-Light.ttf') format('truetype'),
+        url('BeVietnamPro-LightItalic.ttf') format('truetype'),
+        url('BeVietnamPro-Medium.ttf') format('truetype'),
+        url('BeVietnamPro-MediumItalic.ttf') format('truetype'),
+        url('BeVietnamPro-Regular.ttf') format('truetype'),
+        url('BeVietnamPro-SemiBold.ttf') format('truetype'),
+        url('BeVietnamPro-SemiBoldItalic.ttf') format('truetype'),
+        url('BeVietnamPro-Thin.ttf') format('truetype'),
+        url('BeVietnamPro-ThinItalic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+} */
