@@ -39,23 +39,23 @@ export default function JobSelect() {
         <>
             <div className="showing-result">
                 <div className="top-filters">
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <select
                             onChange={jobTypeHandler}
                             className="chosen-single form-select"
                             value={jobList?.jobTypeSelect}
                         >
-                            <option value="">Job Type</option>
+                            <option value="">Loại công việc</option>
                             {jobTypeList?.map((item) => (
                                 <option value={item.value} key={item.id}>
                                     {item.name}
                                 </option>
                             ))}
                         </select>
-                    </div>
+                    </div> */}
                     {/* End job type filter */}
 
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <select
                             onChange={datePostHandler}
                             className="chosen-single form-select"
@@ -67,26 +67,26 @@ export default function JobSelect() {
                                 </option>
                             ))}
                         </select>
-                    </div>
+                    </div> */}
                     {/* End date posted filter */}
 
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <select
                             onChange={experienceHandler}
                             className="chosen-single form-select"
                             value={jobList?.experienceSelect}
                         >
-                            <option>Experience Level</option>
+                            <option>Số năm kinh nghiệm</option>
                             {experienceLavel?.map((item) => (
                                 <option value={item.value} key={item.id}>
                                     {item.name}
                                 </option>
                             ))}
                         </select>
-                    </div>
+                    </div> */}
                     {/* End ecperience level filter */}
 
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <select
                             onChange={salaryHandler}
                             className="chosen-single form-select"
@@ -133,7 +133,7 @@ export default function JobSelect() {
                                 15000 - 20000
                             </option>
                         </select>
-                    </div>
+                    </div> */}
                     {/* End salary estimate filter */}
                 </div>
             </div>

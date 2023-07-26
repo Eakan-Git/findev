@@ -13,7 +13,7 @@ const JobCate = ({ cates }) => {
     <ul className="job-skills">
       {cates.map((cate) => (
         <li key={cate.id}>
-          <a href={`/search/?keyword=${cate.description}`}>{cate.description}</a>
+          <a href={`/search?categories=${cate.description}`}>{cate.description}</a>
         </li>
       ))}
     </ul>

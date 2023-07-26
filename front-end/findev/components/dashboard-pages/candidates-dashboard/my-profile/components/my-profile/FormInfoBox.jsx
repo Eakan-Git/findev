@@ -38,9 +38,16 @@ const FormInfoBox = () => {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(modifiedFields);
+    // console.log(modifiedFields);
     if (Object.keys(modifiedFields).length > 0) {
-      // console.log("Modified fields:", modifiedFields);
+      // convert skills to array of objects with skill key and value of skill
+      if (modifiedFields.skills) {
+        modifiedFields.skills = modifiedFields.skills.map((skill) => ({
+          skill,
+        }));
+      }
+      console.log("Modified fields:", modifiedFields);
+
       const msg = await putProfile(user.token, modifiedFields);
       // console.log(msg);
       if (msg?.error === false) {

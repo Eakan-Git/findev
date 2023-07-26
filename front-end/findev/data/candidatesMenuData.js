@@ -45,14 +45,14 @@ module.exports = [
     id: 8,
     name: "Đăng xuất",
     icon: "la-sign-out",
-    routePath: "/",
+    routePath: "",
     active: "",
   },
   {
     id: 9,
     name: "Xóa tài khoản",
     icon: "la-trash",
-    routePath: "/",
+    routePath: "",
     active: "",
   },
 ];

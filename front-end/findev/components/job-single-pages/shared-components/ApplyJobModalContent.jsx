@@ -120,77 +120,80 @@ const handleSubmit = async (event) => {
           <div className="uploading-outer apply-cv-outer">
               {cvList.length === 0 ? (
                 <>
-                  <button className="uploadButton" onClick={() => (window.location.href = "/profile/cv-manager")}>
-                    Bạn chưa có CV. Bấm vào đây để tạo CV.
-                  </button>
+                  <div
+                  style={{ color: "red", textAlign: "center", marginBottom: "10px" }}
+                  >Bạn chưa có CV nào trong kho lưu trữ</div>
+                  <span data-bs-dismiss="modal">
+                    <Link 
+                    className="theme-btn btn-style-two w-100"
+                    href={"/profile/cv-manager"}>Đăng CV ngay</Link>
+                  </span>
                 </>
               ) : (
                 <>
                   <select className="uploadButton" required onChange={handleDropdownChange}>
-                  <option value="">Chọn CV</option>
-                  {cvList.map((cv) => (
-                    <option key={cv.id} value={cv.cv_path}>
-                      {cv.cv_name}
-                    </option>
-                  ))}
-              </select>
+                    <option value="">Chọn CV</option>
+                      {cvList.map((cv) => (
+                        <option key={cv.id} value={cv.cv_path}>
+                          {cv.cv_name}
+                        </option>
+                      ))}
+                  </select>
+                  <div className="col-lg-12 col-md-12 col-sm-12 form-group mt-3" >
+                  <div className="input-group checkboxes square">
+                    <input
+                      type="checkbox"
+                      name="remember-me"
+                      id="rememberMe1"
+                      onChange={handleCheckBoxTbChange}
+                    />
+                    <label htmlFor="rememberMe1" className="remember">
+                      <span className="custom-checkbox"/> <span> Tôi đồng ý gửi kèm </span>
+                        <span data-bs-dismiss="modal">
+                          <Link href={"/profile/my-schedule"}>thời gian biểu </Link>
+                          </span>
+                      <span>của mình </span>
+                    </label>
+                  </div>
+                  </div>
+                  {/* End .col */}
+
+                  <div className="col-lg-12 col-md-12 col-sm-12 form-group">
+                    <div className="input-group checkboxes square">
+                      <input
+                        type="checkbox"
+                        name="remember-me"
+                        id="rememberMe2"
+                        onChange={handleCheckBoxChange}
+                      />
+                      <label htmlFor="rememberMe2" className="remember">
+                        <span className="custom-checkbox"></span> Tôi đã đọc và đồng ý với{" "}
+                        <span data-bs-dismiss="modal">
+                          <Link href="/terms">Các Điều khoản và Chính sách bảo mật của FinDev</Link>
+                        </span>
+                      </label>
+                    </div>
+                    {isCheckedError && (
+                      <p className="error-message">Vui lòng tích vào ô đồng ý điều khoản.</p>
+                    )}
+                  </div> 
+
+                  <div className="col-lg-12 col-md-12 col-sm-12 form-group">
+                    <button className="theme-btn btn-style-one w-100"
+                    type="submit"
+                    name="submit-form"
+                    id="submit-form"
+                    disabled={cvList.length === 0}
+                    >
+                      Gửi đơn ứng tuyển
+                    </button>
+                  </div>
                 </>
               )}
           </div>
         </div>
       </div>
       {/* End .col */}
-      
-
-      <div className="col-lg-12 col-md-12 col-sm-12 form-group mt-3" >
-        <div className="input-group checkboxes square">
-          <input
-            type="checkbox"
-            name="remember-me"
-            id="rememberMe1"
-            onChange={handleCheckBoxTbChange}
-          />
-          <label htmlFor="rememberMe1" className="remember">
-            <span className="custom-checkbox"/> <span> Tôi đồng ý gửi kèm </span>
-              <span data-bs-dismiss="modal">
-                <Link href={"/profile/my-schedule"}>thời gian biểu </Link>
-                </span>
-            <span>của mình </span>
-          </label>
-        </div>
-      </div>
-      {/* End .col */}
-
-      <div className="col-lg-12 col-md-12 col-sm-12 form-group">
-        <div className="input-group checkboxes square">
-          <input
-            type="checkbox"
-            name="remember-me"
-            id="rememberMe2"
-            onChange={handleCheckBoxChange}
-          />
-          <label htmlFor="rememberMe2" className="remember">
-            <span className="custom-checkbox"></span> Tôi đã đọc và đồng ý với{" "}
-            <span data-bs-dismiss="modal">
-              <Link href="/terms">Các Điều khoản và Chính sách bảo mật của FinDev</Link>
-            </span>
-          </label>
-        </div>
-        {isCheckedError && (
-          <p className="error-message">Vui lòng tích vào ô đồng ý điều khoản.</p>
-        )}
-      </div> 
-
-      <div className="col-lg-12 col-md-12 col-sm-12 form-group">
-        <button className="theme-btn btn-style-one w-100"
-        type="submit"
-        name="submit-form"
-        id="submit-form"
-        disabled={cvList.length === 0}
-        >
-          Gửi đơn ứng tuyển
-        </button>
-      </div>
     </form>
   );
 };

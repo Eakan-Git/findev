@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     addCategory,
@@ -22,7 +22,8 @@ const FilterJobBox = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [jobsPerPage, setJobsPerPage] = useState(10);
     const router = useRouter();
-    const { keyword, location } = router.query;
+    const keyword = router.query.keyword;
+    const location = router.query.addresses;
     // console.log(keyword, location);
 
     useEffect(() => {
@@ -30,33 +31,32 @@ const FilterJobBox = () => {
         // if keyword is not undefined but location is undefined, search by keyword
         // if location is not undefined but keyword is undefined, search by location
         // if both are not undefined, search by both
+        console.log(keyword, location);
         let queryUrl = "";
         if (keyword !== undefined && location === undefined) {
         queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}`;
         } else if (location !== undefined && keyword === undefined) {
-        // queryUrl = `${searchUrl}?location=${encodeURIComponent(location)}`;
-        alert("Hãy nhập từ khóa");
-        return;
+        queryUrl = `${searchUrl}?addresses=${encodeURIComponent(location)}`;
+        // alert("Hãy nhập từ khóa");
+        // return;
         } else if (keyword !== undefined && location !== undefined) {
         queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}&addresses=${encodeURIComponent(location)}`;
         }
         if(currentPage !== 1) {
             queryUrl = `${queryUrl}&page=${currentPage}`;
-            // update browser url
-            router.push(`${router.pathname}?keyword=${keyword}&addresses=${location}&page=${currentPage}`);
         }
         if(jobsPerPage !== 10) {
             queryUrl = `${queryUrl}&limit=${jobsPerPage}`;
-            // update browser url
-            router.push(`${router.pathname}?keyword=${keyword}&addresses=${location}&page=${currentPage}&limit=${jobsPerPage}`);
         }
+        router.push(`${router.pathname}?keyword=${keyword === "undefined" ? "" : keyword}&addresses=${location === "undefined" ? "" : location}&page=${currentPage}&limit=${jobsPerPage}`);
+
         // console.log(queryUrl);
         // call api to get jobs with keyword and location as params
         const getJobs = async () => {
             // console.log(queryUrl);
         const res = await fetch(queryUrl);
         const data = await res.json();
-        // console.log(data.data);
+        // console.log(data);
         if(data.length !== 0){
             setJobs(data);
         }
@@ -295,7 +295,7 @@ const FilterJobBox = () => {
                         </button>
                     ) : undefined}
 
-                    <select
+                    {/* <select
                         value={sort}
                         className="chosen-single form-select"
                         onChange={sortHandler}
@@ -303,7 +303,7 @@ const FilterJobBox = () => {
                         <option value="">Sắp xếp theo</option>
                         <option value="asc">Mới nhất</option>
                         <option value="des">Cũ nhất</option>
-                    </select>
+                    </select> */}
 
                     <select
                         onChange={perPageHandler}

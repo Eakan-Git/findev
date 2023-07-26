@@ -3,8 +3,7 @@ export const localUrl = "https://job-recommendation-app-2lw5b.ondigitalocean.app
 export const searchUrl = "http://20.240.38.246/api/server/jobs";
 export const recommendUrl = "http://20.240.38.246/api/server/recommend-job";
 export const readCVUrl = "http://20.240.38.246/api/cv/read-cv";
-export const relatedUrl = "http://20.240.38.246/api/server/recommendations/?title=";
-
+export const relatedUrl = "http://20.240.38.246/api/server/title?title=";
 // export const localUrl = process.env.localUrl;
 // export const searchUrl = process.env.searchUrl;
 // export const recommendUrl = process.env.recommendUrl;

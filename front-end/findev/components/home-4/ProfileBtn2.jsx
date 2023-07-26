@@ -94,12 +94,10 @@ const ProfileBtn = ({textColor}) => {
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false"
                             >
-                                <Image
+                                <img
                                     alt="avatar"
                                     className="thumb"
                                     src= {profile?.avatar || "/images/resource/candidate-1.png"}
-                                    width={90}
-                                    height={90}
                                 />
                                 <span className="name" style={{color: textColor}}>Hồ sơ</span>
                             </a>

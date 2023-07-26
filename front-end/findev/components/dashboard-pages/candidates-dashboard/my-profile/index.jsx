@@ -9,56 +9,46 @@ import CopyrightFooter from "../../CopyrightFooter";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
 import { readCVUrl } from "/utils/path";
-import { useState, useEffect } from "react";
-// import { Modal } from "@mui/material";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { localUrl } from "/utils/path";
 const Index = () => {
+  const fileInputRef = useRef(null);
   const { user } = useSelector((state) => state.user);
   const [profile, setProfile] = useState(null);
-  const [isOpenModal, setIsOpenModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-
-  const openModal = () => {
-    setIsOpenModal(true);
-  };
-
-  const closeModal = () => {
-    setIsOpenModal(false);
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleUploadCV = async (e) => {
-    // e.preventDefault();
-    const file = e.target.files[0];
-    // console.log(file);
-    const formData = new FormData();
+    let file = e.target.files[0];
+    let formData = new FormData();
     formData.append("file", file);
-  
+    setIsLoading(true);
     try {
-      const res = await fetch(readCVUrl, {
+      let res = await fetch(readCVUrl, {
         method: "POST",
         body: formData,
       });
-      const data = await res.json();
-      // console.log(data);
+      let data = await res.json();
       delete data.data.user_profile.avatar;
       delete data.data.user_profile.github;
       delete data.data.user_profile.link;
       console.log(data.data.user_profile.avatar);
       // delete data.data.user_profile.date_of_birth;
       // change date_of_birth to yyyy/dd/mm
-      const date = new Date(data.data.user_profile.date_of_birth);
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-      const dt = date.getDate();
-      const newDate = `${year}/${month}/${dt}`;
+      let date = new Date(data.data.user_profile.date_of_birth);
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let dt = date.getDate();
+      let newDate = `${year}/${month}/${dt}`;
       data.data.user_profile.date_of_birth = newDate;
+      setIsLoading(false);
       // ask user to confirm
       if (window.confirm("Bạn có muốn thay đổi thông tin không?")) {
-        // Move the setProfile and setIsEdit calls after the if block
         setProfile(data.data.user_profile);
         setIsEdit(!isEdit);
       }
+      fileInputRef.current.value = "";
     } catch (error) {
       console.log("An error occurred:", error);
     }
@@ -70,14 +60,13 @@ const Index = () => {
       bulkUpdateProfile();
     }
   }, [isEdit]);
-  
+
   const bulkUpdateProfile = async () => {
     try {
       const updatedFields = { ...profile };
       console.log("updatedFields",updatedFields);
       const msg = await putProfile(user.token, updatedFields);
-      // window.location.reload();
-      // alert("Cập nhật thông tin thành công!");
+      window.location.reload();
       alert(msg.message);
     } catch (error) {
       console.error(error);
@@ -147,8 +136,14 @@ const Index = () => {
                   <div className="widget-title">
                     <h4>Hồ sơ của bạn</h4>
                     <label className="theme-btn btn-style-one">
+                      {/* add a spinner if loading */}
+                      {isLoading ? 
+                      (<span className="fa fa-spinner fa-spin" style={{color: "white", marginRight: "1rem"}}></span>)
+                      : (null)}
                     Nhập thông tin nhanh bằng CV
-                    <input type="file" style={{ display: 'none' }} 
+                    <input type="file" 
+                    ref={fileInputRef}
+                    style={{ display: 'none' }} 
                     onChange={handleUploadCV}
                     />
                   </label>

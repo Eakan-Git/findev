@@ -52,7 +52,8 @@ const Experiences = ({ user }) => {
     setIsModalOpen(false);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, e) => {
+    e.preventDefault();
     try {
       await axios.delete(`${localUrl}/user-experiences/${id}`, {
         headers: {
@@ -116,7 +117,7 @@ const Experiences = ({ user }) => {
                 <div className="edit-box">
                   <span className="year">{`${new Date(exp.start).getMonth() + 1}/${new Date(exp.start).getFullYear()} - ${new Date(exp.end).getMonth() + 1}/${new Date(exp.end).getFullYear()}`}</span>
                   <div className="edit-btns">
-                    <button onClick={() => handleDelete(exp.id)}>
+                    <button onClick={(e) => handleDelete(exp.id, e)}>
                       <span className="la la-trash"></span>
                     </button>
                   </div>

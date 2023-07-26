@@ -55,7 +55,8 @@ const SearchForm3 = () => {
 
         {/* <!-- Form Group --> */}
         <div className="form-group col-lg-2 col-md-12 col-sm-12 text-right">
-          <button type="submit" className="theme-btn btn-style-one">
+          <button type="submit" className="theme-btn btn-style-one"
+          >
             Tìm kiếm
           </button>
         </div>

@@ -51,7 +51,8 @@ const Education = ({ user }) => {
     setIsModalOpen(false);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, e) => {
+    e.preventDefault();
     try {
       await axios.delete(`${localUrl}/user-educations/${id}`, {
         headers: {
@@ -112,7 +113,7 @@ const Education = ({ user }) => {
                 <div className="edit-box">
                   <span className="year">{`${new Date(education.start).getFullYear()} - ${new Date(education.end).getFullYear()}`}</span>
                   <div className="edit-btns">
-                    <button onClick={() => handleDelete(education.id)}>
+                    <button onClick={(e) => handleDelete(education.id, e)}>
                       <span className="la la-trash"></span>
                     </button>
                   </div>

@@ -8,9 +8,6 @@ import JobSearchForm from "./JobSearchForm";
 import { useRouter } from "next/router";
 import { searchUrl } from "/utils/path";
 const Index = () => {
-  const router = useRouter();
-  const { keyword, location } = router.query;
-  // console.log(keyword, location);
   return (
     <>
       {/* <!-- Header Span --> */}
