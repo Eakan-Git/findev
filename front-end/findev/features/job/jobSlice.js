@@ -27,20 +27,20 @@ const initialState = {
     jobTypeList: [
         {
             id: 1,
-            name: "Freelancer",
-            value: "freelancer",
-            isChecked: false,
-        },
-        {
-            id: 2,
             name: "Toàn thời gian",
             value: "full-time",
             isChecked: false,
         },
         {
-            id: 3,
+            id: 2,
             name: "Bán thời gian",
             value: "part-time",
+            isChecked: false,
+        },
+        {
+            id: 3,
+            name: "Thực tập",
+            value: "internship",
             isChecked: false,
         }
     ],

@@ -30,13 +30,12 @@ const Index = () => {
                         <Link 
                         href={"/find-jobs"}
                         className="text"
-                        style={{fontSize: "1rem", fontWeight: "500", color: "blue", textDecoration: "underline",top: "0.5rem", right: "0.5rem", position: "absolute"}}
+                        style={{fontSize: "1rem", fontWeight: "500", color: "blue", right: "0.5rem", position: "absolute"}}
                         >
                             Xem thêm
                         </Link>
                     </div>
                     {/* End sec-title */}
-
                     <div className="default-tabs tabs-box">
                         <JobFilterTab />
                     </div>
@@ -69,7 +68,7 @@ const Index = () => {
                         <Link 
                         href={"/find-jobs"}
                         className="text"
-                        style={{fontSize: "1rem", fontWeight: "500", color: "blue", textDecoration: "underline",top: "4.5rem", right: "0.5rem", position: "absolute"}}
+                        style={{fontSize: "1rem", fontWeight: "500", color: "blue", right: "0.5rem", position: "absolute"}}
                         >
                             Xem thêm
                         </Link>
@@ -88,9 +87,6 @@ const Index = () => {
                 <div className="auto-container">
                     <div className="sec-title text-center">
                         <h2>Danh mục công việc phổ biến</h2>
-                        {/* <div className="text">
-                            2020 jobs live - 293 added today.
-                        </div> */}
                     </div>
 
                     <div

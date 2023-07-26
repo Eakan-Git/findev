@@ -50,7 +50,8 @@ const Awards = ({user }) => {
     setIsModalOpen(false);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, event) => {
+    event.preventDefault();
     try {
       await axios.delete(`${localUrl}/user-achievements/${id}`, {
         headers: {
@@ -102,7 +103,6 @@ const Awards = ({user }) => {
         <div className="text">Bạn chưa cập nhật thành tựu.</div>
       ) : (
         awards.map((award, index) => (
-          console.log(award),
           <div className="resume-block" key={index}>
             <div className="inner">
               <span className="name">{index + 1}</span>
@@ -114,7 +114,7 @@ const Awards = ({user }) => {
                 <div className="edit-box">
                   {/* <span className="year">{award.year}</span> */}
                   <div className="edit-btns">
-                    <button onClick={() => handleDelete(award.id)}>
+                    <button onClick={(event) => handleDelete(award.id, event)}>
                       <span className="la la-trash"></span>
                     </button>
                   </div>

@@ -62,7 +62,11 @@ export default [
             },
             {
                 name: "Đăng xuất",
-                routePath: "/logout",
+                routePath: "",
+            },
+            {
+                name: "Xóa tài khoản",
+                routePath: "",
             }
         ],
     },
