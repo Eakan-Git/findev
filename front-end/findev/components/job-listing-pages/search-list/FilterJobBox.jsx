@@ -26,7 +26,8 @@ const FilterJobBox = () => {
     const location = router.query.addresses;
     const categories = router.query.categories;
     const skill = router.query.skill;
-    console.log(keyword, location, categories, skill);
+    const [isLoading, setIsLoading] = useState(false);
+    // console.log(keyword, location, categories, skill);
 
     useEffect(() => {
         let queryUrl = `${searchUrl}?`;
@@ -34,7 +35,7 @@ const FilterJobBox = () => {
         location ? queryUrl += `&addresses=${location}` : queryUrl += "";
         categories ? queryUrl += `&categories=${categories}` : queryUrl += "";
         skill ? queryUrl += `&skill=${skill}` : queryUrl += "";
-        console.log(queryUrl);
+        // console.log(queryUrl);
         const getJobs = async () => {
         const res = await fetch(queryUrl);
         const data = await res.json();
@@ -42,7 +43,9 @@ const FilterJobBox = () => {
             setJobs(data);
         }
         };
+        setIsLoading(true);
         getJobs();
+        setIsLoading(false);
     }, [keyword, location, skill, categories, currentPage, jobsPerPage]);
 
     const handlePageChange = (page) => {
@@ -113,7 +116,7 @@ const FilterJobBox = () => {
 
     // Jobs content
     let content = undefined;
-    console.log(jobs);
+    // console.log(jobs);
     if (jobs !== undefined && jobs !== null) {
         const filteredJobs = jobs?.data?.jobs?.data;
 

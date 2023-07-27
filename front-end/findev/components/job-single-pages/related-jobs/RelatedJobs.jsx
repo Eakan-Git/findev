@@ -10,7 +10,7 @@ const RelatedJobs = ({ title }) => {
   useEffect(() => {
     const getJob = async () => {
       try {
-        console.log(queryUrl);
+        // console.log(queryUrl);
         const res = await axios.get(`${queryUrl}`);
         // if (res.error) {
         //   console.log(res.error)

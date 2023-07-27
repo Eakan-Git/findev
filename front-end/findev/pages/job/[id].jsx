@@ -118,7 +118,7 @@ const JobSingleDynamicV1 = () => {
         // Kết thúc trạng thái lưu
         setIsSaving(false);
       }
-      console.log("Job removed from saved list");
+      // console.log("Job removed from saved list");
     } else {
       try {
         // Xác nhận trạng thái đang lưu
@@ -146,7 +146,7 @@ const JobSingleDynamicV1 = () => {
         // Kết thúc trạng thái lưu
         setIsSaving(false);
       }
-      console.log("Job added to saved list");
+      // console.log("Job added to saved list");
     }
   };
 

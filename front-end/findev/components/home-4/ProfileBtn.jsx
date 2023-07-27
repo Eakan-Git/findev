@@ -37,7 +37,7 @@ const ProfileBtn = ({textColor}) => {
     const handleSignOut = () => {
       if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
         // check if current page is start with /profile
-        console.log(router.pathname);
+        // console.log(router.pathname);
         if (router.pathname.startsWith("/profile")) {
           dispatch(logoutUser());
           router.push("/");

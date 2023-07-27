@@ -142,7 +142,7 @@ const FilterJobBox = () => {
         else {
             if (filteredJobs.length > 0) {
                 content = filteredJobs.map((item) => (
-                    console.log(item),
+                    // console.log(item),
                     <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
                         <div className="inner-box">
                             <div className="content">
