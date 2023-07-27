@@ -63,9 +63,9 @@ const Index = () => {
   const bulkUpdateProfile = async () => {
     try {
       const updatedFields = { ...profile };
-      console.log("updatedFields",updatedFields);
+      // console.log("updatedFields",updatedFields);
       const msg = await putProfile(user.token, updatedFields);
-      // window.location.reload();
+      window.location.reload();
       alert(msg.message);
     } catch (error) {
       console.error(error);
@@ -75,7 +75,7 @@ const Index = () => {
   
   const putProfile = async (token, updatedFields) => {
     const payload = { user_profile: updatedFields };
-    console.log(JSON.stringify(payload, null, 2));
+    // console.log(JSON.stringify(payload, null, 2));
     let bodyPayload = { object: payload};
     // console.log(JSON.stringify(bodyPayload, null, 2));
     try {

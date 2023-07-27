@@ -21,7 +21,7 @@ const SearchForm3 = () => {
         url += `addresses=${encodeURIComponent(location)}&`;
       }
       
-      console.log(url);
+      // console.log(url);
       Router.push(url.slice(0, -1));
     }
   };

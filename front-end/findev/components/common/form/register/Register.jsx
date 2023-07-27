@@ -42,11 +42,11 @@ const Register = () => {
     // } 
     else {
       const url = `${localUrl}/auth-user/sign-up`;
-      console.log(url);
+      // console.log(url);
       const headers = {
         "Content-Type": "application/json",
       };
-      console.log(data);
+      // console.log(data);
   
       try {
         const response = await fetch(url, {
@@ -57,7 +57,7 @@ const Register = () => {
         const result = await response.json();
   
         // Handle the result from the API
-        console.log(result);
+        // console.log(result);
         if(result.error === false) {
           alert(result.message);
           router.reload(window.location.pathname);

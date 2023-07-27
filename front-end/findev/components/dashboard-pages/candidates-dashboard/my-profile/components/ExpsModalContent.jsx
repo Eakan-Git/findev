@@ -38,7 +38,7 @@ const ExpsModalContent = ({ user, onClose, reloadData  }) => {
         console.error('Phiên làm việc đã hết hạn, vui lòng đăng nhập lại');
       }
       const data = await res.json();
-      console.log(data); 
+      // console.log(data); 
       reloadData();
       onClose();
       setDescription("");

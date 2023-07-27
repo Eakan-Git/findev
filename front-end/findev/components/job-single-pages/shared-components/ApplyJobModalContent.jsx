@@ -73,8 +73,8 @@ const handleSubmit = async (event) => {
     return; // Dừng xử lý nếu ô checkbox chưa được tích vào
   }
     try {
-      console.log(checkBoxTb);
-      console.log("timeTable", timeTable);
+      // console.log(checkBoxTb);
+      // console.log("timeTable", timeTable);
       const formData = new FormData();
       formData.append("time_table", checkBoxTb ? timeTable : null);
       formData.append("job_id", id);
@@ -104,12 +104,12 @@ const handleSubmit = async (event) => {
         }
       );
 
-      console.log(response);
+      // console.log(response);
       alert(response.data.message);
     } catch (error) {
       // Xử lý lỗi nếu cần
       alert("Đã có lỗi xảy ra xin hãy thử lại sau");
-      console.log(error);
+      // console.log(error);
     }
   };
 

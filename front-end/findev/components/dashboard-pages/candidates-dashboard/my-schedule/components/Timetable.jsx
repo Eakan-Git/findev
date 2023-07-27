@@ -22,7 +22,7 @@ const Timetable = () => {
     const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
     if (fetchedProfile.error === false) {
       setProfile(fetchedProfile.data.user_profile);
-      console.log(fetchedProfile.data.user_profile.time_table);
+      // console.log(fetchedProfile.data.user_profile.time_table);
       setLoading(!loading);
     } else if (fetchedProfile.message === 'Unauthenticated.') {
       alert('Phiên làm việc đã hết hạn, vui lòng đăng nhập lại');

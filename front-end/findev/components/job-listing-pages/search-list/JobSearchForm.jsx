@@ -9,7 +9,7 @@ const JobSearchForm = () => {
   const router = useRouter();
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("keyword:", keyword, "\nlocation:", location);
+    // console.log("keyword:", keyword, "\nlocation:", location);
     if(keyword.trim() === "" && location.trim() === "") {
       return;
     }

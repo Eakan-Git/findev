@@ -36,7 +36,7 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
         alert(res.message);
       }
       const data = await res.json();
-      console.log(data); 
+      // console.log(data); 
       reloadData();
       onClose();
       setUniversity("");

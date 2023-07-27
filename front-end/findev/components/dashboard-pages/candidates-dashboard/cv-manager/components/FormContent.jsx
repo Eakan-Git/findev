@@ -9,7 +9,7 @@ const FormContent = () => {
 
   const handleUploadCV = async (e) => {
     e.preventDefault();
-    console.log(cvTitle, cvNote, cvFile);
+    // console.log(cvTitle, cvNote, cvFile);
     if(!cvFile) {
         alert("Vui lòng chọn file CV");
         return;
@@ -20,7 +20,7 @@ const FormContent = () => {
     }
     const formData = new FormData();
     formData.append("cv_name", cvTitle);
-    formData.append("cv_note", cvNote);
+    cvNote && formData.append("note", cvNote);
     formData.append("user_id", user.userAccount.id);
     formData.append("cv_path", cvFile);
     try {
@@ -32,7 +32,7 @@ const FormContent = () => {
           body: formData,
         });
   
-        console.log(response);
+        // console.log(response);
         setCvFile(null); // Reset the selected file
         setCvTitle(""); // Clear the title input
         setCvNote(""); // Clear the note input

@@ -14,7 +14,7 @@ const ProfileBtn = ({textColor}) => {
     const [profile, setProfile] = useState(null);
     const fetchUser = async () => {
       const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
-      if (fetchedProfile.error === false) {
+      if (fetchedProfile?.error === false) {
         setProfile(fetchedProfile.data.user_profile);
       }
     };
@@ -32,7 +32,7 @@ const ProfileBtn = ({textColor}) => {
     const handleSignOut = () => {
         if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
           // check if current page is start with /profile
-          console.log(router.pathname);
+          // console.log(router.pathname);
           if (router.pathname.startsWith("/profile")) {
             dispatch(logoutUser());
             router.push("/");

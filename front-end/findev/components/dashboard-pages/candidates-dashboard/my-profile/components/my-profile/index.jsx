@@ -5,6 +5,7 @@ const Index = () => {
   return (
     <div className="widget-content">
       <LogoUpload />
+      {/* <AvatarShow /> */}
       {/* End logo and cover photo components */}
 
       <FormInfoBox />

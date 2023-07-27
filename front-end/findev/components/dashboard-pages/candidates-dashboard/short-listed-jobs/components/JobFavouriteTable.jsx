@@ -32,7 +32,7 @@ const JobFavouriteTable = () => {
           setPaginationLinks(res.data.data.saved_jobs.links)
           setLastPage(res.data.data.saved_jobs.last_page);
         }
-      console.log("Dayy: ", res);
+      // console.log("Dayy: ", res);
       } catch (error) {
         if (error.response && error.response.data.message === "Unauthenticated.") {
           alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
