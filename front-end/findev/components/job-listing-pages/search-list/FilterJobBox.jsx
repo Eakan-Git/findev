@@ -15,7 +15,7 @@ import {
 } from "../../../features/filter/filterSlice";
 import Pagination from "../components/Pagination3";
 import JobSelect from "../components/JobSelect";
-import {searchUrl } from "../../../utils/path";
+import {searchUrl } from "/utils/path";
 
 const FilterJobBox = () => {
     const [jobs, setJobs] = useState(undefined);
@@ -24,45 +24,26 @@ const FilterJobBox = () => {
     const router = useRouter();
     const keyword = router.query.keyword;
     const location = router.query.addresses;
-    // console.log(keyword, location);
+    const categories = router.query.categories;
+    const skill = router.query.skill;
+    console.log(keyword, location, categories, skill);
 
     useEffect(() => {
-        // construct query url, if keyword or location is not undefined
-        // if keyword is not undefined but location is undefined, search by keyword
-        // if location is not undefined but keyword is undefined, search by location
-        // if both are not undefined, search by both
-        console.log(keyword, location);
-        let queryUrl = "";
-        if (keyword !== undefined && location === undefined) {
-        queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}`;
-        } else if (location !== undefined && keyword === undefined) {
-        queryUrl = `${searchUrl}?addresses=${encodeURIComponent(location)}`;
-        // alert("Hãy nhập từ khóa");
-        // return;
-        } else if (keyword !== undefined && location !== undefined) {
-        queryUrl = `${searchUrl}?keyword=${encodeURIComponent(keyword)}&addresses=${encodeURIComponent(location)}`;
-        }
-        if(currentPage !== 1) {
-            queryUrl = `${queryUrl}&page=${currentPage}`;
-        }
-        if(jobsPerPage !== 10) {
-            queryUrl = `${queryUrl}&limit=${jobsPerPage}`;
-        }
-        router.push(`${router.pathname}?keyword=${keyword === "undefined" ? "" : keyword}&addresses=${location === "undefined" ? "" : location}&page=${currentPage}&limit=${jobsPerPage}`);
-
-        // console.log(queryUrl);
-        // call api to get jobs with keyword and location as params
+        let queryUrl = `${searchUrl}?`;
+        keyword ? queryUrl += `&keyword=${keyword}` : queryUrl += "";
+        location ? queryUrl += `&addresses=${location}` : queryUrl += "";
+        categories ? queryUrl += `&categories=${categories}` : queryUrl += "";
+        skill ? queryUrl += `&skill=${skill}` : queryUrl += "";
+        console.log(queryUrl);
         const getJobs = async () => {
-            // console.log(queryUrl);
         const res = await fetch(queryUrl);
         const data = await res.json();
-        // console.log(data);
         if(data.length !== 0){
             setJobs(data);
         }
         };
         getJobs();
-    }, [keyword, location, currentPage, jobsPerPage]);
+    }, [keyword, location, skill, categories, currentPage, jobsPerPage]);
 
     const handlePageChange = (page) => {
         // check page is a number
@@ -132,20 +113,9 @@ const FilterJobBox = () => {
 
     // Jobs content
     let content = undefined;
-
+    console.log(jobs);
     if (jobs !== undefined && jobs !== null) {
         const filteredJobs = jobs?.data?.jobs?.data;
-        // console.log(filteredJobs);
-            // .filter(keywordFilter)
-            // .filter(locationFilter)
-            // .filter(destinationFilter)
-            // .filter(categoryFilter)
-            // .filter(jobTypeFilter)
-            // .filter(datePostedFilter)
-            // .filter(experienceFilter)
-            // .filter(salaryFilter)
-            // .sort(sortFilter)
-            // .slice(perPage.start, perPage.end !== 0 ? perPage.end : 16);
 
         if (filteredJobs?.length > 0) {
             content = filteredJobs.map((item) => (

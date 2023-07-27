@@ -188,13 +188,11 @@ const JobSingleDynamicV1 = () => {
                             <span className="icon flaticon-map-locator"></span>
                             {job?.location || "Chưa cập nhật"}
                           </li>
-                          {/* location info */}
-                          <li>
+                          {/* <li>
                             <span className="icon flaticon-clock-3"></span>{" "}
                             {job?.deadline}
-                          </li>
-                          {/* time info */}
-                          <li>
+                          </li> */}
+                          {/* <li>
                             <span className="icon flaticon-money"></span>{" "}
                             {job?.min_salary === -1 && job?.max_salary === -1
                                         ? "Thỏa thuận"
@@ -203,7 +201,7 @@ const JobSingleDynamicV1 = () => {
                                         : job?.min_salary === 0 && job?.max_salary > 0
                                         ? `Lên đến ${job.max_salary} triệu`
                                         : `${job.min_salary} - ${job.max_salary} triệu`}
-                          </li>
+                          </li> */}
                           {/* salary info */}
                         </ul>
                         {/* End .job-info */}

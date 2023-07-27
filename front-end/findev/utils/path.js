@@ -1,12 +1,11 @@
-export const localUrl = "https://job-recommendation-app-2lw5b.ondigitalocean.app/api";
+export const localUrl = "https://jr-app-zyarc.ondigitalocean.app/api";
 // export const localUrl = "http://localhost:8000/api";
-export const searchUrl = "http://20.240.38.246/api/server/jobs";
-export const recommendUrl = "http://20.240.38.246/api/server/recommend-job";
-export const readCVUrl = "http://20.240.38.246/api/cv/read-cv";
-export const relatedUrl = "http://20.240.38.246/api/server/title?title=";
+export const searchUrl = "https://20.91.169.93.nip.io/api/server/jobs";
+export const recommendUrl = "https://20.91.169.93.nip.io/api/server/recommend-job";
+export const readCVUrl = "https://20.91.169.93.nip.io/api/cv/read-cv";
+export const relatedUrl = "https://20.91.169.93.nip.io/api/server/title?title=";
 // export const localUrl = process.env.localUrl;
 // export const searchUrl = process.env.searchUrl;
 // export const recommendUrl = process.env.recommendUrl;
 // export const readCVUrl = process.env.readCVUrl;
 // export const relatedUrl = process.env.relatedUrl;
-
