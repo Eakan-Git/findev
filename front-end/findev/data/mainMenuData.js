@@ -100,7 +100,7 @@ export const findJobItems = [
             },
             {
                 name: "Việc làm IT",
-                routePath: "#",
+                routePath: "/search?category=Việc làm IT",
             },
             {
                 name: "Việc làm bán thời gian",
