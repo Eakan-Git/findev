@@ -24,32 +24,8 @@ const FilterJobBox = () => {
     const [jobs, setJobs] = useState(undefined);
     const [currentPage, setCurrentPage] = useState(1);
     const [jobsPerPage, setJobsPerPage] = useState(10);
-    const router = useRouter();
     const { jobList, jobSort } = useSelector((state) => state.filter);
-    // console.log(keyword, location);
-    // if(user) {
-    //     useEffect(() => {
-    //     // construct query url
-    //     let queryUrl = `${recommendUrl}/${user.userAccount.id}`;
-    //     // if(currentPage !== 1) {
-    //     //     queryUrl = `${queryUrl}?page=${currentPage}`;
-    //     //     // update browser url
-    //     //     router.push(`${router.pathname}?page=${currentPage}`);
-    //     // }
-    //     // console.log(queryUrl);
-    //     // call api to get jobs with keyword and location as params
-    //     const getJobs = async () => {
-    //     console.log(queryUrl);
-    //     const res = await fetch(queryUrl);
-    //     const data = await res.json();
-    //     // console.log(data.data);
-    //     if(data.length !== 0){
-    //         setJobs(data);
-    //     }
-    //     };
-    //     getJobs();
-    // }, [currentPage, jobsPerPage]);
-    // }
+    const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {
         if (user) {
           const recommendJobsDataKey = "recommendJobsData";
@@ -65,17 +41,14 @@ const FilterJobBox = () => {
     
                 if (data.length !== 0) {
                   setJobs(data);
-    
-                  // Save data to localStorage with lifetime of 1 day
-                //   localStorage.setItem(recommendJobsDataKey, JSON.stringify(data));
                 }
               } catch (error) {
                 console.error("Error fetching jobs:", error);
               }
             };
+            setIsLoading(true);
             getJobs();
-          } else {
-            // setJobs(JSON.parse(recommendJobsData));
+            setIsLoading(false);
           }
         }
       }, [user]);
@@ -149,112 +122,117 @@ const FilterJobBox = () => {
     let content = undefined;
 
     if (jobs?.data !== undefined && jobs?.data !== null) {
-        console.log(jobs);
+        // console.log(jobs);
         const filteredJobs = jobs.data.jobs.data;
-        // console.log(filteredJobs);
-            // .filter(keywordFilter)
-            // .filter(locationFilter)
-            // .filter(destinationFilter)
-            // .filter(categoryFilter)
-            // .filter(jobTypeFilter)
-            // .filter(datePostedFilter)
-            // .filter(experienceFilter)
-            // .filter(salaryFilter)
-            // .sort(sortFilter)
-            // .slice(perPage.start, perPage.end !== 0 ? perPage.end : 16);
 
-        if (filteredJobs.length > 0) {
-            content = filteredJobs.map((item) => (
-                console.log(item),
-                <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
-                    <div className="inner-box">
-                        <div className="content">
-                            <span className="company-logo">
-                                <Link href={`/job/${item.job_id}`}>
-                                <img src={item?.company_logo || "/images/logo.png"}
-                                title={item?.company_name || "Company Logo"} 
-                                alt={item?.company_name || "Company Logo"}
-                                />
-                                </Link>
-                                {/* <img src={item?.employer_profile.company_profile.logo} alt={item?.company} /> */}
-                            </span>
-                            <h4>
-                                <Link href={`/job/${item.job_id}`}
-                                alt={item.title}
-                                title={item.title}
-                                >
-                                    {/* check if job title is longer than 50 character then truncate */}
-                                        {item.title.length > 50
-                                            ? item.title.slice(0, 50) + "..."
-                                            : item.title
-                                        }
-                                </Link>
-                            </h4>
-                            <ul className="job-info">
-                                <li>
-                                    <span className="icon flaticon-briefcase"></span>
-                                    <Link href={`/employer/${item?.company_id || 1}`}
-                                    alt={item?.company_name}
-                                    title={item?.company_name}
-                                    >
-                                    {item?.company_name.length > 12 ? item?.company_name.slice(0, 12) + "..." : item?.company_name}
+        if(isLoading){
+            content = 
+            <>
+                <h1 style={{ textAlign: 'center', color: 'black' }}>
+                    <span className="fa fa-spinner fa-spin fa-fw"
+                    style={{marginRight: '5px'}}
+                    ></span>
+                        Đang tải...
+                </h1>;
+                <div className="text"
+                style={{ textAlign: 'center', color: 'black' }}
+                >Quá trình này có thể mất vài phút.</div>
+            </>
+        }
+        else {
+            if (filteredJobs.length > 0) {
+                content = filteredJobs.map((item) => (
+                    console.log(item),
+                    <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
+                        <div className="inner-box">
+                            <div className="content">
+                                <span className="company-logo">
+                                    <Link href={`/job/${item.job_id}`}>
+                                    <img src={item?.company_logo || "/images/logo.png"}
+                                    title={item?.company_name || "Company Logo"} 
+                                    alt={item?.company_name || "Company Logo"}
+                                    />
                                     </Link>
-                                </li>
-                                <li>
-                                    <span className="icon flaticon-map-locator"></span>
-                                    {/* get first location from job_location array using slice
-                                        and get text before ':' using split
+                                    {/* <img src={item?.employer_profile.company_profile.logo} alt={item?.company} /> */}
+                                </span>
+                                <h4>
+                                    <Link href={`/job/${item.job_id}`}
+                                    alt={item.title}
+                                    title={item.title}
+                                    >
+                                        {/* check if job title is longer than 50 character then truncate */}
+                                            {item.title.length > 50
+                                                ? item.title.slice(0, 50) + "..."
+                                                : item.title
+                                            }
+                                    </Link>
+                                </h4>
+                                <ul className="job-info">
+                                    <li>
+                                        <span className="icon flaticon-briefcase"></span>
+                                        <Link href={`/employer/${item?.company_id || 1}`}
+                                        alt={item?.company_name}
+                                        title={item?.company_name}
+                                        >
+                                        {item?.company_name.length > 12 ? item?.company_name.slice(0, 12) + "..." : item?.company_name}
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <span className="icon flaticon-map-locator"></span>
+                                        {/* get first location from job_location array using slice
+                                            and get text before ':' using split
+                                        */}
+                                        {/* {item.location[0].split(":")[0]} */}
+                                        {item.location.split(":")[0] || "Không xác định"}
+                                        
+                                    </li>
+                                    <li>
+                                        <span className="icon flaticon-clock-3"></span> {item.deadline}
+                                    </li>
+                                    <li>
+                                        <span className="icon flaticon-money"></span>
+                                        {/* switch case for min_salary and max_salary cases:
+                                        min_salary = -1 and max_salary = -1 => Thỏa thuận
+                                        min_salary = 0 and max_salary = 0 => Không lương
+                                        min_salary = 0 and max_salary > 0 => Lên đến max_salary
+                                        min_salary > 0 and max_salary > 0 => Từ min_salary - max_salary
+                                        */}
+                                        {item.min_salary === -1 && item.max_salary === -1
+                                            ? "Thỏa thuận"
+                                            : item.min_salary === 0 && item.max_salary === 0
+                                            ? "Không lương"
+                                            : item.min_salary === 0 && item.max_salary > 0
+                                            ? `Lên đến ${item.max_salary}tr`
+                                            : `${item.min_salary} - ${item.max_salary}tr`}
+                                    </li>
+                                </ul>
+                                <ul className="job-other-info">
+                                    <li className="time">{item.type}</li>
+                                    <li className="required">Số lượng: {item.recruit_num}</li>
+                                    <li className="yoe">
+                                    {/* if item.min_yoe == item.max_yoe -> min_yoe
+                                        if item.min_yoe == item.max_yoe -> min_yoe == 0 -> Không yêu cầu kinh nghiệm
+                                        if item.min_yoe == item.max_yoe -> min_yoe != 0 -> Kinh nghiệm từ min_yoe năm
+                                        if item.min_yoe != item.max_yoe -> Kinh nghiệm từ min_yoe đến max_yoe năm
                                     */}
-                                    {/* {item.location[0].split(":")[0]} */}
-                                    {item.location.split(":")[0] || "Không xác định"}
-                                    
-                                </li>
-                                <li>
-                                    <span className="icon flaticon-clock-3"></span> {item.deadline}
-                                </li>
-                                <li>
-                                    <span className="icon flaticon-money"></span>
-                                    {/* switch case for min_salary and max_salary cases:
-                                    min_salary = -1 and max_salary = -1 => Thỏa thuận
-                                    min_salary = 0 and max_salary = 0 => Không lương
-                                    min_salary = 0 and max_salary > 0 => Lên đến max_salary
-                                    min_salary > 0 and max_salary > 0 => Từ min_salary - max_salary
-                                    */}
-                                    {item.min_salary === -1 && item.max_salary === -1
-                                        ? "Thỏa thuận"
-                                        : item.min_salary === 0 && item.max_salary === 0
-                                        ? "Không lương"
-                                        : item.min_salary === 0 && item.max_salary > 0
-                                        ? `Lên đến ${item.max_salary}tr`
-                                        : `${item.min_salary} - ${item.max_salary}tr`}
-                                </li>
-                            </ul>
-                            <ul className="job-other-info">
-                                <li className="time">{item.type}</li>
-                                <li className="required">Số lượng: {item.recruit_num}</li>
-                                <li className="yoe">
-                                {/* if item.min_yoe == item.max_yoe -> min_yoe
-                                    if item.min_yoe == item.max_yoe -> min_yoe == 0 -> Không yêu cầu kinh nghiệm
-                                    if item.min_yoe == item.max_yoe -> min_yoe != 0 -> Kinh nghiệm từ min_yoe năm
-                                    if item.min_yoe != item.max_yoe -> Kinh nghiệm từ min_yoe đến max_yoe năm
-                                */}
-                                {item.min_yoe === item.max_yoe
-                                ? item.min_yoe === 0
-                                    ? "Không yêu cầu kinh nghiệm"
-                                    : `Kinh nghiệm từ ${item.min_yoe} năm`
-                                : `Kinh nghiệm từ ${item.min_yoe} - ${item.max_yoe}
-                                    năm`}
-                                </li>
-                            </ul>
-                            {/* <button className="bookmark-btn">
-                                <span className="flaticon-bookmark"></span>
-                            </button> */}
+                                    {item.min_yoe === item.max_yoe
+                                    ? item.min_yoe === 0
+                                        ? "Không yêu cầu kinh nghiệm"
+                                        : `Kinh nghiệm từ ${item.min_yoe} năm`
+                                    : `Kinh nghiệm từ ${item.min_yoe} - ${item.max_yoe}
+                                        năm`}
+                                    </li>
+                                </ul>
+                                {/* <button className="bookmark-btn">
+                                    <span className="flaticon-bookmark"></span>
+                                </button> */}
+                            </div>
                         </div>
                     </div>
-                </div>
-            ));
-        } else {
-            content = <h1 style={{ textAlign: 'center' }}>Không tìm thấy công việc, bạn hãy cập nhật thông tin cá nhân của mình</h1>;
+                ));
+            } else {
+                content = <h1 style={{ textAlign: 'center' }}>Không tìm thấy công việc, bạn hãy cập nhật thông tin cá nhân của mình</h1>;
+            }
         }
     }
     else{
