@@ -11,7 +11,7 @@ const CVListingsTable = ({user}) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [cvListings, setCvListings] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const fetchCVListings = async () => {
     const url = `${localUrl}/cvs/user/${user.userAccount.id}`;
     const headers = {
@@ -47,6 +47,7 @@ const CVListingsTable = ({user}) => {
   const handleDeleteCV = async (id) => {
     // ask for confirmation
     if(confirm("Bạn có chắc chắn xóa CV này?")){
+    setIsLoading(true);
       try {
       const res = await axios.delete(`${localUrl}/cvs/${id}`, {
         headers: {
@@ -54,7 +55,9 @@ const CVListingsTable = ({user}) => {
           'Authorization': user.token
         }
       });
-      console.log("delete");
+      // console.log("delete");
+      alert(res.data.message);
+      setIsLoading(false);
       fetchCVListings(); // Call fetchCVListings after successful deletion
     } catch (err) {
       console.log(err);
@@ -121,7 +124,9 @@ const CVListingsTable = ({user}) => {
                           </li>
                           <li>
                             <button data-text="Xóa CV" onClick={() => handleDeleteCV(item.id)}>
-                              <span className="la la-trash"></span>
+                            {isLoading ? 
+                            (<span className="fa fa-spinner fa-spin" style={{color: "white"}}></span>)
+                            : (<span className="la la-trash"></span>)}
                             </button>
                           </li>
                         </ul>

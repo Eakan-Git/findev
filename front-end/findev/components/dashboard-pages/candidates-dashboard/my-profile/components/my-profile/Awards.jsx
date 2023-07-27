@@ -6,6 +6,7 @@ import axios from 'axios'
 import { localUrl } from "/utils/path.js";
 const Awards = ({user }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [awards, setAwards] = useState([]);
   const MAX_AWARDS = 5;
   const getAwards = async () => {
@@ -53,6 +54,7 @@ const Awards = ({user }) => {
   const handleDelete = async (id, event) => {
     event.preventDefault();
     try {
+      setIsLoading(true);
       await axios.delete(`${localUrl}/user-achievements/${id}`, {
         headers: {
           'Content-Type': 'application/json',
@@ -63,6 +65,7 @@ const Awards = ({user }) => {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
   };
 
 
@@ -115,7 +118,9 @@ const Awards = ({user }) => {
                   {/* <span className="year">{award.year}</span> */}
                   <div className="edit-btns">
                     <button onClick={(event) => handleDelete(award.id, event)}>
-                      <span className="la la-trash"></span>
+                    {isLoading ? 
+                            (<span className="fa fa-spinner fa-spin" style={{color: "blue"}}></span>)
+                            : (<span className="la la-trash"></span>)}
                     </button>
                   </div>
                 </div>

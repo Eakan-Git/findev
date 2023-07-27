@@ -8,6 +8,7 @@ import { localUrl } from "/utils/path.js";
 const Education = ({ user }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [educations, setEducations] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const MAX_EDU = 3;
   const getEDUS = async () => {
     try {
@@ -54,6 +55,7 @@ const Education = ({ user }) => {
   const handleDelete = async (id, e) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       await axios.delete(`${localUrl}/user-educations/${id}`, {
         headers: {
           'Content-Type': 'application/json',
@@ -64,6 +66,7 @@ const Education = ({ user }) => {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -114,7 +117,9 @@ const Education = ({ user }) => {
                   <span className="year">{`${new Date(education.start).getFullYear()} - ${new Date(education.end).getFullYear()}`}</span>
                   <div className="edit-btns">
                     <button onClick={(e) => handleDelete(education.id, e)}>
-                      <span className="la la-trash"></span>
+                    {isLoading ? 
+                            (<span className="fa fa-spinner fa-spin" style={{color: "blue"}}></span>)
+                            : (<span className="la la-trash"></span>)}
                     </button>
                   </div>
                 </div>

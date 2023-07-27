@@ -21,7 +21,7 @@ const FormInfoBox = () => {
   const [loading, setLoading] = useState(true);
   const [modifiedFields, setModifiedFields] = useState({});
   const [privateOption, setPrivateOption] = useState(profile?.is_private || 1);
-
+  const [isLoading, setIsLoading] = useState(false);
   const handlePrivateChange = (event) => {
     event.preventDefault();
     const selectedValue = event.target.value;
@@ -47,13 +47,14 @@ const FormInfoBox = () => {
         }));
       }
       console.log("Modified fields:", modifiedFields);
-
-      const msg = await putProfile(user.token, modifiedFields);
+      setIsLoading(true);
+      const msg = await putProfile(user, modifiedFields);
       // console.log(msg);
       if (msg?.error === false) {
         alert(msg.message);
         setProfile((prevProfile) => ({ ...prevProfile, ...modifiedFields }));
         setModifiedFields({});
+        setDefaultProfile(profile);
       }
       else
       {
@@ -61,6 +62,7 @@ const FormInfoBox = () => {
         // console.log(msg);
         alert(msg.message);
       }
+      setIsLoading(false);
     }
   };
   
@@ -255,7 +257,9 @@ const fetchUser = async () => {
             className="theme-btn btn-style-one"
             onClick={handleSubmit}
           >
-            Lưu
+            {isLoading ? 
+                      (<span className="fa fa-spinner fa-spin" style={{color: "white"}}></span>)
+                      : (<>Cập nhật</>)}
           </button>
         </div>
       )}

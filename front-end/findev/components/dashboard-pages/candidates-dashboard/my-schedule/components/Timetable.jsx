@@ -16,6 +16,7 @@ const Timetable = () => {
   const [activatedCells, setActivatedCells] = useState([]);
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchUser = async () => {
     const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
@@ -132,6 +133,7 @@ const Timetable = () => {
     }
     // console.log("coordinate", coordinate);
     try {
+      setIsLoading(true);
       const response = await fetch(`${localUrl}/time-tables/${user.userAccount.id}`, {
         method: 'PUT',
         headers: {
@@ -154,6 +156,9 @@ const Timetable = () => {
       // Handle network error
       console.log('Error:', error);
     }
+    setIsLoading(false);
+    setActivatedCells(selectedCells); // Update activated cells
+    setIsDragging(false);
   };
   
   
@@ -164,8 +169,6 @@ const Timetable = () => {
 
   const isChanged = JSON.stringify(originalActivatedCells) !== JSON.stringify(selectedCells);
 
-  // let buttons = null;
-
   let buttons = (
     <div className="form-group col-lg-6 col-md-12" style={{ marginTop: '10px' }}>
       <button type="submit" className="theme-btn btn-style-cancel" onClick={handleCancel}>
@@ -173,7 +176,9 @@ const Timetable = () => {
       </button>
       <span style={{ margin: '0 10px' }}></span>
       <button type="submit" className="theme-btn btn-style-one" onClick={handleSave}>
-        Cập nhật
+        {isLoading ? 
+                      (<span className="fa fa-spinner fa-spin" style={{color: "white"}}></span>)
+                      : (<>Cập nhật</>)}
       </button>
       <span style={{ margin: '0 10px' }}></span>
       <button type="submit" className="theme-btn btn-style-clear" onClick={handleClear}>
