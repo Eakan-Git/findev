@@ -30,10 +30,9 @@ const Index = () => {
         body: formData,
       });
       let data = await res.json();
-      delete data.data.user_profile.avatar;
+      // delete data.data.user_profile.avatar;
       delete data.data.user_profile.github;
       delete data.data.user_profile.link;
-      console.log(data.data.user_profile.avatar);
       // delete data.data.user_profile.date_of_birth;
       // change date_of_birth to yyyy/dd/mm
       let date = new Date(data.data.user_profile.date_of_birth);
@@ -66,7 +65,7 @@ const Index = () => {
       const updatedFields = { ...profile };
       console.log("updatedFields",updatedFields);
       const msg = await putProfile(user.token, updatedFields);
-      window.location.reload();
+      // window.location.reload();
       alert(msg.message);
     } catch (error) {
       console.error(error);
