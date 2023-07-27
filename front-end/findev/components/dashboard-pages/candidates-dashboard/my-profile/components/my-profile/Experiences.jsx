@@ -9,6 +9,7 @@ import { localUrl } from "/utils/path.js";
 const Experiences = ({ user }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [exps, setExps] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const MAX_EXPS = 3;
   const getExps = async () => {
     try {
@@ -55,6 +56,7 @@ const Experiences = ({ user }) => {
   const handleDelete = async (id, e) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       await axios.delete(`${localUrl}/user-experiences/${id}`, {
         headers: {
           'Content-Type': 'application/json',
@@ -65,6 +67,7 @@ const Experiences = ({ user }) => {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
   };
 
 
@@ -118,7 +121,9 @@ const Experiences = ({ user }) => {
                   <span className="year">{`${new Date(exp.start).getMonth() + 1}/${new Date(exp.start).getFullYear()} - ${new Date(exp.end).getMonth() + 1}/${new Date(exp.end).getFullYear()}`}</span>
                   <div className="edit-btns">
                     <button onClick={(e) => handleDelete(exp.id, e)}>
-                      <span className="la la-trash"></span>
+                    {isLoading ? 
+                            (<span className="fa fa-spinner fa-spin" style={{color: "blue"}}></span>)
+                            : (<span className="la la-trash"></span>)}
                     </button>
                   </div>
                 </div>

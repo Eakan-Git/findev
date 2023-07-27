@@ -48,16 +48,16 @@ const Index = () => {
             <div className="col-lg-12">
               <div className="ls-widget">
                 <div className="tabs-box">
-                  <div className="widget-title">
-                    <h4>Thời gian biểu là thời gian BẬN của bạn</h4>
-                    <div className="chosen-outer">
-                    {/* <!--Tabs Box--> */}
-                    <select className="chosen-single form-select">
-                      <option>Tất cả</option>
-                      <option>Giờ hành chính</option>
-                    </select>
-                  </div>
-                  </div>
+                  <h4 className="widget-title">
+                    Thời gian biểu là thời gian BẬN của bạn.
+                  </h4>
+                    {/* <div className="chosen-outer">
+                      <select className="chosen-single form-select">
+                        <option>Tất cả</option>
+                        <option>Giờ hành chính</option>
+                      </select>
+                    </div> */}
+                  {/* </div> */}
                   
                   {/* End widget-title */}
 

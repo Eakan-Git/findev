@@ -8,6 +8,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 const JobFavouriteTable = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const [SavedJobs, setSavedJobs] = useState([]);
@@ -59,6 +60,7 @@ const JobFavouriteTable = () => {
     const confirmation = confirm("Bạn có chắc chắn muốn xóa?");
     if (confirmation) {
       try {
+        setIsLoading(true);
         const res = await fetch(url, { method: "DELETE", headers });
         if (!res.error) {
           const data = await res.json();
@@ -77,6 +79,7 @@ const JobFavouriteTable = () => {
           dispatch(logoutUser());
         }
       }
+      setIsLoading(false);
     }
   };
 
@@ -181,7 +184,9 @@ const JobFavouriteTable = () => {
                           <ul className="option-list">
                             <li>
                               <button data-text="Xóa công việc" onClick={() => handleDeleteSavedJob(item.id)}>
-                                <span className="la la-trash"></span>
+                              {isLoading ? 
+                            (<span className="fa fa-spinner fa-spin" style={{color: "blue"}}></span>)
+                            : (<span className="la la-trash"></span>)}
                               </button>
                             </li>
                           </ul>
