@@ -100,6 +100,9 @@ const HeaderNavContent = () => {
                     <li>
                         <Link href="/employers">Công ty</Link>
                     </li>
+                    <li>
+                        <Link href="/faq">Câu hỏi thường gặp</Link>
+                    </li>
                     {/* End Pages menu items */}
                 </ul>
             </nav>
