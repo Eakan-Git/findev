@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { localUrl } from "/utils/path";
-const FormContent = () => {
+const FormContent = ({isUploaded, setIsUploaded}) => {
     const { user } = useSelector((state) => state.user);
     const [cvTitle, setCvTitle] = useState("");
     const [cvNote, setCvNote] = useState("");
@@ -37,7 +37,8 @@ const FormContent = () => {
         setCvTitle(""); // Clear the title input
         setCvNote(""); // Clear the note input
         alert("Tải lên thành công");
-        window.location.reload();
+        // window.location.reload();
+        setIsUploaded(!isUploaded);
       } catch (err) {
         console.log(err);
         if (err.message === "Unauthenticated.") {

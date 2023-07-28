@@ -1,6 +1,6 @@
 import FormContent from "./FormContent";
 
-const UploadModal = () => {
+const UploadModal = ({setIsUploaded}) => {
 
   return (
     <>
@@ -19,7 +19,7 @@ const UploadModal = () => {
               <div id="login-modal">
                 {/* <!-- Login Form --> */}
                 <div className="login-form default-form">
-                  <FormContent />
+                  <FormContent setIsUploaded={setIsUploaded} />
                 </div>
                 {/* <!--End Login Form --> */}
               </div>

@@ -8,13 +8,13 @@ const ApplyJobModalContent = ( user ) => {
   const id = router.query.id;
   const [cvList, setCvList] = useState([]);
   const [checkBoxTb, setCheckBoxTb] = useState(false);
-  const [selectedCvPath, setSelectedCvPath] = useState("");
+  const [selectedCVID, setSelectedCVID] = useState("");
   const [isCheckedError, setIsCheckedError] = useState(false);
   const [isChecked, setIsChecked] = useState(true)
   const [timeTable, setTimeTable] = useState([]);
   
   const handleDropdownChange = (event) => {
-    setSelectedCvPath(event.target.value);
+    setSelectedCVID(event.target.value);
   };
 
   const handleCheckBoxChange = (event) => {
@@ -51,18 +51,16 @@ const ApplyJobModalContent = ( user ) => {
         },
       });
   
-      const data = await res.json(); // Assuming the response is in JSON format
-  
-      setTimeTable(data.data.time_table.coordinate);
-      // console.log("timeTable", data.data.time_table.coordinate);
+      // const data = await res.json(); // Assuming the response is in JSON format
+      console.log(res);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   
   useEffect(() => {
     fetchCvList();
-    fetchTimeTable();
+    // fetchTimeTable();
   }, []);
 //select_timetable: checkBoxTb,
 const handleSubmit = async (event) => {
@@ -74,38 +72,46 @@ const handleSubmit = async (event) => {
   }
     try {
       // console.log(checkBoxTb);
-      // console.log("timeTable", timeTable);
       const formData = new FormData();
-      formData.append("time_table", checkBoxTb ? timeTable : null);
+      formData.append("time_table", checkBoxTb ? checkBoxTb : null);
       formData.append("job_id", id);
       formData.append("user_id", user.user.userAccount.id);
-      formData.append("cv_path", selectedCvPath);
-      // const response = await fetch(`${localUrl}/applications`, {
-      //   method: "POST",
-      //   headers: {
-      //     Authorization: `Bearer ${user.user.token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: formData,
-      // });
-      const response = await axios.post(
-        `${localUrl}/applications`,
-        {
-          time_table: checkBoxTb ? timeTable : "",
-          job_id: id,
-          user_id: user.user.userAccount.id,
-          cv_path: selectedCvPath,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: user.user.token,
-          },
-        }
-      );
+      formData.append("cv_id", selectedCVID);
 
+      // for (const key of formData.entries()) {
+      //   console.log(key[0] + ', ' + key[1]);
+      // }
+
+      const response = await fetch(`${localUrl}/applications`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user.user.token}`,
+        },
+        body: formData,
+      });
+
+      // const response = await axios.post(
+      //   `${localUrl}/applications`,
+      //   {
+      //     time_table: checkBoxTb,
+      //     job_id: id,
+      //     user_id: user.user.userAccount.id,
+      //     cv_id: selectedCVID,
+      //   },
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: user.user.token,
+      //     },
+      //   }
+      // );
       // console.log(response);
-      alert(response.data.message);
+      if(response.ok){
+        alert("Đã gửi đơn ứng tuyển thành công");
+      }
+      else {
+        alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
+      }
     } catch (error) {
       // Xử lý lỗi nếu cần
       alert("Đã có lỗi xảy ra xin hãy thử lại sau");
@@ -134,7 +140,7 @@ const handleSubmit = async (event) => {
                   <select className="uploadButton" required onChange={handleDropdownChange}>
                     <option value="">Chọn CV</option>
                       {cvList.map((cv) => (
-                        <option key={cv.id} value={cv.cv_path}>
+                        <option key={cv.id} value={cv.id}>
                           {cv.cv_name}
                         </option>
                       ))}

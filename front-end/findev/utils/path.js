@@ -1,4 +1,4 @@
-export const localUrl = "https://jr-app-zyarc.ondigitalocean.app/api";
+export const localUrl = "https://jrc-app-mftzj.ondigitalocean.app/api";
 // export const localUrl = "http://localhost:8000/api";
 export const searchUrl = "https://20.91.169.93.nip.io/api/server/jobs";
 export const recommendUrl = "https://20.91.169.93.nip.io/api/server/recommend-job";

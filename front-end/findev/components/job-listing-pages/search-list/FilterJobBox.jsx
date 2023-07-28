@@ -35,6 +35,8 @@ const FilterJobBox = () => {
         location ? queryUrl += `&addresses=${location}` : queryUrl += "";
         categories ? queryUrl += `&categories=${categories}` : queryUrl += "";
         skill ? queryUrl += `&skill=${skill}` : queryUrl += "";
+        queryUrl += `&page=${currentPage}`;
+        queryUrl += `&limit=${jobsPerPage}`;
         // console.log(queryUrl);
         const getJobs = async () => {
         const res = await fetch(queryUrl);
@@ -116,7 +118,7 @@ const FilterJobBox = () => {
 
     // Jobs content
     let content = undefined;
-    // console.log(jobs);
+    console.log(jobs);
     if (jobs !== undefined && jobs !== null) {
         const filteredJobs = jobs?.data?.jobs?.data;
 

@@ -16,7 +16,7 @@ import UploadModal from "./components/UploadModal";
 const Index = () => {
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
-  // const [isUploaded, setIsUploaded] = useState(false); // This state is used to trigger a re-render of the CVListingsTable component
+  const [isUploaded, setIsUploaded] = useState(false); // This state is used to trigger a re-render of the CVListingsTable component
   // get user's profile
   const [profile, setProfile] = useState(null);
   const fetchUser = async () => {
@@ -44,7 +44,7 @@ const Index = () => {
 
       <LoginPopup />
 
-      <UploadModal />
+      <UploadModal isUploaded={isUploaded} setIsUploaded={setIsUploaded}/>
 
       <DashboardCandidatesHeader />
 
@@ -81,7 +81,7 @@ const Index = () => {
                   </div>
                 </div>
                 <div className="widget-content">
-                  <CVListingsTable user={user}/>
+                  <CVListingsTable isUploaded={isUploaded} user={user}/>
                 </div>
               </div>
             </div>

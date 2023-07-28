@@ -35,53 +35,52 @@ const LogoUpload = () => {
     }
   };
   const putProfile = async () => {
-    const bodyPayload = {
-      avatar: logImg,
-    };
-    const payload = {
-      object: bodyPayload,
-    }
-    console.log(payload);
-    // try {
-    //   const response = await fetch(`${localUrl}/user-profiles/import/${user.userAccount.id}`, {
-    //     method: 'PUT',
-    //     headers: {
-    //       'Accept': 'application/json',
-    //       'Authorization': `Bearer ${user.token}`,
-    //       'Content-Type': 'application/json', // Set the proper content type header for JSON
-    //     },
-    //     body: payload, 
-    //   });
-    //   console.log(response);
-    //   if (response.error) {
-    //     throw new Error("Error updating profile.");
-    //   }
+    const formData = new FormData();
+    formData.append("avatar", logImg);
+    // formData.append("_method", "PUT");
+  //   for (var key of formData.entries()) {
+  //     console.log(key[0] + ', ' + key[1]);
+  // }
+  //   try {
+  //       const response = await fetch(`${localUrl}/user-profiles/${user.userAccount.id}`, {
+  //         method: "PUT",
+  //         headers: {
+  //           Authorization: `Bearer ${user.token}`,
+  //         },
+  //         body: formData,
+  //       });
   
-    //   const data = await response.json();
-    //   return data;
-    // } catch (error) {
-    //   console.error(error);
-    //   throw error;
-    // }
+  //       console.log(response);
+  //       // alert("Tải lên thành công");
+  //       // window.location.reload();
+  //     } catch (err) {
+  //       console.log(err);
+  //       if (err.message === "Unauthenticated.") {
+  //         alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+  //         router.push("/");
+  //         dispatch(logoutUser());
+  //       }
+  //     }
   };
   return (
     <>
       <div className="uploading-outer">
-        <div className="uploadButton">
+        <button className="uploadButton">
           <input
             className="uploadButton-input"
-            type="file"
+            // type="file"
             name="attachments[]"
-            accept="image/*"
+            // accept="image/*"
             id="upload"
-            onChange={logImgHandler}
+            // onChange={logImgHandler}
+            onClick={() => {alert("Chức năng đang tạm khóa")}}
           />
           <label className="uploadButton-button ripple-effect" htmlFor="upload">
             {logImg ? logImg.name : "Tải ảnh đại diện"}
           </label>
           <span className="uploadButton-file-name"></span>
-        </div>
-        {error && <p className="error-message">{error}</p>} {/* Display error message if there is an error */}
+        </button>
+        {error && <p className="error-message">{error}</p>}
       </div>
     </>
   );

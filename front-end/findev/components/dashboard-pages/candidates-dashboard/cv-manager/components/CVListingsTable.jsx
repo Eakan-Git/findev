@@ -6,12 +6,13 @@ import { useDispatch } from "react-redux";
 import { logoutUser } from "/app/actions/userActions";
 import axios from "axios";
 
-const CVListingsTable = ({user}) => {
+const CVListingsTable = ({isUploaded, user}) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [cvListings, setCvListings] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
   const fetchCVListings = async () => {
     const url = `${localUrl}/cvs/user/${user.userAccount.id}`;
     const headers = {
@@ -42,7 +43,7 @@ const CVListingsTable = ({user}) => {
 
   useEffect(() => {
     fetchCVListings();
-  }, [user]);
+  }, [user, isUploaded]);
 
   const handleDeleteCV = async (id) => {
     // ask for confirmation
