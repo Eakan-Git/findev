@@ -38,29 +38,29 @@ const LogoUpload = () => {
     const formData = new FormData();
     formData.append("avatar", logImg);
     // formData.append("_method", "PUT");
-  //   for (var key of formData.entries()) {
-  //     console.log(key[0] + ', ' + key[1]);
-  // }
-  //   try {
-  //       const response = await fetch(`${localUrl}/user-profiles/${user.userAccount.id}`, {
-  //         method: "PUT",
-  //         headers: {
-  //           Authorization: `Bearer ${user.token}`,
-  //         },
-  //         body: formData,
-  //       });
+    for (var key of formData.entries()) {
+      console.log(key[0] + ', ' + key[1]);
+  }
+    try {
+        const response = await fetch(`${localUrl}/user-profiles/${user.userAccount.id}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: formData,
+        });
   
-  //       console.log(response);
-  //       // alert("Tải lên thành công");
-  //       // window.location.reload();
-  //     } catch (err) {
-  //       console.log(err);
-  //       if (err.message === "Unauthenticated.") {
-  //         alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
-  //         router.push("/");
-  //         dispatch(logoutUser());
-  //       }
-  //     }
+        console.log(response);
+        // alert("Tải lên thành công");
+        // window.location.reload();
+      } catch (err) {
+        console.log(err);
+        if (err.message === "Unauthenticated.") {
+          alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
+          router.push("/");
+          dispatch(logoutUser());
+        }
+      }
   };
   return (
     <>
@@ -70,7 +70,7 @@ const LogoUpload = () => {
             className="uploadButton-input"
             // type="file"
             name="attachments[]"
-            // accept="image/*"
+            accept="image/*"
             id="upload"
             // onChange={logImgHandler}
             onClick={() => {alert("Chức năng đang tạm khóa")}}

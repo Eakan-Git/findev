@@ -33,6 +33,7 @@ const Index = () => {
       // delete data.data.user_profile.avatar;
       delete data.data.user_profile.github;
       delete data.data.user_profile.link;
+      data.data.user_profile.avatar || delete data.data.user_profile.avatar;
       // delete data.data.user_profile.date_of_birth;
       // change date_of_birth to yyyy/dd/mm
       let date = new Date(data.data.user_profile.date_of_birth);
