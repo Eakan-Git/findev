@@ -5,7 +5,7 @@ import Faq from "../components/pages-menu/faq";
 const Index = () => {
   return (
     <>
-      <Seo pageTitle="Faq" />
+      <Seo pageTitle="Câu hỏi thường gặp" />
       <Faq />
     </>
   );

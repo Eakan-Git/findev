@@ -79,7 +79,7 @@ const ProfileBtn = ({textColor}) => {
              //<span className="text-white">{user?.userAccount.username}</span>
            // <DashboardCandidatesHeader />
            <>
-           <div className="outer-box">
+           {/* <div className="outer-box"> */}
                         {/* <button className="menu-btn">
                             <span className="count">1</span>
                                 <span className="flaticon-bookmark"></span>
@@ -92,6 +92,11 @@ const ProfileBtn = ({textColor}) => {
                         {/* End notification-icon */}
 
                         {/* <!-- Dashboard Option --> */}
+                        <img
+                                    alt="avatar"
+                                    className="navBar-avt"
+                                    src= {profile?.avatar || "/images/resource/candidate-1.png"}
+                                />
                         <div className="dropdown dashboard-option">
                             <a
                                 className="dropdown-toggle"
@@ -99,11 +104,7 @@ const ProfileBtn = ({textColor}) => {
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false"
                             >
-                                <img
-                                    alt="avatar"
-                                    className="navBar-avt"
-                                    src= {profile?.avatar || "/images/resource/candidate-1.png"}
-                                />
+                                
                                 <span className="name" style={{color: textColor}}>Hồ sơ</span>
                             </a>
 
@@ -125,7 +126,7 @@ const ProfileBtn = ({textColor}) => {
                             </ul>
                         </div>
                         {/* End dropdown */}
-                    </div>
+                    {/* </div> */}
            </>
           )}
         </>
