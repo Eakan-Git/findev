@@ -83,7 +83,7 @@ const Index = () => {
             </section>
             {/* <!-- End Top Companies --> */}
 
-            <section className="job-categories">
+            {/* <section className="job-categories">
                 <div className="auto-container">
                     <div className="sec-title text-center">
                         <h2>Danh mục công việc phổ biến</h2>
@@ -94,37 +94,11 @@ const Index = () => {
                         data-aos="fade-up"
                         data-aos-anchor-placement="top-bottom"
                     >
-                        {/* <!-- Category Block --> */}
                         <JobCategories />
                     </div>
                 </div>
-            </section>
+            </section> */}
             {/* End Job Categorie Section */}
-
-            {/* <section className="news-section style-two">
-                <div className="auto-container">
-                    <div className="sec-title text-center">
-                        <h2>Recent News Articles</h2>
-                        <div className="text">
-                            Fresh job related news content posted each day.
-                        </div>
-                    </div>
-                    <div className="row" data-aos="fade-up">
-                        <Blog />
-                    </div>
-                </div>
-            </section> */}
-            
-            {/* <!-- End News Section --> */}
-
-            {/* <section className="clients-section alternate">
-                <div className="sponsors-outer" data-aos="fade">
-                    <ul className="sponsors-carousel">
-                        <Partner />
-                    </ul>
-                </div>
-            </section> */}
-            {/* <!-- End Clients Section--> */}
 
             <Footer />
             {/* <!-- End Main Footer --> */}

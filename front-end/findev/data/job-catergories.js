@@ -2,7 +2,7 @@ module.exports = [
   {
     id: 1,
     icon: "flaticon-money-1",
-    catTitle: "Tài chính - Ngân hàng",
+    catTitle: "Ngân hàng",
     jobNumber: "2",
   },
   {
