@@ -14,41 +14,38 @@ const Pagination = ({ jobs, handlePageChange }) => {
     );
   }
   const generatePaginationLinks = () => {
-    if (paginationLinks?.length <= 10) {
+    if (paginationLinks?.length <= 8) {
       return paginationLinks;
     } 
     else {
-      let firstFour = paginationLinks.slice(jobs?.data?.jobs?.pagination_info?.current_page, 4);
-      let lastThree = paginationLinks.slice(-3);
-      let middleItem = { label: '...', active: false };
-
-      return [...firstFour, middleItem, ...lastThree];
+      let current = jobs?.data?.jobs?.current_page;
+      if(current < 3){
+        let first = paginationLinks.slice(0, 5);
+        let last = paginationLinks.slice(-2);
+        let middleItem = { label: '...', active: false };
+        return [...first, middleItem, ...last];
+      }
+      else if(current > paginationLinks?.length - 5){
+        let first = paginationLinks.slice(0, 2);
+        let last = paginationLinks.slice(-5);
+        let middleItem = { label: '...', active: false };
+        return [...first, middleItem, ...last];
+      }
+      else{
+        let first = paginationLinks.slice(0, 2);
+        let last = paginationLinks.slice(-2);
+        let middleItem = { label: '...', active: false };
+        let currentLink = { label: current, active: true };
+        let leftLink = { label: current - 1, active: false };
+        let rightLink = { label: current + 1, active: false };
+        return [...first, middleItem, leftLink, currentLink, rightLink, middleItem, ...last];
+      }
     }
   };
   // Access the pagination links from jobs.links
   const paginationLinks = jobs?.data?.jobs?.pagination_info?.links;
   let modifiedPaginationLinks = paginationLinks;
-  // console.log(paginationLinks);
-  // Check if paginationLinks is null or undefined
-  if (paginationLinks?.length <= 3) {
-    <>
-    <nav className="ls-pagination">
-        <ul>
-          <li>
-            <a href="#" className="current-page">
-              1
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </>
-  }
-  else if(paginationLinks?.length >= 8) {
-    modifiedPaginationLinks = generatePaginationLinks();
-  }
-  else {
-    modifiedPaginationLinks = paginationLinks;
-  }
+  modifiedPaginationLinks = generatePaginationLinks();
 
   return (
     <nav className="ls-pagination">

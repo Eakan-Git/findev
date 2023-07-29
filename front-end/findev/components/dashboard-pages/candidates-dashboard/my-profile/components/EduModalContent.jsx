@@ -27,7 +27,7 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
         body: JSON.stringify({
           'user_id': user.userAccount.id,
           'university': university,
-          'major': major,
+          'major': major !== "" ? major : undefined,
           'start': start,
           'end': end,
         })
@@ -36,7 +36,7 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
         alert(res.message);
       }
       const data = await res.json();
-      // console.log(data); 
+      console.log(data); 
       reloadData();
       onClose();
       setUniversity("");
@@ -76,7 +76,7 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
         <div className="col-lg-6 col-md-6 col-sm-6 form-group">
         <label>Ngày bắt đầu</label>
         <input
-          type="date"
+          type="month"
           className="form-control"
           value={start}
           onChange={(e) => setStart(e.target.value)}
@@ -87,7 +87,7 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
       <div className="col-lg-6 col-md-6 col-sm-6 form-group">
         <label>Ngày kết thúc </label>
         <input
-          type="date"
+          type="month"
           className="form-control"
           value={end}
           onChange={(e) => setEnd(e.target.value)}

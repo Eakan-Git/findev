@@ -10,7 +10,7 @@ import Education from "./Education";
 import Experiences from "./Experiences";
 import Awards from "./Awards";
 import { catOptions } from "./catOptions";
-
+import { Input } from "@mui/icons-material";
 const FormInfoBox = () => {
   // fetch user profile data with ID from state
   const { user } = useSelector((state) => state.user);
@@ -100,6 +100,27 @@ const fetchUser = async () => {
   if(!loading) {
   return (
     <form action="#" className="default-form">
+        <div className="row">
+        <div className="form-group col-lg-6 col-md-6">
+          <label>Tên đăng nhập</label>
+          <input type="text" name="username" 
+          value={user.userAccount.username}
+          disabled={true}
+           />
+        </div>
+        <div className="form-group col-lg-6 col-md-6">
+          <label>Cho phép nhà tuyển dụng tìm kiếm bạn</label>
+          <select
+            className="chosen-single form-select"
+            name="is_private"
+            value={privateOption}
+            onChange={handlePrivateChange}
+          >
+            <option value="0">Cho phép</option>
+            <option value="1">Không cho phép</option>
+          </select>
+        </div>
+        </div>
       <div className="row">
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
@@ -120,13 +141,14 @@ const fetchUser = async () => {
         </div>
 
         {/* <!-- Input --> */}
+        {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <label>Số điện thoại</label>
+          <label>Địa chỉ</label>
           <input
             type="text"
-            name="phone"
+            name="address"
             placeholder={"Vui lòng cập nhật thông tin"}
-            value={modifiedFields.phone !== undefined ? modifiedFields.phone : (profile?.phone || "")}
+            value={modifiedFields.address !== undefined ? modifiedFields.address : (profile?.address || "")}
             onChange={handleInputChange}
           />
         </div>
@@ -145,13 +167,13 @@ const fetchUser = async () => {
         </div>
 
         {/* <!-- Input --> */}
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Địa chỉ</label>
+        <div className="form-group col-lg-3 col-md-12">
+          <label>Số điện thoại</label>
           <input
             type="text"
-            name="address"
+            name="phone"
             placeholder={"Vui lòng cập nhật thông tin"}
-            value={modifiedFields.address !== undefined ? modifiedFields.address : (profile?.address || "")}
+            value={modifiedFields.phone !== undefined ? modifiedFields.phone : (profile?.phone || "")}
             onChange={handleInputChange}
           />
         </div>
@@ -172,7 +194,7 @@ const fetchUser = async () => {
       </div>
 
         {/* <!-- Input --> */}
-        <div className="form-group col-lg-6 col-md-12">
+        <div className="form-group col-lg-3 col-md-12">
           <label>Số năm kinh nghiệm</label>
           <input type="number" name="year_of_experience" 
           placeholder={"Vui lòng cập nhật thông tin"}
@@ -182,10 +204,10 @@ const fetchUser = async () => {
            />
         </div>
 
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-6 col-md-12">
+        <div className="form-group col-lg-3 col-md-12">
           <label>Ngày sinh</label>
-          <input className="chosen-single form-select"
+          <input
+          className="chosen-single form-select"
           type="date"
           name="date_of_birth"
           value={modifiedFields.date_of_birth !== undefined ? modifiedFields.date_of_birth : (profile?.date_of_birth || "")}
@@ -194,8 +216,8 @@ const fetchUser = async () => {
           </input>
         </div>
 
-        {/* <!-- Search Select --> */}
-        <div className="form-group col-lg-6 col-md-12">
+
+        <div className="form-group col-lg-9 col-md-12">
           <label>Kỹ năng</label>
           <Select
             defaultValue={profile?.skills.map((skill) => ({ value: skill.skill, label: skill.skill })) ?? []}
@@ -211,22 +233,6 @@ const fetchUser = async () => {
           />
         </div>
 
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-6 col-md-12">
-        <label>Cho phép nhà tuyển dụng tìm kiếm bạn</label>
-        <select
-          className="chosen-single form-select"
-          name="is_private"
-          value={privateOption}
-          onChange={handlePrivateChange}
-        >
-          <option value="0">Cho phép</option>
-          <option value="1">Không cho phép</option>
-        </select>
-      </div>
-
-
-        {/* <!-- About Company --> */}
         <div className="form-group col-lg-12 col-md-12">
         <label>Giới thiệu</label>
         <textarea

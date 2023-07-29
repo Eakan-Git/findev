@@ -38,6 +38,18 @@ const FilterJobBox = () => {
         queryUrl += `&page=${currentPage}`;
         queryUrl += `&limit=${jobsPerPage}`;
         // console.log(queryUrl);
+        // update browser url
+        router.push({
+            pathname: "/search",
+            query: {
+                keyword: keyword,
+                addresses: location,
+                categories: categories,
+                skill: skill,
+                page: currentPage,
+                limit: jobsPerPage,
+            },
+        });
         const getJobs = async () => {
         const res = await fetch(queryUrl);
         const data = await res.json();
@@ -118,7 +130,7 @@ const FilterJobBox = () => {
 
     // Jobs content
     let content = undefined;
-    console.log(jobs);
+    // console.log(jobs);
     if (jobs !== undefined && jobs !== null) {
         const filteredJobs = jobs?.data?.jobs?.data;
 
