@@ -6,6 +6,12 @@ import axios from 'axios'
 import { localUrl } from "/utils/path.js";
 
 const Education = ({ user }) => {
+  function formatMonthYear(dateStr) {
+    if (dateStr.indexOf('-') === -1) return dateStr;
+    const [year, month] = dateStr.split("-");
+    return `${month}/${year}`;
+  }
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [educations, setEducations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -110,11 +116,11 @@ const Education = ({ user }) => {
               <span className="name">{index + 1}</span>
               <div className="title-box">
                 <div className="info-box">
-                  <h3>{education.university}</h3>
-                  <span>{education.major}</span>
+                  <h3>{education?.university}</h3>
+                  <span>{education?.major}</span>
                 </div>
                 <div className="edit-box">
-                  <span className="year">{`${new Date(education.start).getFullYear()} - ${new Date(education.end).getFullYear()}`}</span>
+                  <span className="year">{formatMonthYear(education.start)} - {formatMonthYear(education.end)}</span>
                   <div className="edit-btns">
                     <button onClick={(e) => handleDelete(education.id, e)}>
                     {isLoading ? 

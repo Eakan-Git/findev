@@ -50,9 +50,9 @@ const LogoUpload = () => {
           body: formData,
         });
   
-        console.log(response);
-        // alert("Tải lên thành công");
-        // window.location.reload();
+        // console.log(response);
+        window.location.reload();
+        alert("Tải lên thành công");
       } catch (err) {
         console.log(err);
         if (err.message === "Unauthenticated.") {
@@ -70,7 +70,7 @@ const LogoUpload = () => {
             className="uploadButton-input"
             type="file"
             name="attachments[]"
-            // accept="image/*"
+            accept="png, jpg, jpeg"
             id="upload"
             onChange={logImgHandler}
             // onClick={() => {alert("Chức năng đang tạm khóa")}}

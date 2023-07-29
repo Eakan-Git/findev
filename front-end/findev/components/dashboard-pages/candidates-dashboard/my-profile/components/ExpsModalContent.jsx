@@ -56,24 +56,28 @@ const ExpsModalContent = ({ user, onClose, reloadData  }) => {
     <form className="default-form job-apply-form" onSubmit={handleSubmit}>
       <div className="row">
         <div className="col-lg-12 col-md-12 col-sm-12 form-group">
+          <label>Tên kinh nghiệm/công ty</label>
           <input
             type="text"
             className="form-control"
-            placeholder="Tên kinh nghiệm/công ty (vd: Công ty VNG, Đồ án tốt nghiệp,...)"
+            placeholder="(vd: Công ty VNG, Đồ án tốt nghiệp,...)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
+            maxLength={50}
           ></input>
         </div>
 
         <div className="col-lg-12 col-md-12 col-sm-12 form-group">
+          <label>Vị trí/Tên đồ án</label>
           <input
             type="text"
             className="form-control"
-            placeholder="Vị trí/Tên đồ án (vd: Project Manager, Hệ thống gợi ý việc làm,...)"
+            placeholder="(vd: Project Manager, Hệ thống gợi ý việc làm,...)"
             value={position}
             onChange={(e) => setPosition(e.target.value)}
             required
+            maxLength={60}
           ></input>
         </div>
 
@@ -107,6 +111,7 @@ const ExpsModalContent = ({ user, onClose, reloadData  }) => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
+            maxLength={255}
           ></textarea>
         </div>
 

@@ -46,6 +46,7 @@ const AwardsModalContent = ({ user, onClose, reloadData  }) => {
             value={awardDescription}
             onChange={(e) => setAwardDescription(e.target.value)}
             required
+            maxLength={30}
           ></input>
         </div>
 

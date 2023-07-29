@@ -118,8 +118,11 @@ const Experiences = ({ user }) => {
                   <span>{exp.position}</span>
                 </div>
                 <div className="edit-box">
-                  <span className="year">{`${new Date(exp.start).getMonth() + 1}/${new Date(exp.start).getFullYear()} - ${new Date(exp.end).getMonth() + 1}/${new Date(exp.end).getFullYear()}`}</span>
-                  <div className="edit-btns">
+                  {/* <span className="year">{`${new Date(exp.start).getMonth() + 1}/${new Date(exp.start).getFullYear()} - ${new Date(exp.end).getMonth() + 1}/${new Date(exp.end).getFullYear()}`}</span> */}
+                  <span className="year">
+                    {`${new Date(exp.start).toLocaleDateString('en-GB')} - ${new Date(exp.end).toLocaleDateString('en-GB')}`}
+                  </span>
+                   <div className="edit-btns">
                     <button onClick={(e) => handleDelete(exp.id, e)}>
                     {isLoading ? 
                             (<span className="fa fa-spinner fa-spin" style={{color: "blue"}}></span>)
