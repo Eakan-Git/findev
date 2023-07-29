@@ -108,6 +108,11 @@ const handleSubmit = async (event) => {
       // console.log(response);
       if(response.ok){
         alert("Đã gửi đơn ứng tuyển thành công");
+        setCheckBoxTb(false);
+        setSelectedCvPath("");
+        setIsCheckedError(false);
+        setIsChecked(false)
+        handleModalClose();
       }
       else {
         alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
@@ -180,7 +185,7 @@ const handleSubmit = async (event) => {
                       </label>
                     </div>
                     {isCheckedError && (
-                      <p className="error-message">Vui lòng tích vào ô đồng ý điều khoản.</p>
+                      <p style={{ color: 'red', marginTop: '5px' }} className="error-message">Vui lòng tích vào ô đồng ý điều khoản.</p>
                     )}
                   </div> 
 
