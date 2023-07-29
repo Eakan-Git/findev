@@ -102,11 +102,12 @@ const FormContent = () => {
           </Link>
         </div>
 
+      {/* <div className="bottom-box">
         <div className="divider">
           <span>Hoặc</span>
         </div>
-
         <LoginWithSocial />
+      </div> */}
       </div>
       {/* End bottom-box LoginWithSocial */}
     </div>
