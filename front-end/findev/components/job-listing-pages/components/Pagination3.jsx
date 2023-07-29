@@ -1,19 +1,22 @@
 const Pagination = ({ jobs, handlePageChange }) => {
+  console.log("jobs", jobs);
   // Check if jobs is null or undefined
-  if (!jobs) {
+  if (!jobs?.data?.jobs?.pagination_info?.links) {
     return (
-      <nav className="ls-pagination">
-        <ul>
-          <li>
-            <a href="#" className="current-page">
-              1
-            </a>
-          </li>
-        </ul>
-      </nav>
+      // <nav className="ls-pagination">
+      //   <ul>
+      //     <li>
+      //       <a href="#" className="current-page">
+      //         1
+      //       </a>
+      //     </li>
+      //   </ul>
+      // </nav>
+      null
     );
   }
   const generatePaginationLinks = () => {
+    console.log("paginationLinks", paginationLinks);
     if (paginationLinks?.length <= 8) {
       return paginationLinks;
     } 

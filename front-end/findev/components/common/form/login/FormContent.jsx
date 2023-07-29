@@ -22,7 +22,7 @@ const FormContent = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      alert(loginData.message);
+      // alert(loginData.message);
       router.reload(window.location.pathname);
       dispatch(setUser(loginData.data));
     } else if (isError) alert(error?.data.message);
