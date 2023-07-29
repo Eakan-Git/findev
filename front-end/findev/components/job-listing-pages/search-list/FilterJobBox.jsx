@@ -70,8 +70,12 @@ const FilterJobBox = () => {
         else if (page === "&laquo; Previous" && currentPage > 1) {
         setCurrentPage(currentPage - 1);
         }
-        else if (page === "Next &raquo;" && currentPage < jobs.last_page) {
+        else if (page === "Next &raquo;" && currentPage < jobs?.data?.jobs?.pagination_info?.last_page) {
         setCurrentPage(currentPage + 1);
+        }
+        else {
+            console.log(currentPage, jobs)
+            console.log("Uncaught Error: Invalid page number");
         }
     };
     const { jobList, jobSort } = useSelector((state) => state.filter);
