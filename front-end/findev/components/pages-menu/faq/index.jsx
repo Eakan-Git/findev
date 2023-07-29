@@ -1,7 +1,7 @@
 import Breadcrumb from "../../common/Breadcrumb";
 import LoginPopup from "../../common/form/login/LoginPopup";
 import FooterDefault from "../../footer/common-footer";
-import DefaulHeader from "../../header/DefaulHeader";
+import DefaulHeader from "../../header/DefaulHeader2";
 import MobileMenu from "../../header/MobileMenu";
 import FaqChild from "./FaqChild";
 
