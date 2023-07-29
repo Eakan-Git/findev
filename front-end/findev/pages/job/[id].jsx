@@ -323,7 +323,7 @@ const JobSingleDynamicV1 = () => {
                         </div>
                         {/* End modal-header */}
 
-                        <ApplyJobModalContent user={user} handleModalClose={handleModalClose()}/>
+                        <ApplyJobModalContent user={user} handleModalClose={handleModalClose}/>
 
                         {/* End PrivateMessageBox */}
                       </div>
