@@ -42,7 +42,7 @@ const LogoUpload = () => {
       console.log(key[0] + ', ' + key[1]);
   }
     try {
-        const response = await fetch(`${localUrl}/user-profiles/${user.userAccount.id}`, {
+        const response = await fetch(`${localUrl}/user-profiles/avatar/${user.userAccount.id}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${user.token}`,
@@ -68,12 +68,12 @@ const LogoUpload = () => {
         <button className="uploadButton">
           <input
             className="uploadButton-input"
-            // type="file"
+            type="file"
             name="attachments[]"
-            accept="image/*"
+            // accept="image/*"
             id="upload"
-            // onChange={logImgHandler}
-            onClick={() => {alert("Chức năng đang tạm khóa")}}
+            onChange={logImgHandler}
+            // onClick={() => {alert("Chức năng đang tạm khóa")}}
           />
           <label className="uploadButton-button ripple-effect" htmlFor="upload">
             {logImg ? logImg.name : "Tải ảnh đại diện"}
