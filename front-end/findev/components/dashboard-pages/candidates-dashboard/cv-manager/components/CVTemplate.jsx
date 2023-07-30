@@ -2,6 +2,11 @@ import { Page, Document, StyleSheet, View, Text, Image, Font, Svg } from '@react
 import { useEffect, useState, React} from 'react';
 
 const CVTemplate = ({ profile }) => {
+  //w write a function to get year from date
+  const getYear = (date) => {
+    const d = new Date(date);
+    return d.getFullYear();
+  };
   // console.log(avatar);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -9,23 +14,6 @@ const CVTemplate = ({ profile }) => {
       setLoading(!loading);
     }
   }, [profile]);
-  // const imgUrl = "https://firebasestorage.googleapis.com/v0/b/findev-fde4d.appspot.com/o/face__130_95.jpg?alt=media" ;
-  // const imgUrl = profile?.avatar;
-  // console.log("avt", imgUrl);
-  // const getImg = async () => {
-  //   try{
-  //     const res = await fetch(imgUrl, {
-  //       method: 'GET',
-  //     });
-  //     const data = await res.blob();
-  //     console.log(res);
-  //     return data;
-  //   }
-  //   catch(error){
-  //     console.log(error);
-  //   }
-  // }
-  // getImg();
   if (loading === false) {
     // console.log(profile);
   return (
@@ -60,7 +48,7 @@ const CVTemplate = ({ profile }) => {
               <Text style={styles.title}>HỌC VẤN</Text>
               {profile?.educations.map((edu, index) => (
                 <View key={index}>
-                  <Text style={styles.time}>{edu.start} - {edu.end}</Text>
+                  <Text style={styles.time}>{getYear(edu.start)} - {getYear(edu.end)}</Text>
                   <Text style={styles.subtitle}>{edu.university.toLowerCase()}</Text>
                   <Text style={styles.additional_text}>{edu.major}</Text>
                 </View>
