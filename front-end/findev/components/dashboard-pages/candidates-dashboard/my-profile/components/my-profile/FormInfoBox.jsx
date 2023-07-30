@@ -21,6 +21,7 @@ const FormInfoBox = () => {
   const [modifiedFields, setModifiedFields] = useState({});
   const [privateOption, setPrivateOption] = useState(profile?.is_private || 1);
   const [isLoading, setIsLoading] = useState(false);
+  const [skillnum, setSkillnum] = useState(0);
   const handlePrivateChange = (event) => {
     event.preventDefault();
     const selectedValue = event.target.value;
@@ -132,7 +133,7 @@ const fetchUser = async () => {
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <label>Tên công việc</label>
+          <label>Tên công việc mong muốn</label>
           <input type="text" name="good_at_position" placeholder={"Vui lòng cập nhật thông tin"} 
           value={modifiedFields.good_at_position !== undefined ? modifiedFields.good_at_position : (profile?.good_at_position || "")}
           onChange={handleInputChange}
@@ -228,6 +229,11 @@ const fetchUser = async () => {
             onChange={(selectedOptions) => {
               const skills = selectedOptions.map((option) => option.value);
               setModifiedFields({ ...modifiedFields, skills });
+            }}
+            isOptionDisabled={() => {
+              if (modifiedFields?.skills?.length > 4) {
+                return true;
+              }
             }}
           />
         </div>
