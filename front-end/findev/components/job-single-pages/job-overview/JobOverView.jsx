@@ -6,7 +6,7 @@ const JobOverView = ({job}) => {
           <i className="icon icon-degree"></i>
           <h5>Số năm kinh nghiệm</h5>
           <span>
-          {job.min_yoe === job.max_yoe
+          {job?.min_yoe === job?.max_yoe
                   ? job.min_yoe === 0
                     ? "Không yêu cầu kinh nghiệm"
                     : `Kinh nghiệm từ ${job.min_yoe} năm`

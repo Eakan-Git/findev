@@ -158,7 +158,7 @@ const FilterJobBox = () => {
                             <div className="content">
                                 <span className="company-logo">
                                     <Link href={`/job/${item.id}`}>
-                                    <img src={item.employer_profile.company_profile.logo}
+                                    <img src={item?.employer_profile?.company_profile?.logo}
                                     // title={item.employer_profile.company_profile.name} 
                                     // alt={item.employer_profile.company_profile.name}
                                     />
@@ -171,9 +171,9 @@ const FilterJobBox = () => {
                                     title={item.title}
                                     >
                                         {/* check if job title is longer than 50 character then truncate */}
-                                            {item.title.length > 50
-                                                ? item.title.slice(0, 50) + "..."
-                                                : item.title
+                                            {item?.title?.length > 50
+                                                ? item?.title?.slice(0, 50) + "..."
+                                                : item?.title
                                             }
                                     </Link>
                                 </h4>
@@ -184,7 +184,7 @@ const FilterJobBox = () => {
                                         alt={item.employer_profile.company_profile.name}
                                         title={item.employer_profile.company_profile.name}
                                         >
-                                        {item.employer_profile.company_profile.name.length > 12 ? item.employer_profile.company_profile.name.slice(0, 12) + "..." : item.employer_profile.company_profile.name}
+                                        {item?.employer_profile?.company_profile?.name?.length > 12 ? item?.employer_profile?.company_profile.name?.slice(0, 12) + "..." : item?.employer_profile?.company_profile?.name}
                                         </Link>
                                     </li>
                                     <li>
@@ -193,7 +193,7 @@ const FilterJobBox = () => {
                                             and get text before ':' using split
                                         */}
                                         {/* {item.location[0].split(":")[0]} */}
-                                        {item.location.split(":")[0]}
+                                        {item?.location?.split(":")[0]}
                                     </li>
                                     <li>
                                         <span className="icon flaticon-clock-3"></span> {item.deadline}
@@ -224,11 +224,11 @@ const FilterJobBox = () => {
                                         if item.min_yoe == item.max_yoe -> min_yoe != 0 -> Kinh nghiệm từ min_yoe năm
                                         if item.min_yoe != item.max_yoe -> Kinh nghiệm từ min_yoe đến max_yoe năm
                                     */}
-                                    {item.min_yoe === item.max_yoe
-                                    ? item.min_yoe === 0
+                                    {item?.min_yoe === item?.max_yoe
+                                    ? item?.min_yoe === 0
                                         ? "Không yêu cầu kinh nghiệm"
-                                        : `Kinh nghiệm từ ${item.min_yoe} năm`
-                                    : `Kinh nghiệm từ ${item.min_yoe} - ${item.max_yoe}
+                                        : `Kinh nghiệm từ ${item?.min_yoe} năm`
+                                    : `Kinh nghiệm từ ${item?.min_yoe} - ${item?.max_yoe}
                                         năm`}
                                     </li>
                                 </ul>
