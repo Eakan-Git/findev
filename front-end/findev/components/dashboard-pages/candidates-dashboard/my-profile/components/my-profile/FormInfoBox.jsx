@@ -253,6 +253,7 @@ const fetchUser = async () => {
           <button
             type="submit"
             className="theme-btn btn-style-cancel"
+            style={{marginBottom: "10px"}}
             onClick={handleCancel}
           >
             Hủy
@@ -262,6 +263,7 @@ const fetchUser = async () => {
             type="submit"
             className="theme-btn btn-style-one"
             onClick={handleSubmit}
+            // style={{marginBottom: "10px"}}
           >
             {isLoading ? 
                       (<span className="fa fa-spinner fa-spin" style={{color: "white"}}></span>)
