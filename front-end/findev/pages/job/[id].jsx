@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-import jobs from "../../data/job-featured";
 import LoginPopup from "../../components/common/form/login/LoginPopup";
 import FooterDefault from "../../components/footer/common-footer";
 import DefaulHeader from "../../components/header/DefaulHeader2";
@@ -12,18 +11,15 @@ import JobOverView from "../../components/job-single-pages/job-overview/JobOverV
 import JobSkills from "../../components/job-single-pages/shared-components/JobSkills";
 import JobCate from "../../components/job-single-pages/shared-components/JobCate";
 import CompanyInfo from "../../components/job-single-pages/shared-components/CompanyInfo";
-import MapJobFinder from "../../components/job-listing-pages/components/MapJobFinder";
 import SocialTwo from "../../components/job-single-pages/social/SocialTwo";
-import Contact from "../../components/job-single-pages/shared-components/Contact";
 import JobDetailsDescriptions from "../../components/job-single-pages/shared-components/JobDetailsDescriptions";
 import ApplyJobModalContent from "../../components/job-single-pages/shared-components/ApplyJobModalContent";
 import ReportJobModalContent from "../../components/job-single-pages/shared-components/ReportJobModalContent";
-import Link from "next/link";
 import { localUrl } from "../../utils/path";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import CachedIcon from '@mui/icons-material/Cached';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 
 
 const JobSingleDynamicV1 = () => {
@@ -406,7 +402,7 @@ const JobSingleDynamicV1 = () => {
                     <div className="widget-content">
                       <div className="company-title">
                         <div className="company-logo">
-                          <img src={job?.employer_profile.company_profile.logo} alt="resource" />
+                          <img src={job?.employer_profile?.company_profile?.logo} alt="resource" />
                         </div>
                         <h5 className="company-name">{job?.employer_profile?.company_profile?.name}</h5>
                         {/* <a href="#" className="profile-link">

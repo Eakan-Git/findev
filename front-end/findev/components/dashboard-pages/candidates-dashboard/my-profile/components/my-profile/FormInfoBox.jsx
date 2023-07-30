@@ -10,7 +10,6 @@ import Education from "./Education";
 import Experiences from "./Experiences";
 import Awards from "./Awards";
 import { catOptions } from "./catOptions";
-import { Input } from "@mui/icons-material";
 const FormInfoBox = () => {
   // fetch user profile data with ID from state
   const { user } = useSelector((state) => state.user);
