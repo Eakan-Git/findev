@@ -38,15 +38,19 @@ const FormContent = (props) => {
         />
       </div>
       <div className="form-group">
-        <label>Nhập lại mật khẩu</label>
-        <input
-          id="confirm-password-field"
-          type="password"
-          name="confirm-password"
-          placeholder="Nhập lại mật khẩu"
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-      </div>
+      <label>Nhập lại mật khẩu</label>
+      <input
+        id="confirm-password-field"
+        type="password"
+        name="confirm-password"
+        placeholder="Nhập lại mật khẩu"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
+      {confirmPassword && password !== confirmPassword && (
+        <p style={{color:"red"}}>Mật khẩu không khớp</p>
+      )}
+    </div>
       {/* password */}
 
       <div className="form-group">

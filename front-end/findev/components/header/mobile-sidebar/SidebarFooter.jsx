@@ -1,16 +1,47 @@
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "/app/actions/userActions";
 const SidebarFooter = () => {
+  const user = useSelector((state) => state.user.user);
   const socialContent = [
     { id: 1, icon: "fa-facebook-f", link: "https://www.facebook.com/" },
     { id: 2, icon: "fa-twitter", link: "https://www.twitter.com/" },
     { id: 3, icon: "fa-instagram", link: "https://www.instagram.com/" },
     { id: 4, icon: "fa-linkedin-in", link: "https://www.linkedin.com/" },
   ];
-
+  let content = null;
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    if(confirm("Bạn có chắc chắn muốn đăng xuất?")){
+      dispatch(logoutUser());
+    }
+  }
+  if(user){
+    content = <>
+    <a
+      className="theme-btn btn-style-one mm-listitem__text"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasMenu"
+      onClick={handleLogout}
+      >
+        Đăng xuất
+      </a>
+    </>
+  }
+  else{
+    content = <>
+      <a href="#" 
+      className="theme-btn btn-style-one mm-listitem__text"
+      data-bs-toggle="modal"
+      data-bs-target="#loginPopupModal"
+      >
+        Đăng nhập
+      </a>
+    </>
+  }
   return (
     <div className="mm-add-listing mm-listitem pro-footer">
-      {/* <a href="#" className="theme-btn btn-style-one mm-listitem__text">
-        Job Post
-      </a> */}
+      {content}
       {/* job post btn */}
 
       <div className="mm-listitem__text">
@@ -29,7 +60,7 @@ const SidebarFooter = () => {
         </div>
         {/* End .contact-info */}
 
-        <div className="social-links">
+        {/* <div className="social-links">
           {socialContent.map((item) => (
             <a
               href={item.link}
@@ -40,7 +71,7 @@ const SidebarFooter = () => {
               <i className={`fab ${item.icon}`}></i>
             </a>
           ))}
-        </div>
+        </div> */}
         {/* End social-links */}
       </div>
       {/* End .mm-listitem__text */}

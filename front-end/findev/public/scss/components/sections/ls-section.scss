@@ -599,6 +599,7 @@ Listing Pagination
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  flex-wrap: wrap; /* Allow items to wrap into multiple rows */
 }
 
 .ls-pagination li {
@@ -662,7 +663,13 @@ Listing Pagination
   background: transparent;
   color: var(--primary-color);
 }
-
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .ls-pagination li {
+    line-height: 25px;
+    min-width: 25px;
+  }
+}
 /***
 
 ====================================================================

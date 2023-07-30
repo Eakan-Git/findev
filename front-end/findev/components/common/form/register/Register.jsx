@@ -57,7 +57,7 @@ const Register = () => {
         const result = await response.json();
   
         // Handle the result from the API
-        // console.log(result);
+        console.log(result);
         if(result.error === false) {
           alert(result.message);
           router.reload(window.location.pathname);

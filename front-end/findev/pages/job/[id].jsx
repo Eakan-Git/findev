@@ -363,7 +363,7 @@ const JobSingleDynamicV1 = () => {
                     <button
                       className="theme-btn btn-style-two"
                       onClick={user ? handleModalOpen : null}
-                      disabled={user ? false : true}
+                      hidden={user ? false : true}
                     >
                       <div className="text-center">
                         Báo cáo công việc không phù hợp

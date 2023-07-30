@@ -16,7 +16,7 @@ const Pagination = ({ jobs, handlePageChange }) => {
     );
   }
   const generatePaginationLinks = () => {
-    console.log("paginationLinks", paginationLinks);
+    // console.log("paginationLinks", paginationLinks);
     if (paginationLinks?.length <= 8) {
       return paginationLinks;
     } 

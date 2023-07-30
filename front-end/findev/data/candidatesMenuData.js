@@ -47,12 +47,5 @@ module.exports = [
     icon: "la-sign-out",
     routePath: "",
     active: "",
-  },
-  {
-    id: 9,
-    name: "Xóa tài khoản",
-    icon: "la-trash",
-    routePath: "",
-    active: "",
-  },
+  }
 ];
