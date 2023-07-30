@@ -103,7 +103,7 @@ const ProfileBtn = ({textColor}) => {
                             </a>
 
                             <ul className="dropdown-menu">
-                            {candidatesMenuData.slice(0, -1).map((item) => (
+                            {candidatesMenuData.map((item) => (
                                 <li
                                     onClick={() => handleBtnClick(item.id)}
                                     className={`${

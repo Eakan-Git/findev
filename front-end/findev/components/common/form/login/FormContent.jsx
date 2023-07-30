@@ -22,10 +22,10 @@ const FormContent = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      // alert(loginData.message);
+      console.log(loginData);
       router.reload(window.location.pathname);
-      dispatch(setUser(loginData.data));
-    } else if (isError) alert(error?.data.message);
+      dispatch(setUser(loginData?.data));
+    } else if (isError) alert(error?.data?.message || "Đã có lỗi xảy ra");
   }, [isSuccess, isError]);
 
   return (

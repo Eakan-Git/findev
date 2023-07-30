@@ -54,7 +54,7 @@ const HeaderNavContent = () => {
                         <Link href="/find-jobs">
                                     Tìm việc
                                 </Link>
-                        <div className="mega-menu">
+                        {/* <div className="mega-menu">
                             <div className="mega-menu-bar row">
                                 {findJobItems.map((item) => (
                                     <div
@@ -84,7 +84,7 @@ const HeaderNavContent = () => {
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </div> */}
                     </li>
                     {/* End findjobs menu items */}
 

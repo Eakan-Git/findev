@@ -2,6 +2,8 @@ import Link from "next/link";
 import { relatedUrl } from "../../../utils/path";
 import { useState, useEffect } from "react";
 import axios from "axios"
+import Skeleton from '@mui/material/Skeleton';
+
 const RelatedJobs = ({ title }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,9 @@ const RelatedJobs = ({ title }) => {
   }, [title]);
 
   if (loading) {
-    return <div>Đang tải...</div>;
+    return (
+      <Skeleton variant="circle" animation="wave" width={"100%"} height={118} />
+    )
   }
 
   if (jobs.length < 1) {
