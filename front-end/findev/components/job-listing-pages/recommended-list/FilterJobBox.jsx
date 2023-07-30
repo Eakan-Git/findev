@@ -125,7 +125,7 @@ const FilterJobBox = () => {
                     <div className="inner-box">
                         <div className="content">
                             <span className="company-logo">
-                                <Link href={`/job/${item.job_id}`}
+                                <Link href={`/recommended-jobs/${item.job_id}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
@@ -137,7 +137,7 @@ const FilterJobBox = () => {
                                 {/* <img src={item?.employer_profile.company_profile.logo} alt={item?.company} /> */}
                             </span>
                             <h4>
-                                <Link href={`/job/${item.job_id}`}
+                                <Link href={`/recommended-jobs/${item.job_id}`}
                                 alt={item.title}
                                 title={item.title}
                                 target="_blank"
