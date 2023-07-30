@@ -43,7 +43,6 @@ const SidebarFooter = () => {
     <div className="mm-add-listing mm-listitem pro-footer">
       {content}
       {/* job post btn */}
-
       <div className="mm-listitem__text">
         <div className="contact-info">
           <span className="phone-num">
