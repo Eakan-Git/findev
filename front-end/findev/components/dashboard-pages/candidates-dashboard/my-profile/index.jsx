@@ -136,7 +136,7 @@ const Index = () => {
                 <div className="tabs-box">
                   <div className="widget-title">
                     <h4>Hồ sơ của bạn</h4>
-                    <button className="theme-btn btn-style-one"
+                    <label className="theme-btn btn-style-one"
                     style={{
                       marginLeft: "1rem",
                       marginRight: "1rem",  
@@ -159,7 +159,7 @@ const Index = () => {
                         style={{ display: "none" }}
                         onChange={handleUploadCV}
                       />
-                    </button>
+                    </label>
                   </div>
                   <MyProfile />
                 </div>
