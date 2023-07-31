@@ -53,7 +53,7 @@ const Index = () => {
       console.log("An error occurred:", error);
     }
   };
-  
+
   useEffect(() => {
     // Check if isEdit is true before calling bulkUpdateProfile
     if (isEdit) {
@@ -72,28 +72,30 @@ const Index = () => {
       console.error(error);
     }
   };
-  
-  
+
   const putProfile = async (token, updatedFields) => {
     const payload = { user_profile: updatedFields };
     // console.log(JSON.stringify(payload, null, 2));
-    let bodyPayload = { object: payload};
+    let bodyPayload = { object: payload };
     // console.log(JSON.stringify(bodyPayload, null, 2));
     try {
-      const response = await fetch(`${localUrl}/user-profiles/import/${user.userAccount.id}`, {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json', // Set the proper content type header for JSON
-        },
-        body: JSON.stringify(bodyPayload, null, 2), 
-      });
-  
+      const response = await fetch(
+        `${localUrl}/user-profiles/import/${user.userAccount.id}`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json", // Set the proper content type header for JSON
+          },
+          body: JSON.stringify(bodyPayload, null, 2),
+        }
+      );
+
       if (response.error) {
         throw new Error("Error updating profile.");
       }
-  
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -101,8 +103,7 @@ const Index = () => {
       throw error;
     }
   };
-  
-  
+
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
@@ -135,18 +136,30 @@ const Index = () => {
                 <div className="tabs-box">
                   <div className="widget-title">
                     <h4>Hồ sơ của bạn</h4>
-                    <label className="theme-btn btn-style-one">
+                    <button className="theme-btn btn-style-one"
+                    style={{
+                      marginLeft: "1rem",
+                      marginRight: "1rem",  
+                      width: "50%",
+                      minWidth: "14.5rem",
+                      maxWidth: "20rem",
+                    }}
+                    >
                       {/* add a spinner if loading */}
-                      {isLoading ? 
-                      (<span className="fa fa-spinner fa-spin" style={{color: "white", marginRight: "1rem"}}></span>)
-                      : (null)}
-                    Nhập thông tin nhanh bằng CV
-                    <input type="file" 
-                    ref={fileInputRef}
-                    style={{ display: 'none' }} 
-                    onChange={handleUploadCV}
-                    />
-                  </label>
+                      {isLoading ? (
+                        <span
+                          className="fa fa-spinner fa-spin"
+                          style={{ color: "white", marginRight: "1rem" }}
+                        ></span>
+                      ) : null}
+                      Nhập thông tin nhanh bằng CV
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: "none" }}
+                        onChange={handleUploadCV}
+                      />
+                    </button>
                   </div>
                   <MyProfile />
                 </div>
@@ -158,9 +171,9 @@ const Index = () => {
                   <div className="widget-title">
                     <h4>Social Network</h4>
                   </div> */}
-                  {/* End widget-title */}
+              {/* End widget-title */}
 
-                  {/* <div className="widget-content">
+              {/* <div className="widget-content">
                     <SocialNetworkBox />
                   </div>
                 </div>

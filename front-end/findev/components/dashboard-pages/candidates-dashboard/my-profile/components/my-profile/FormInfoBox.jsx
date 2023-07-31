@@ -10,7 +10,7 @@ import Education from "./Education";
 import Experiences from "./Experiences";
 import Awards from "./Awards";
 import { catOptions } from "./catOptions";
-const FormInfoBox = () => {
+const FormInfoBox = ({setAvt}) => {
   // fetch user profile data with ID from state
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
@@ -98,6 +98,7 @@ const FormInfoBox = () => {
     const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
     if (fetchedProfile.error === false) {
       setProfile(fetchedProfile.data.user_profile);
+      setAvt(fetchedProfile.data.user_profile.avatar);
       setDefaultProfile(fetchedProfile.data.user_profile);
       setPrivateOption(fetchedProfile.data.user_profile.is_private);
       // console.log("Profile:", fetchedProfile.data.user_profile);
