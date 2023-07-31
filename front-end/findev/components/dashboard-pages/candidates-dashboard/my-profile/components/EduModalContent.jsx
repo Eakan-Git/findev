@@ -9,11 +9,20 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
   const [major, setMajor] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
+  const [currentYear] = useState(new Date().getFullYear());
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${user.token}`
   };
-  
+    // convert date to yyyy-MM-dd
+  const convertDate = (date) => {
+    const d = new Date(date);
+    const day = d.getDate();
+    const month = d.getMonth() + 1;
+    const year = d.getFullYear();
+    const convertedDate = `${year}-${month}-${day}`;
+    return convertedDate;
+  }
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (new Date(start) >= new Date(end)) {
@@ -44,7 +53,7 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
       setStart("");
       setEnd("");
     } catch (error) {
-      console.log(error);
+      alert("Dữ liệu không hợp lệ. Vui lòng thử lại.");
     }
   };
 
@@ -81,6 +90,8 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
           value={start}
           onChange={(e) => setStart(e.target.value)}
           required
+          min={"2010-01"}
+          max = {`${currentYear}-12`}
         />
       </div>
 
@@ -92,6 +103,8 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
           value={end}
           onChange={(e) => setEnd(e.target.value)}
           required
+          min={start ? start : "2010-01"}
+          // max = {`${currentYear}-12`}
         />
       </div>
 
