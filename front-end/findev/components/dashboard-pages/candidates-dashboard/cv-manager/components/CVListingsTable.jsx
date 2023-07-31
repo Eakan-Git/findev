@@ -57,7 +57,7 @@ const CVListingsTable = ({isUploaded, user}) => {
         }
       });
       // console.log("delete");
-      alert(res.data.message);
+      // alert(res.data.message);
       setIsLoading(false);
       fetchCVListings(); // Call fetchCVListings after successful deletion
     } catch (err) {

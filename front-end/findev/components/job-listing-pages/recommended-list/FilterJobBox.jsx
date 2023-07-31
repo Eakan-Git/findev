@@ -217,19 +217,31 @@ const FilterJobBox = () => {
             content = <h1 style={{ textAlign: 'center' }}>Không tìm thấy công việc, bạn hãy cập nhật thông tin cá nhân của mình</h1>;
         }
     }
-    else{
-        content =
-            <>
-                <h1 style={{ textAlign: 'center', color: 'black' }}>
-                    <span className="fa fa-spinner fa-spin fa-fw"
-                    style={{marginRight: '5px'}}
-                    ></span>
-                        Đang tải...
-                </h1>;
-                <div className="text"
-                style={{ textAlign: 'center', color: 'black' }}
-                >Quá trình này có thể mất vài phút.</div>
-            </>
+    else {
+        content = user ? <>
+        <h1 style={{ textAlign: 'center', color: 'black' }}>
+            <span className="fa fa-spinner fa-spin fa-fw"
+            style={{marginRight: '5px'}}
+            ></span>
+                Đang tải...
+        </h1>;
+        <div className="text"
+        style={{ textAlign: 'center', color: 'black' }}
+        >Quá trình này có thể mất vài phút.</div>
+    </> : <>
+            <div className="ls-switcher">
+                {/* <JobSelect /> */}
+            </div>
+
+            <div className="row">{content}</div>
+            <div className="row">
+                <div className="col-md-12">
+                    <h2 className="text-center">
+                        Bạn cần đăng nhập để sử dụng tính năng này
+                    </h2>
+                </div>
+            </div>
+        </>;
     }
 
     // Event Handlers
@@ -259,25 +271,6 @@ const FilterJobBox = () => {
         setCurrentPage(1);
         dispatch(addPerPage({start: 0, end: 10}));
     };
-
-    if(!user) {
-        return (
-            <>
-            <div className="ls-switcher">
-                {/* <JobSelect /> */}
-            </div>
-
-            <div className="row">{content}</div>
-            <div className="row">
-                <div className="col-md-12">
-                    <h2 className="text-center">
-                        Bạn cần đăng nhập để sử dụng tính năng này
-                    </h2>
-                </div>
-            </div>
-        </>
-        )
-    }
     return (
         <>
             <div className="ls-switcher">

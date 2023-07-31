@@ -146,7 +146,7 @@ const Timetable = () => {
   
       if (response.ok) {
         const data = await response.json();
-        alert(data.message);
+        // alert(data.message);
         // Handle successful response
       } else {
         // Handle error response
