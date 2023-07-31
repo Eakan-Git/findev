@@ -31,7 +31,7 @@ const FilterJobBox = () => {
           const recommendJobsData = localStorage.getItem(recommendJobsDataKey);
     
           if (!recommendJobsData) {
-            const queryUrl = `${recommendUrl}/${user.userAccount.id}`;
+            const queryUrl = `${recommendUrl}${user.userAccount.id}`;
             console.log(queryUrl);
             const getJobs = async () => {
               try {
