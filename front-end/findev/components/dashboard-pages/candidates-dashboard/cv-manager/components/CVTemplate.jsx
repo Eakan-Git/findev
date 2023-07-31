@@ -169,14 +169,14 @@ const styles = StyleSheet.create({
     objectFit: 'cover',
   },
   name: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: 'bold',
-    // textTransform: 'uppercase',
+    textTransform: 'uppercase',
     fontFamily: 'Roboto Bold',
   },
   position: {
     fontSize: 16,
-    // fontWeight: 'bold',
+    fontWeight: 'bold',
     textTransform: 'uppercase',
     color: '#12b012',
     fontFamily: 'Roboto Bold',
