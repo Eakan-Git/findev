@@ -71,11 +71,11 @@ const ExpsModalContent = ({ user, onClose, reloadData  }) => {
           <input
             type="text"
             className="form-control"
-            placeholder="(vd: Project Manager, Hệ thống gợi ý việc làm,...)"
+            placeholder="(vd: Fresher, Intern, Hệ thống gợi ý việc làm,...)"
             value={position}
             onChange={(e) => setPosition(e.target.value)}
             required
-            maxLength={60}
+            maxLength={50}
           ></input>
         </div>
 
