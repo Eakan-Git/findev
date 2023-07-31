@@ -1,8 +1,5 @@
-import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { localUrl } from "/utils/path.js";
-import {fetchedProfile} from "./my-profile/fetchProfile"
-import {axios} from "axios"
 
 const ExpsModalContent = ({ user, onClose, reloadData  }) => {
   const [description, setDescription] = useState("");
@@ -10,6 +7,7 @@ const ExpsModalContent = ({ user, onClose, reloadData  }) => {
   const [position, setPosition] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
+  const [currentYear] = useState(new Date().getFullYear());
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${user.token}`
@@ -89,6 +87,8 @@ const ExpsModalContent = ({ user, onClose, reloadData  }) => {
           value={start}
           onChange={(e) => setStart(e.target.value)}
           required
+          min={"2010-01"}
+          max = {`${currentYear}-12`}
         />
       </div>
 
@@ -100,6 +100,8 @@ const ExpsModalContent = ({ user, onClose, reloadData  }) => {
           value={end}
           onChange={(e) => setEnd(e.target.value)}
           required
+          min={"2010-01"}
+          // max = {`${currentYear}-12`}
         />
       </div>
 

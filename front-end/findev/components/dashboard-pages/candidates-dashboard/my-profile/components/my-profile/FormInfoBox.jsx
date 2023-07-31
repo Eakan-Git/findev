@@ -21,7 +21,6 @@ const FormInfoBox = () => {
   const [modifiedFields, setModifiedFields] = useState({});
   const [privateOption, setPrivateOption] = useState(profile?.is_private || 1);
   const [isLoading, setIsLoading] = useState(false);
-  const [skillnum, setSkillnum] = useState(0);
   const handlePrivateChange = (event) => {
     event.preventDefault();
     const selectedValue = event.target.value;
@@ -36,6 +35,15 @@ const FormInfoBox = () => {
       [name]: value,
     }));
   };
+  // convert date to yyyy-MM-dd
+  const convertDate = (date) => {
+    const d = new Date(date);
+    const day = d.getDate();
+    const month = d.getMonth() + 1;
+    const year = d.getFullYear();
+    const convertedDate = `${year}-${month}-${day}`;
+    return convertedDate;
+  }
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (Object.keys(modifiedFields).length > 0) {
@@ -51,6 +59,15 @@ const FormInfoBox = () => {
           alert("Số điện thoại không hợp lệ");
           return;
         }
+      }
+      if(modifiedFields.date_of_birth){
+        const date = new Date(modifiedFields.date_of_birth);
+        const yyyy = date.getFullYear();
+        if(yyyy < 1996 || yyyy > 2006){
+          alert("Năm sinh phải nằm trong khoảng 1996 - 2006");
+          return;
+        }
+        modifiedFields.date_of_birth = convertDate(modifiedFields.date_of_birth);
       }
       // console.log("Modified fields:", modifiedFields);
       setIsLoading(true);
@@ -257,15 +274,18 @@ const FormInfoBox = () => {
                   : profile?.date_of_birth || ""
               }
               onChange={handleInputChange}
+              min={"1996-01-01"}
+              max={"2006-12-31"}
+              locate={"en-GB"}
             ></input>
           </div>
 
-          <div className="form-group col-lg-9 col-md-12">
+          <div className="form-group col-lg-12 col-md-12">
             <label>Kỹ năng</label>
             <Select
               defaultValue={
                 profile?.skills.map((skill) => ({
-                  value: skill.skill,
+                  value: skill.skill, 
                   label: skill.skill,
                 })) ?? []
               }
