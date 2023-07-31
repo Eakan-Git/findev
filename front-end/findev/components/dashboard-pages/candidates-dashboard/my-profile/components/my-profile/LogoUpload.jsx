@@ -28,7 +28,6 @@ const LogoUpload = () => {
     }
     try {
       putProfile();
-      // setLogoImg(null);
     } catch (error) {
       console.log("An error occurred:", error);
       setError("An error occurred while uploading the image.");
@@ -37,10 +36,6 @@ const LogoUpload = () => {
   const putProfile = async () => {
     const formData = new FormData();
     formData.append("avatar", logImg);
-    // formData.append("_method", "PUT");
-    for (var key of formData.entries()) {
-      console.log(key[0] + ', ' + key[1]);
-  }
     try {
         const response = await fetch(`${localUrl}/user-profiles/avatar/${user.userAccount.id}`, {
           method: "POST",
@@ -50,9 +45,8 @@ const LogoUpload = () => {
           body: formData,
         });
   
-        // console.log(response);
         window.location.reload();
-        alert("Tải lên thành công");
+        // alert("Tải lên thành công");
       } catch (err) {
         console.log(err);
         if (err.message === "Unauthenticated.") {
@@ -71,9 +65,8 @@ const LogoUpload = () => {
             type="file"
             name="attachments[]"
             accept="png, jpg, jpeg"
-            id="upload"
+            id="uploadImg"
             onChange={logImgHandler}
-            // onClick={() => {alert("Chức năng đang tạm khóa")}}
           />
           <label className="uploadButton-button ripple-effect" htmlFor="upload">
             {logImg ? logImg.name : "Tải ảnh đại diện"}
