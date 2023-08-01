@@ -18,7 +18,7 @@ const Pagination = ({ jobs, handlePageChange }) => {
   return (
     <nav className="ls-pagination">
       <ul>
-        {paginationLinks.map((link, index) => {
+        {paginationLinks?.map((link, index) => {
           if (link.active) {
             return (
               <li key={index}>
