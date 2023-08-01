@@ -48,7 +48,7 @@ const Index = () => {
       if (window.confirm("Bạn có muốn thay đổi thông tin không?")) {
         setProfile(data.data.user_profile);
         setIsEdit(!isEdit);
-        window.location.reload();
+        // window.location.reload();
       }
       fileInputRef.current.value = "";
     } catch (error) {
@@ -60,6 +60,7 @@ const Index = () => {
     // Check if isEdit is true before calling bulkUpdateProfile
     if (isEdit) {
       bulkUpdateProfile();
+      setIsEdit(false);
     }
   }, [isEdit]);
 
@@ -68,7 +69,11 @@ const Index = () => {
       const updatedFields = { ...profile };
       // console.log("updatedFields",updatedFields);
       const msg = await putProfile(user.token, updatedFields);
+      // console.log(msg);
       alert(msg.message);
+      if(msg.error === false){
+        window.location.reload();
+      }
     } catch (error) {
       console.error(error);
     }
