@@ -7,21 +7,18 @@ const SearchForm3 = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    
     let url = "/search?";
     if(!keyword && !location) {
       Router.push('find-jobs');
     }
     else {
       if (keyword) {
-        url += `keyword=${encodeURIComponent(keyword)}&`;
+        url += `title=${encodeURIComponent(keyword)}&`;
       }
       
       if (location) {
-        url += `addresses=${encodeURIComponent(location)}&`;
+        url += `location=${encodeURIComponent(location)}&`;
       }
-      
-      // console.log(url);
       Router.push(url.slice(0, -1));
     }
   };

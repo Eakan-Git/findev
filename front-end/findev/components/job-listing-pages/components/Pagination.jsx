@@ -2,13 +2,7 @@ const Pagination = ({ jobs, handlePageChange }) => {
   // Check if jobs is null or undefined
   if (!jobs) {
     return (
-      <nav className="ls-pagination">
-        <ul>
-          <a href="#" className="current-page">
-            1
-          </a>
-        </ul>
-      </nav>
+      null
     );
   }
 
@@ -18,7 +12,7 @@ const Pagination = ({ jobs, handlePageChange }) => {
   return (
     <nav className="ls-pagination">
       <ul>
-        {paginationLinks.map((link, index) => {
+        {paginationLinks?.map((link, index) => {
           if (link.active) {
             return (
               <li key={index}>

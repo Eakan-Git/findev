@@ -20,11 +20,12 @@ const FormInfoBox = ({setAvt}) => {
   const [loading, setLoading] = useState(true);
   const [modifiedFields, setModifiedFields] = useState({});
   const [privateOption, setPrivateOption] = useState(profile?.is_private || 1);
+  const [yoeOption, setYoeOption] = useState(profile?.year_of_experience || 0);
   const [isLoading, setIsLoading] = useState(false);
   const handlePrivateChange = (event) => {
     event.preventDefault();
     const selectedValue = event.target.value;
-    console.log(selectedValue);
+    // console.log(selectedValue);
     setPrivateOption(selectedValue);
     setModifiedFields({ ...modifiedFields, is_private: selectedValue });
   };
@@ -69,6 +70,13 @@ const FormInfoBox = ({setAvt}) => {
         }
         modifiedFields.date_of_birth = convertDate(modifiedFields.date_of_birth);
       }
+      if(modifiedFields.email){
+        const regex = new RegExp("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
+        if(!regex.test(modifiedFields.email)){
+          alert("Email không hợp lệ");
+          return;
+        }
+      }
       // console.log("Modified fields:", modifiedFields);
       setIsLoading(true);
       const msg = await putProfile(user, modifiedFields);
@@ -94,6 +102,12 @@ const FormInfoBox = ({setAvt}) => {
       setProfile(defaultProfile);
     }
   };
+  const handleYoeChange = (event) => {
+    event.preventDefault();
+    const selectedValue = parseInt(event.target.value);
+    setYoeOption(selectedValue);
+    setModifiedFields({ ...modifiedFields, year_of_experience: selectedValue });
+  }
   const fetchUser = async () => {
     const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
     if (fetchedProfile.error === false) {
@@ -157,6 +171,7 @@ const FormInfoBox = ({setAvt}) => {
                   ? modifiedFields.full_name
                   : profile?.full_name || ""
               }
+              max={50}
               onChange={handleInputChange}
             />
           </div>
@@ -174,6 +189,7 @@ const FormInfoBox = ({setAvt}) => {
                   : profile?.good_at_position || ""
               }
               onChange={handleInputChange}
+              maxLength={50}
             />
           </div>
 
@@ -191,6 +207,7 @@ const FormInfoBox = ({setAvt}) => {
                   : profile?.address || ""
               }
               onChange={handleInputChange}
+              max={50}
             />
           </div>
 
@@ -207,6 +224,8 @@ const FormInfoBox = ({setAvt}) => {
                   : profile?.email || ""
               }
               onChange={handleInputChange}
+              max={50}
+              pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
             />
           </div>
 
@@ -224,6 +243,7 @@ const FormInfoBox = ({setAvt}) => {
               }
               onChange={handleInputChange}
               pattern="^(84|0|\\+84[3|5|7|8|9])+([0-9]{8})$"
+              max={10}
             />
           </div>
 
@@ -249,7 +269,7 @@ const FormInfoBox = ({setAvt}) => {
           {/* <!-- Input --> */}
           <div className="form-group col-lg-3 col-md-12">
             <label>Số năm kinh nghiệm</label>
-            <input
+            {/* <input
               type="number"
               name="year_of_experience"
               placeholder={"Vui lòng cập nhật thông tin"}
@@ -260,7 +280,24 @@ const FormInfoBox = ({setAvt}) => {
               }
               onChange={handleInputChange}
               min={0}
-            />
+              max={4}
+            /> */}
+            <select
+              className="chosen-single form-select"
+              name="yoe"
+              value={
+                modifiedFields.year_of_experience !== undefined
+                  ? modifiedFields.year_of_experience
+                  : profile?.year_of_experience || 0
+              }
+              defaultValue={yoeOption}
+              onChange={handleYoeChange}
+            >
+              <option value="0">Chưa có kinh nghiệm</option>
+              <option value="1">1 năm</option>
+              <option value="2">2 năm</option>
+              <option value="3">3 năm</option>
+            </select>
           </div>
 
           <div className="form-group col-lg-3 col-md-12">

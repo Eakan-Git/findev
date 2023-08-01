@@ -36,7 +36,7 @@ const FilterJobBox = () => {
         categories ? queryUrl += `&categories=${categories}` : queryUrl += "";
         skill ? queryUrl += `&skill=${skill}` : queryUrl += "";
         queryUrl += `&page=${currentPage}`;
-        queryUrl += `&limit=${jobsPerPage}`;
+        queryUrl += `&count_per_page=${jobsPerPage}`;
         // console.log(queryUrl);
         // update browser url
         router.push({

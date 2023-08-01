@@ -9,19 +9,16 @@ const JobSearchForm = () => {
   const router = useRouter();
   const handleSubmit = (e) => {
     e.preventDefault();
-    // console.log("keyword:", keyword, "\nlocation:", location);
-    if(keyword.trim() === "" && location.trim() === "") {
-      return;
-    }
-    else if(keyword.trim() === "" && location.trim() !== ""){
-      router.push(`/search?addresses=${location}`);
-    }
-    else if(keyword.trim() !== "" && location.trim() === ""){
-      router.push(`/search?keyword=${keyword}`);
-    }
-    else {
-      router.push(`/search?keyword=${keyword}&addresses=${location}`);
-    }
+    router.push({
+      pathname: "/search",
+      query: {
+        title: keyword,
+        location: location,
+      },
+    });
+    // save title and location to localStorage
+    localStorage.setItem("title", keyword);
+    localStorage.setItem("location", location);
   };
 
   return (

@@ -31,7 +31,7 @@ import { localUrl } from '/utils/path';
 // };
 const putProfile = async (user, updatedFields) => {
   const payload = { user_profile: updatedFields };
-  console.log(JSON.stringify(payload, null, 2));
+  // console.log(JSON.stringify(payload, null, 2));
   let bodyPayload = { object: payload};
   // console.log(JSON.stringify(bodyPayload, null, 2));
   try {

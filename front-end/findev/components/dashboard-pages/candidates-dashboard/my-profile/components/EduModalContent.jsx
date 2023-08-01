@@ -69,6 +69,7 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
             value={university}
             onChange={(e) => setUniversity(e.target.value)}
             required
+            maxLength={50}
           ></input>
         </div>
 
@@ -79,6 +80,7 @@ const EduModalContent = ({ user, onClose, reloadData  }) => {
             placeholder="Chuyên ngành (nếu có)"
             value={major}
             onChange={(e) => setMajor(e.target.value)}
+            maxLength={30}
           ></input>
         </div>
 

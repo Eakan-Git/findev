@@ -30,6 +30,7 @@ const Index = () => {
         body: formData,
       });
       let data = await res.json();
+      // console.log(data);
       // delete data.data.user_profile.avatar;
       delete data.data.user_profile.github;
       delete data.data.user_profile.link;
@@ -66,7 +67,6 @@ const Index = () => {
       const updatedFields = { ...profile };
       // console.log("updatedFields",updatedFields);
       const msg = await putProfile(user.token, updatedFields);
-      window.location.reload();
       alert(msg.message);
     } catch (error) {
       console.error(error);
