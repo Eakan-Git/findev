@@ -48,6 +48,7 @@ const Index = () => {
       if (window.confirm("Bạn có muốn thay đổi thông tin không?")) {
         setProfile(data.data.user_profile);
         setIsEdit(!isEdit);
+        window.location.reload();
       }
       fileInputRef.current.value = "";
     } catch (error) {
