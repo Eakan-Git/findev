@@ -58,9 +58,13 @@ const FilterJobBox = ({jobs, isLoading}) => {
                 </div>
             </>
         }
-        else {
-            if (filteredJobs?.length > 0) {
-                content = filteredJobs.map((item) => (
+        else { // if not loading
+            // console.log(filteredJobs);
+            if ((filteredJobs?.length <= 0)){
+                content = <h1>Không tìm thấy công việc</h1>;
+            }
+            else {
+                content = filteredJobs?.map((item) => (
                     <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
                         <div className="inner-box">
                             <div className="content">
@@ -147,8 +151,6 @@ const FilterJobBox = ({jobs, isLoading}) => {
                         </div>
                     </div>
                 ));
-            } else {
-                content = <h1>Không tìm thấy công việc</h1>;
             }
         }
     }

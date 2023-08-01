@@ -13,7 +13,6 @@ const LocationBox = ({ setNewLocation }) => {
         type="text"
         name="listing-search"
         placeholder="Thành phố"
-        // value={location}
         defaultValue={currentLocation}
         onChange={locationHandler}
       />

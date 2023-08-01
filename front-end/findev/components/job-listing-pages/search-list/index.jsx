@@ -9,17 +9,17 @@ import { useRouter } from "next/router";
 import { searchUrl } from "/utils/path";
 const Index = () => {
   const router = useRouter();
-  const [location, setLocation] = useState("");
-  const [category, setCategory] = useState("");
-  const [skill, setSkill] = useState("");
-  const [title, setTitle] = useState("");
+  const [location, setLocation] = useState(router.query.location || "");
+  const [category, setCategory] = useState(router.query.category || "");
+  const [skill, setSkill] = useState(router.query.skill || "");
+  const [title, setTitle] = useState(router.query.title || "");
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [keyword, setKeyword] = useState("");
   let { page, count_per_page } = router.query;
 
   useEffect(() => {
-    setTitle(router.query.title || "");
+    setTitle(router.query.title);
     setLocation(router.query.location || "");
     setCategory(router.query.category || "");
     setSkill(router.query.skill || "");
@@ -72,7 +72,7 @@ const Index = () => {
       <LoginPopup />
       {/* End Login Popup Modal */}
       <DefaulHeader />
-      
+
       {/* End Header with upload cv btn */}
 
       <MobileMenu />
@@ -80,7 +80,7 @@ const Index = () => {
 
       <section className="page-title style-two">
         <div className="auto-container">
-          <JobSearchForm title={title} location={location}/>
+          <JobSearchForm title={title} location={location} />
           {/* <!-- Job Search Form --> */}
         </div>
       </section>
@@ -91,7 +91,7 @@ const Index = () => {
           <div className="row">
             <div className="content-column col-lg-12">
               <div className="ls-outer">
-                <FilterJobBox jobs={jobs} isLoading={isLoading}/>
+                <FilterJobBox jobs={jobs} isLoading={isLoading} />
               </div>
             </div>
             {/* <!-- End Content Column --> */}

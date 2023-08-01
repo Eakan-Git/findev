@@ -13,7 +13,6 @@ const SearchBox = ({ setNewTitle }) => {
         type="text"
         name="listing-search"
         placeholder="Tên công việc, kỹ năng hoặc công ty..."
-        // value={title}
         defaultValue={currentTitle}
         onChange={titleHandler}
       />

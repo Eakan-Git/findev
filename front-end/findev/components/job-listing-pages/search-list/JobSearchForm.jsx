@@ -5,17 +5,15 @@ import { useRouter } from "next/router";
 
 const JobSearchForm = ({title, location}) => {
   const router = useRouter();
-  const [newTitle, setNewTitle] = useState("");
-  const [newLocation, setNewLocation] = useState("");
-  let currentTitle = router.query.title;
-  let currentLocation = router.query.location;
+  const [newTitle, setNewTitle] = useState(title || "");
+  const [newLocation, setNewLocation] = useState(location || "");
   const handleSubmit = (e) => {
     e.preventDefault();
     router.push({
       pathname: "/search",
       query: {
-        title: newTitle !== "" ? newTitle : currentTitle,
-        location: newLocation !== "" ? newLocation : currentLocation,
+        title: newTitle,
+        location: newLocation,
       },
     });
   };
