@@ -9,7 +9,7 @@ export default [
             },
             {
                 name: "Công việc gợi ý",
-                routePath: "/recommend-jobs",
+                routePath: "/recommended-jobs",
             }
         ],
     },
