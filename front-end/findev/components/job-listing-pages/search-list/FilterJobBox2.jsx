@@ -15,11 +15,13 @@ import {
 } from "../../../features/filter/filterSlice";
 import Pagination from "../components/Pagination";
 import JobSelect from "../components/JobSelect";
+import { Slider } from "@mui/material";
 
 const FilterJobBox = ({ jobs, isLoading }) => {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [jobsPerPage, setJobsPerPage] = useState(10);
-  const router = useRouter();
+  const [type, setType] = useState(router.query.type || "");
   useEffect(() => {
     router.push({
       pathname: "/search",
@@ -38,6 +40,15 @@ const FilterJobBox = ({ jobs, isLoading }) => {
     } else if (page === "Next &raquo;" && currentPage < jobs.last_page) {
       setCurrentPage(currentPage + 1);
     }
+  };
+  const typeHandler = (e) => {
+    router.push({
+      pathname: "/search",
+      query: {
+        ...router.query,
+        type: e.target.value,
+      },
+    });
   };
   const { jobList, jobSort } = useSelector((state) => state.filter);
 
@@ -201,16 +212,17 @@ const FilterJobBox = ({ jobs, isLoading }) => {
             </button>
           ) : null} */}
 
-          {/* <select
-                        value={sort}
-                        className="chosen-single form-select"
-                        onChange={sortHandler}
-                    >
-                        <option value="">Sắp xếp theo</option>
-                        <option value="asc">Mới nhất</option>
-                        <option value="des">Cũ nhất</option>
-                    </select> */}
-
+          <select
+            className="chosen-single form-select"
+            onChange={typeHandler}
+            defaultValue={type}
+            style={{padding: "0.375rem 0.75rem", height: "45px"}}
+          >
+            <option value="">Loại công việc</option>
+            <option value="Bán thời gian">Bán thời gian</option>
+            <option value="Toàn thời gian">Toàn thời gian</option>
+            <option value="Thực tập">Thực tập</option>
+          </select>
           <select
             onChange={perPageHandler}
             className="chosen-single form-select ms-3 "

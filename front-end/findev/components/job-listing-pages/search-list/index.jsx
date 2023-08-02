@@ -4,7 +4,7 @@ import DefaulHeader from "../../header/DefaulHeader2";
 import MobileMenu from "../../header/MobileMenu";
 import FilterJobBox from "./FilterJobBox2";
 import JobSearchForm from "./JobSearchForm";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { searchUrl } from "/utils/path";
 const Index = () => {
@@ -13,15 +13,22 @@ const Index = () => {
   const [category, setCategory] = useState(router.query.category || "");
   const [skill, setSkill] = useState(router.query.skill || "");
   const [title, setTitle] = useState(router.query.title || "");
+  const [type, setType] = useState(router.query.type || "");
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   let { page, count_per_page } = router.query;
 
   useEffect(() => {
+    if(router.query === undefined) {
+      router.push({
+        pathname: "/search",
+      });
+    }
     setTitle(router.query.title);
     setLocation(router.query.location || "");
     setCategory(router.query.category || "");
     setSkill(router.query.skill || "");
+    setType(router.query.type || "");
     page = router.query.page || 1;
     count_per_page = router.query.count_per_page || 10;
   }, [router.query]);
@@ -47,19 +54,30 @@ const Index = () => {
     if (count_per_page && count_per_page !== 10) {
       params.push(`count_per_page=${count_per_page}`);
     }
-    params.push(`keyword=${title}`);
+    if(type) {
+      params.push(`type=${type}`);
+    }
     if (params.length > 0) {
       queryURL += `?${params.join("&")}`;
     }
     const fetchJobs = async () => {
       setIsLoading(true);
       const res = await fetch(queryURL);
-      const data = await res.json();
-      setJobs(data?.data?.jobs);
+      if (res.status === 404) {
+        let newURL = `${searchUrl}?keyword=${title}`;
+        console.log("n",newURL);
+        const res = await fetch(newURL);
+        const data = await res.json();
+        setJobs(data?.data?.jobs);
+      } else {
+        const data = await res.json();
+        setJobs(data?.data?.jobs);
+      }
+      console.log("q",queryURL);
       setIsLoading(false);
     };
     fetchJobs();
-  }, [location, category, skill, title, page, count_per_page]);
+  }, [location, category, skill, title, type, page, count_per_page]);
   return (
     <>
       {/* <!-- Header Span --> */}
