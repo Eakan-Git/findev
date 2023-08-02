@@ -214,7 +214,9 @@ const FilterJobBox = () => {
                 </div>
             ));
         } else {
-            content = <h1 style={{ textAlign: 'center' }}>Không tìm thấy công việc, bạn hãy cập nhật thông tin cá nhân của mình</h1>;
+            content = <h1 style={{ textAlign: 'center' }}>Không tìm thấy công việc, bạn hãy cập nhật đầy đủ các mục có dấu sao 
+            <span style={{color:"red"}}> (*) </span>
+            trong thông tin cá nhân của mình</h1>;
         }
     }
     else {

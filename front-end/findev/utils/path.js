@@ -8,6 +8,7 @@ export const recommendUrl = "https://20.242.247.247.nip.io/api/job-recommend/rec
 export const readCVUrl = "https://20.242.247.247.nip.io/api/cv/read-cv";
 export const relatedUrl = "https://20.242.247.247.nip.io/api/search/title?title=";
 export const rateUrl = "https://20.242.247.247.nip.io/api/rate/update_data/";
+export const getRateUrl = "https://20.242.247.247.nip.io/api/rate/get_rate/";
 // export const localUrl = process.env.localUrl;
 // export const searchUrl = process.env.searchUrl;
 // export const recommendUrl = process.env.recommendUrl;

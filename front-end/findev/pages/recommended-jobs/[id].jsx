@@ -15,14 +15,14 @@ import SocialTwo from "../../components/job-single-pages/social/SocialTwo";
 import JobDetailsDescriptions from "../../components/job-single-pages/shared-components/JobDetailsDescriptions";
 import ApplyJobModalContent from "../../components/job-single-pages/shared-components/ApplyJobModalContent";
 import ReportJobModalContent from "../../components/job-single-pages/shared-components/ReportJobModalContent";
-import { localUrl, rateUrl } from "../../utils/path";
+import { getRateUrl, localUrl, rateUrl } from "../../utils/path";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import CachedIcon from '@mui/icons-material/Cached';
-import { Modal } from 'react-bootstrap';
-import Box from '@mui/material/Box';
-import Rating from '@mui/material/Rating';
-import Typography from '@mui/material/Typography';
+import CachedIcon from "@mui/icons-material/Cached";
+import { Modal } from "react-bootstrap";
+import Box from "@mui/material/Box";
+import Rating from "@mui/material/Rating";
+import Typography from "@mui/material/Typography";
 
 const JobSingleDynamicV1 = () => {
   const router = useRouter();
@@ -36,6 +36,9 @@ const JobSingleDynamicV1 = () => {
   const { user } = useSelector((state) => state.user);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rate, setRate] = useState(null);
+  const [isRateLoading, setIsRateLoading] = useState(false);
+  const [isRateChanged, setIsRateChanged] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const handleModalOpen = () => {
     setIsModalOpen(true);
   };
@@ -45,62 +48,65 @@ const JobSingleDynamicV1 = () => {
   };
   const handleRate = (event, newValue) => {
     setRate(newValue);
-  }
+    setIsRateChanged(true);
+  };
   useEffect(() => {
     if (rate === null) return;
+    if (isRateChanged === false) return;
     (async () => {
       // Construct the API URL with URL parameters
-      const rateUrlWithParams = `${rateUrl}?job_id=${job.id}&id=${user.userAccount.id}&rate=${rate}`;
-  
-      // log the request data to the console
-      console.log(`job_id: ${job.id}`);
-      console.log(`id: ${user.userAccount.id}`);
-      console.log(`rate: ${rate}`);
-  
-      // Uncomment the code below once you are ready to perform the API call
+      const rateUrlWithParams = `${rateUrl}?job_id=${id}&id=${user.userAccount.id}&rate=${rate}`;
       const res = await fetch(rateUrlWithParams, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'accept': 'application/json',
+          accept: "application/json",
         },
       });
-  
+
       const data = await res.json();
       console.log(data);
     })();
-  
-  }, [rate]);
-  
-  
+  }, [isRateChanged]);
+
   useEffect(() => {
     const getJob = async () => {
       try {
         const res = await axios.get(`${localUrl}/jobs/${id}`, {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': user?.token
-          }
+            "Content-Type": "application/json",
+            Authorization: user?.token,
+          },
         });
-  
+
         const fetchedJob = res.data?.data?.job;
         setJob(fetchedJob || null);
         setCompany(fetchedJob?.employer_profile || null);
         const isJobSaved = res.data?.data?.job.is_saved;
-        console.log("isJobSaved: ",isJobSaved);
         setIsSaved(isJobSaved);
       } catch (err) {
-        router.push('/404');
+        router.push("/404");
       } finally {
         setIsLoading(false);
       }
     };
-  
     if (id) {
       getJob();
+      setIsLoaded(true);
     }
   }, [id]);
-  
-  
+  useEffect(() => {
+    if(!isLoaded) return;
+    (async () => {
+      setIsRateLoading(true);
+      const res = await fetch(
+        `${getRateUrl}?id=${user.userAccount.id}&job_id=${id}`
+      );
+      const data = await res.json();
+      setRate(data?.rate);
+      setIsRateLoading(false);
+    })();
+  }, [isLoaded]);
+
   if (isLoading) {
     return <div>Loading...</div>; // You can replace this with a loading spinner or skeleton UI component
   }
@@ -109,13 +115,7 @@ const JobSingleDynamicV1 = () => {
     return <div>Error: {error}</div>; // You can display a proper error message or retry option here
   }
 
-
-   const handleSaveJob = async () => {
-    // console.log("user: ",user)
-    // if(!user) {
-    //   alert("Bạn cần đăng nhập để lưu công việc này");
-    //   return;
-    // }
+  const handleSaveJob = async () => {
 
     if (isSaved === true) {
       try {
@@ -124,15 +124,15 @@ const JobSingleDynamicV1 = () => {
 
         // Gửi request xóa công việc
         const params = new URLSearchParams();
-        params.append('user_id', user.userAccount.id);
-        params.append('job_id', id);
+        params.append("user_id", user.userAccount.id);
+        params.append("job_id", id);
 
         const response = await axios.delete(`${localUrl}/saved-jobs/user-job`, {
           data: params,
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': user.token
-          }
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: user.token,
+          },
         });
 
         // Xử lý phản hồi nếu cần
@@ -140,7 +140,7 @@ const JobSingleDynamicV1 = () => {
         // Cập nhật giá trị isSaved sau khi xóa thành công
         setIsSaved(false);
       } catch (error) {
-        console.error('Failed to delete saved job:', error);
+        console.error("Failed to delete saved job:", error);
       } finally {
         // Kết thúc trạng thái lưu
         setIsSaving(false);
@@ -154,13 +154,13 @@ const JobSingleDynamicV1 = () => {
         await axios.post(
           `${localUrl}/saved-jobs`,
           {
-            'user_id': `${user.userAccount.id}`,
-            'job_id' : id
+            user_id: `${user.userAccount.id}`,
+            job_id: id,
           },
           {
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': user.token
+              "Content-Type": "application/json",
+              Authorization: user.token,
             },
           }
         );
@@ -177,27 +177,46 @@ const JobSingleDynamicV1 = () => {
     }
   };
   let rateContent = null;
+  let rateLoad = null;
+  if(isRateLoading) {
+    rateLoad = <div>Loading...</div>
+  }
+  else{
+    rateLoad = <Rating
+    name="simple-controlled"
+    value={rate}
+    defaultValue={rate}
+    onChange={handleRate}
+    max={10}
+  />
+  }
   if (user) {
     rateContent = (
       <>
         <Box
           sx={{
-            "& > legend": { mt: 2, fontSize: '18px', fontWeight: 'bold' },
+            "& > legend": { mt: 2, fontSize: "18px", fontWeight: "bold" },
           }}
         >
-          <Typography component="legend">Đánh giá sự phù hợp của gợi ý</Typography>
-          <Rating
-            name="simple-controlled"
-            value={rate}
-            onChange={handleRate}
-            max={10}
-          />
+          <Typography component="legend">
+            Đánh giá sự phù hợp của gợi ý
+          </Typography>
+          {isRateLoading ? (
+            <div>Loading...</div>
+          ) : (
+            <Rating
+              name="simple-controlled"
+              value={rate}
+              defaultValue={rate}
+              onChange={handleRate}
+              max={10}
+            />
+          )}
         </Box>
       </>
     );
-  }
-  else {
-    rateContent = <></>
+  } else {
+    rateContent = <></>;
   }
   return (
     <>
@@ -229,7 +248,8 @@ const JobSingleDynamicV1 = () => {
                         <ul className="job-info">
                           <li>
                             <span className="icon flaticon-briefcase"></span>
-                            {job?.employer_profile?.company_profile?.name || "Chưa cập nhật"}
+                            {job?.employer_profile?.company_profile?.name ||
+                              "Chưa cập nhật"}
                           </li>
                           {/* compnay info */}
                           <li>
@@ -255,7 +275,7 @@ const JobSingleDynamicV1 = () => {
                         {/* End .job-info */}
 
                         {/* <ul className="job-other-info"> */}
-                          {/* jobType: [
+                        {/* jobType: [
                               {
                                   styleClass: "time",
                                   type: "Full Time",
@@ -269,7 +289,7 @@ const JobSingleDynamicV1 = () => {
                                   type: "Urgent",
                               },
                                 ], */}
-                          {/* {company?.jobType?.map((val, i) => (
+                        {/* {company?.jobType?.map((val, i) => (
                             <li key={i} className={`${val.styleClass}`}>
                               {val.type}
                             </li>
@@ -287,7 +307,7 @@ const JobSingleDynamicV1 = () => {
                 {/* <figure className="image">
                   <img src="/images/resource/job-post-img.jpg" alt="resource" />
                 </figure> */}
-                <JobDetailsDescriptions job={job}/>
+                <JobDetailsDescriptions job={job} />
                 {/* End jobdetails content */}
 
                 <div className="other-options">
@@ -315,38 +335,44 @@ const JobSingleDynamicV1 = () => {
 
               <div className="sidebar-column col-lg-4 col-md-12 col-sm-12">
                 <aside className="sidebar">
-                {rateContent}
+                  {rateContent}
                   <div className="btn-box">
                     <a
                       href="#"
                       className="theme-btn btn-style-one"
                       data-bs-toggle={user ? "modal" : "modal"}
-                      data-bs-target={user ? "#applyJobModal" : "#loginPopupModal"}
+                      data-bs-target={
+                        user ? "#applyJobModal" : "#loginPopupModal"
+                      }
                     >
                       Ứng tuyển ngay
                     </a>
                     {isSaving ? (
                       <button className="bookmark-btn" disabled>
-                        <i ><CachedIcon/></i>
+                        <i>
+                          <CachedIcon />
+                        </i>
+                      </button>
+                    ) : isSaved ? (
+                      <button
+                        className="bookmark-btn"
+                        style={{
+                          background: "var(--primary-color)",
+                          color: "white",
+                        }}
+                        onClick={handleSaveJob}
+                      >
+                        <i className="flaticon-bookmark"></i>
                       </button>
                     ) : (
-                      isSaved ? (
-                        <button
-                          className="bookmark-btn"
-                          style={{ background: "var(--primary-color)", color: "white" }}
-                          onClick={handleSaveJob}
-                        >
-                          <i className="flaticon-bookmark"></i>
-                        </button>
-                      ) : (
-                        <button className="bookmark-btn" 
+                      <button
+                        className="bookmark-btn"
                         onClick={handleSaveJob}
                         data-bs-toggle={user ? "" : "modal"}
                         data-bs-target={user ? "" : "#loginPopupModal"}
-                        >
-                          <i className="flaticon-bookmark"></i>
-                        </button>
-                      )
+                      >
+                        <i className="flaticon-bookmark"></i>
+                      </button>
                     )}
                   </div>
                   {/* End apply for job btn */}
@@ -418,35 +444,37 @@ const JobSingleDynamicV1 = () => {
                       </div>
                     </button>
 
-
-                   {/* <!-- Modal --> */}
-                   <Modal
+                    {/* <!-- Modal --> */}
+                    <Modal
                       show={isModalOpen}
                       onHide={handleModalClose}
                       dialogClassName="modal-dialog modal-dialog-centered modal-dialog-scrollable"
                       id="reportJobModal"
                     >
                       <Modal.Header closeButton={false}>
-                      <div className="apply-modal-content modal-content">
-                      <div className="text-center">
-                      <h3 className="title">Báo cáo công việc</h3>
-                      <button
-                        type="button"
-                        className="closed-modal"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                        onClick= {handleModalClose}
-                      ></button>
-                      </div>
-                    </div>
+                        <div className="apply-modal-content modal-content">
+                          <div className="text-center">
+                            <h3 className="title">Báo cáo công việc</h3>
+                            <button
+                              type="button"
+                              className="closed-modal"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                              onClick={handleModalClose}
+                            ></button>
+                          </div>
+                        </div>
                       </Modal.Header>
                       <Modal.Body>
-                        <ReportJobModalContent id={id} onClose={handleModalClose} />
+                        <ReportJobModalContent
+                          id={id}
+                          onClose={handleModalClose}
+                        />
                       </Modal.Body>
                     </Modal>
-                     {/* End .send-private-message-wrapper */}
-                   </div>
-                 {/* End .modal */}
+                    {/* End .send-private-message-wrapper */}
+                  </div>
+                  {/* End .modal */}
 
                   {/* End .sidebar-widget */}
 
@@ -454,24 +482,29 @@ const JobSingleDynamicV1 = () => {
                     <div className="widget-content">
                       <div className="company-title">
                         <div className="company-logo">
-                          <img src={job?.employer_profile?.company_profile?.logo} alt="resource" />
+                          <img
+                            src={job?.employer_profile?.company_profile?.logo}
+                            alt="resource"
+                          />
                         </div>
-                        <h5 className="company-name">{job?.employer_profile?.company_profile?.name}</h5>
+                        <h5 className="company-name">
+                          {job?.employer_profile?.company_profile?.name}
+                        </h5>
                         {/* <a href="#" className="profile-link">
                           View company profile
                         </a> */}
                       </div>
                       {/* End company title */}
 
-                      <CompanyInfo company={job?.employer_profile}/>
+                      <CompanyInfo company={job?.employer_profile} />
 
                       <div className="btn-box">
                         <a
                           className="theme-btn btn-style-three"
                           href={`/employer/${job?.employer_profile?.company_id}`}
                         >
-                         {/* Link to employer/id page */}
-                            Xem trang công ty
+                          {/* Link to employer/id page */}
+                          Xem trang công ty
                         </a>
                       </div>
                       {/* End btn-box */}

@@ -64,8 +64,8 @@ const FormInfoBox = ({setAvt}) => {
       if(modifiedFields.date_of_birth){
         const date = new Date(modifiedFields.date_of_birth);
         const yyyy = date.getFullYear();
-        if(yyyy < 1996 || yyyy > 2006){
-          alert("Năm sinh phải nằm trong khoảng 1996 - 2006");
+        if(yyyy < 1980 || yyyy > 2005){
+          alert("Năm sinh phải nằm trong khoảng 1980 - 2005");
           return;
         }
         modifiedFields.date_of_birth = convertDate(modifiedFields.date_of_birth);
@@ -178,7 +178,7 @@ const FormInfoBox = ({setAvt}) => {
 
           {/* <!-- Input --> */}
           <div className="form-group col-lg-6 col-md-12">
-            <label>Tên công việc mong muốn</label>
+            <label>Tên công việc mong muốn </label> <span style={{color:"red"}}> *</span>
             <input
               type="text"
               name="good_at_position"
@@ -196,7 +196,7 @@ const FormInfoBox = ({setAvt}) => {
           {/* <!-- Input --> */}
           {/* <!-- Input --> */}
           <div className="form-group col-lg-6 col-md-12">
-            <label>Địa chỉ</label>
+            <label>Địa chỉ</label><span style={{color:"red"}}> *</span>
             <input
               type="text"
               name="address"
@@ -268,8 +268,8 @@ const FormInfoBox = ({setAvt}) => {
 
           {/* <!-- Input --> */}
           <div className="form-group col-lg-3 col-md-12">
-            <label>Số năm kinh nghiệm</label>
-            {/* <input
+            <label>Số năm kinh nghiệm</label><span style={{color:"red"}}> *</span>
+            <input
               type="number"
               name="year_of_experience"
               placeholder={"Vui lòng cập nhật thông tin"}
@@ -280,9 +280,8 @@ const FormInfoBox = ({setAvt}) => {
               }
               onChange={handleInputChange}
               min={0}
-              max={4}
-            /> */}
-            <select
+            />
+            {/* <select
               className="chosen-single form-select"
               name="yoe"
               value={
@@ -297,7 +296,7 @@ const FormInfoBox = ({setAvt}) => {
               <option value="1">1 năm</option>
               <option value="2">2 năm</option>
               <option value="3">3 năm</option>
-            </select>
+            </select> */}
           </div>
 
           <div className="form-group col-lg-3 col-md-12">
@@ -312,14 +311,15 @@ const FormInfoBox = ({setAvt}) => {
                   : profile?.date_of_birth || ""
               }
               onChange={handleInputChange}
-              min={"1996-01-01"}
-              max={"2006-12-31"}
+              min={"1980-01-01"}
+              max={"2005-12-31"}
               locate={"en-GB"}
             ></input>
           </div>
 
           <div className="form-group col-lg-12 col-md-12">
-            <label>Kỹ năng</label>
+            <label>Kỹ năng</label><span style={{color:"red"}}> *</span>
+            <p>Chọn tối đa 5 kỹ năng</p>
             <Select
               defaultValue={
                 profile?.skills.map((skill) => ({
@@ -345,7 +345,7 @@ const FormInfoBox = ({setAvt}) => {
           </div>
 
           <div className="form-group col-lg-12 col-md-12">
-            <label>Giới thiệu</label>
+            <label>Giới thiệu</label><span style={{color:"red"}}> *</span>
             <textarea
               placeholder="Vui lòng cập nhật thông tin"
               value={
