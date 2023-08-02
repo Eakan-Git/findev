@@ -27,7 +27,7 @@ const Index = () => {
       console.log("Failed to fetch profile data");
     }
   };
-  
+
   useEffect(() => {
     fetchUser();
   }, []);
@@ -44,7 +44,7 @@ const Index = () => {
 
       <LoginPopup />
 
-      <UploadModal isUploaded={isUploaded} setIsUploaded={setIsUploaded}/>
+      <UploadModal isUploaded={isUploaded} setIsUploaded={setIsUploaded} />
 
       <DashboardCandidatesHeader />
 
@@ -64,24 +64,31 @@ const Index = () => {
                 <div className="widget-title">
                   <h4>Danh sách CV của bạn</h4>
                   <div className="CV-button-wrapper">
-                    <button className="theme-btn btn-style-one" 
-                            data-bs-toggle="modal"
-                            data-bs-target="#uploadModal"
-                            >
+                    <button
+                      className="theme-btn btn-style-one"
+                      data-bs-toggle="modal"
+                      data-bs-target="#uploadModal"
+                    >
                       Đăng tải CV&nbsp;<i className="la la-cloud-upload"></i>
                     </button>
                     &nbsp;&nbsp;
-                    {profile && (
-                      <PDFDownloadLink document={<CVTemplate profile={profile} />} fileName={`${profile.full_name.replace(/ /g, '-')}_CV.pdf`}>
+                    {profile !== null ? (
+                      <PDFDownloadLink
+                        document={<CVTemplate profile={profile} />}
+                        fileName={`${profile.full_name.replace(
+                          / /g,
+                          "-"
+                        )}_CV.pdf`}
+                      >
                         <button className="theme-btn btn-style-one">
                           Tạo CV tự động&nbsp;<i className="la la-download"></i>
                         </button>
                       </PDFDownloadLink>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div className="widget-content">
-                  <CVListingsTable isUploaded={isUploaded} user={user}/>
+                  <CVListingsTable isUploaded={isUploaded} user={user} />
                 </div>
               </div>
             </div>
