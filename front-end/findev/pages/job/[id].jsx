@@ -55,7 +55,6 @@ const JobSingleDynamicV1 = () => {
         setJob(fetchedJob || null);
         setCompany(fetchedJob?.employer_profile || null);
         const isJobSaved = res.data?.data?.job.is_saved;
-        console.log("isJobSaved: ",isJobSaved);
         setIsSaved(isJobSaved);
       } catch (err) {
         router.push('/404');
