@@ -30,6 +30,11 @@ const Index = () => {
         body: formData,
       });
       let data = await res.json();
+      if(data.success === false){
+        alert(data.message);
+        setIsLoading(false);
+        return;
+      }
       // console.log(data);
       // delete data.data.user_profile.avatar;
       delete data.data.user_profile.github;

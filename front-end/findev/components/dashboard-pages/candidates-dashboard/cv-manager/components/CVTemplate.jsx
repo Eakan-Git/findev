@@ -38,21 +38,33 @@ const CVTemplate = ({ profile }) => {
         <View style={styles.body}>
           <View style={styles.left}>
             <View style={styles.box}>
-              <Text style={styles.title}>LIÊN HỆ</Text>
-              <Text style={styles.text}>Email: {profile?.email}</Text>
-              <Text style={styles.text}>SĐT: {profile?.phone}</Text>
-              <Text style={styles.text}>Địa chỉ: {profile?.address}</Text>
-              <Text style={styles.text}>Ngày sinh: {profile?.date_of_birth && new Date(profile.date_of_birth).toLocaleDateString('en-GB')}</Text>
+              {profile.email || profile.phone || profile.address || profile.date_of_birth ? (
+                <Text style={styles.title}>LIÊN HỆ</Text>
+              ) : null}
+              {profile?.email ? (
+                <Text style={styles.text}>Email: {profile?.email}</Text>
+              ):null}
+              {profile?.phone ? (
+                <Text style={styles.text}>SĐT: {profile?.phone}</Text>
+              ):null}
+              {profile?.address ? (<Text style={styles.text}>Địa chỉ: {profile?.address}</Text>):null}
+              {profile?.date_of_birth ? (
+                              <Text style={styles.text}>Ngày sinh: {profile?.date_of_birth && new Date(profile.date_of_birth).toLocaleDateString('en-GB')}</Text>
+
+              ):null}
             </View>
             <View style={styles.box}>
-              <Text style={styles.title}>HỌC VẤN</Text>
-              {profile?.educations.map((edu, index) => (
-                <View key={index}>
-                  <Text style={styles.time}>{getYear(edu.start)} - {getYear(edu.end)}</Text>
-                  <Text style={styles.subtitle}>{edu.university.toLowerCase()}</Text>
-                  <Text style={styles.additional_text}>{edu.major}</Text>
-                </View>
-              ))}
+              {profile?.educations.length > 0 ? (
+                <>
+                <Text style={styles.title}>HỌC VẤN</Text>
+                {profile?.educations.map((edu, index) => (
+                  <View key={index}>
+                    <Text style={styles.time}>{getYear(edu.start)} - {getYear(edu.end)}</Text>
+                    <Text style={styles.subtitle}>{edu.university.toLowerCase()}</Text>
+                    <Text style={styles.additional_text}>{edu.major}</Text>
+                  </View>
+                ))}</>
+              ):null}
             </View>
             <View style={styles.box}>
               {profile?.skills.length > 0 ? (
