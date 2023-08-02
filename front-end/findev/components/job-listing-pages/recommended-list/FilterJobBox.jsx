@@ -32,12 +32,12 @@ const FilterJobBox = () => {
     
           if (!recommendJobsData) {
             const queryUrl = `${recommendUrl}${user.userAccount.id}`;
-            console.log(queryUrl);
+            // console.log(queryUrl);
             const getJobs = async () => {
               try {
                 const res = await fetch(queryUrl);
                 const data = await res.json();
-                console.log(data);
+                // console.log(data);
                 setJobs(data);
               } catch (error) {
                 console.error("Error fetching jobs:", error);
