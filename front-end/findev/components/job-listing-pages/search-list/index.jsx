@@ -15,7 +15,6 @@ const Index = () => {
   const [title, setTitle] = useState(router.query.title || "");
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [keyword, setKeyword] = useState("");
   let { page, count_per_page } = router.query;
 
   useEffect(() => {
@@ -48,22 +47,19 @@ const Index = () => {
     if (count_per_page && count_per_page !== 10) {
       params.push(`count_per_page=${count_per_page}`);
     }
+    params.push(`keyword=${title}`);
     if (params.length > 0) {
       queryURL += `?${params.join("&")}`;
     }
-
     const fetchJobs = async () => {
       setIsLoading(true);
-      console.log(queryURL);
       const res = await fetch(queryURL);
       const data = await res.json();
       setJobs(data?.data?.jobs);
       setIsLoading(false);
     };
-
     fetchJobs();
   }, [location, category, skill, title, page, count_per_page]);
-
   return (
     <>
       {/* <!-- Header Span --> */}

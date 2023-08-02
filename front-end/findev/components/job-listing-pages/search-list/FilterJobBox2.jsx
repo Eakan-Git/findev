@@ -188,10 +188,10 @@ const FilterJobBox = ({ jobs, isLoading }) => {
   return (
     <>
       <div className="ls-switcher">
-        <JobSelect />
+        {/* <JobSelect /> */}
 
         <div className="sort-by">
-          {perPage.end !== 10 ? (
+          {/* {perPage.end !== 10 ? (
             <button
               onClick={clearAll}
               className="btn btn-danger text-nowrap me-2"
@@ -199,7 +199,7 @@ const FilterJobBox = ({ jobs, isLoading }) => {
             >
               Về mặc định
             </button>
-          ) : null}
+          ) : null} */}
 
           {/* <select
                         value={sort}
