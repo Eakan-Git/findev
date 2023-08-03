@@ -52,7 +52,7 @@ const ApplyJobModalContent = (user) => {
     }
     try {
       const formData = new FormData();
-      formData.append("time_table", checkBoxTb ? checkBoxTb : null);
+      formData.append("select_timetable", checkBoxTb ? checkBoxTb : null);
       formData.append("job_id", id);
       formData.append("user_id", user.user.userAccount.id);
       formData.append("cv_id", selectedCVID);
