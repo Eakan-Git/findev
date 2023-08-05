@@ -28,12 +28,15 @@ const ApplyJobModalContent = (user) => {
 
   const fetchCvList = async () => {
     try {
-      const res = await axios.get(`${localUrl}/cvs/user/${user.user.userAccount.id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: user.user.token,
-        },
-      });
+      const res = await axios.get(
+        `${localUrl}/cvs/user/${user.user.userAccount.id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: user.user.token,
+          },
+        }
+      );
       setCvList(res.data.data.cv);
     } catch (error) {
       console.log(error);
@@ -66,7 +69,7 @@ const ApplyJobModalContent = (user) => {
       });
 
       if (response.ok) {
-        alert("Đã gửi đơn ứng tuyển thành công");
+        // alert("Đã gửi đơn ứng tuyển thành công");
         // Reset form khi submit thành công
         setCvList([]);
         setCheckBoxTb(false);
@@ -74,6 +77,8 @@ const ApplyJobModalContent = (user) => {
         setIsCheckedError(false);
         setIsChecked(true); // Nếu bạn muốn checkbox luôn được tích mặc định sau khi submit thành công
         setIsSubmitted(true);
+      } else if (response.status === 403) {
+        alert("Bạn đã ứng tuyển vào công việc này rồi");
       } else {
         alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
       }
@@ -87,8 +92,8 @@ const ApplyJobModalContent = (user) => {
     <>
       {isSubmitted ? (
         <div className="text-center">
-        <p>Đơn ứng tuyển đã được gửi thành công!</p>
-      </div>
+          <p>Đơn ứng tuyển đã được gửi thành công!</p>
+        </div>
       ) : (
         <form className="default-form job-apply-form" onSubmit={handleSubmit}>
           <div className="row">
@@ -96,18 +101,31 @@ const ApplyJobModalContent = (user) => {
               <div className="uploading-outer apply-cv-outer">
                 {cvList.length === 0 ? (
                   <>
-                    <div style={{ color: "red", textAlign: "center", marginBottom: "10px" }}>
+                    <div
+                      style={{
+                        color: "red",
+                        textAlign: "center",
+                        marginBottom: "10px",
+                      }}
+                    >
                       Bạn chưa có CV nào trong kho lưu trữ
                     </div>
                     <span data-bs-dismiss="modal">
-                      <Link className="theme-btn btn-style-two w-100" href={"/profile/cv-manager"}>
+                      <Link
+                        className="theme-btn btn-style-two w-100"
+                        href={"/profile/cv-manager"}
+                      >
                         Đăng CV ngay
                       </Link>
                     </span>
                   </>
                 ) : (
                   <>
-                    <select className="uploadButton" required onChange={handleDropdownChange}>
+                    <select
+                      className="uploadButton"
+                      required
+                      onChange={handleDropdownChange}
+                    >
                       <option value="">Chọn CV</option>
                       {cvList.map((cv) => (
                         <option key={cv.id} value={cv.id}>
@@ -124,9 +142,12 @@ const ApplyJobModalContent = (user) => {
                           onChange={handleCheckBoxTbChange}
                         />
                         <label htmlFor="rememberMe1" className="remember">
-                          <span className="custom-checkbox" /> <span> Tôi đồng ý gửi kèm </span>
+                          <span className="custom-checkbox" />{" "}
+                          <span> Tôi đồng ý gửi kèm </span>
                           <span data-bs-dismiss="modal">
-                            <Link href={"/profile/my-schedule"}>thời gian biểu </Link>
+                            <Link href={"/profile/my-schedule"}>
+                              thời gian biểu{" "}
+                            </Link>
                           </span>
                           <span>của mình </span>
                         </label>
@@ -145,12 +166,16 @@ const ApplyJobModalContent = (user) => {
                           <span className="custom-checkbox" />
                           Tôi đã đọc và đồng ý với{" "}
                           <span data-bs-dismiss="modal">
-                            <Link href="/terms">Các Điều khoản và Chính sách bảo mật của FinDev</Link>
+                            <Link href="#">
+                              Các Điều khoản và Chính sách bảo mật của FinDev
+                            </Link>
                           </span>
                         </label>
                       </div>
                       {isCheckedError && (
-                        <p className="error-message">Vui lòng tích vào ô đồng ý điều khoản.</p>
+                        <p className="error-message" style={{color: "red"}}>
+                          Vui lòng tích vào ô đồng ý điều khoản.
+                        </p>
                       )}
                     </div>
 
