@@ -52,7 +52,7 @@ const JobListingsTable = ({ user }) => {
     fetchJobListings();
   }, []);
   const handleCVView = (cv_path) => {
-    console.log(cv_path);
+    window.open(cv_path, "_blank", "noopener,noreferrer");
   }
   if (loading) {
     return <div>Đang tải dữ liệu...</div>;
@@ -168,7 +168,7 @@ const JobListingsTable = ({ user }) => {
                           <ul className="option-list">
                             <li>
                             <button data-text="Xem CV đã gửi"
-                            onClick={() => {handleCVView(item.cv_path)}}
+                            onClick={() => {handleCVView(item?.cv?.cv_path)}}
                             >
                                 <span className="la la-eye"></span>
                             </button>
