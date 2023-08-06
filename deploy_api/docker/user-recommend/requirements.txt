@@ -1,0 +1,14 @@
+pydantic==1.8.2
+fastapi==0.68.0
+pandas
+numpy
+regex
+uvicorn
+pymongo
+mysql-connector-python
+requests
+python-multipart
+paginate_sqlalchemy
+urllib3
+python-dotenv
+typing-extensions==4.5.0

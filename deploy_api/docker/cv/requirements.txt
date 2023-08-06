@@ -1,0 +1,10 @@
+tika
+opencv-python
+pyrebase
+pdf2image
+dlib
+python-dotenv==0.19.0
+urllib3
+uvicorn
+fastapi
+python-multipart

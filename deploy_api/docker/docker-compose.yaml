@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  server:
+    container_name: vi-spacy-server
+    image: ghcr.io/phamanhtuan084/vi-spacy:latest
+    ports:
+      - 8001:8001
+    environment:
+      ELASTICSEARCH_HOST: http://elasticsearch:9200
+      MONGODB_CONNECTION_STRING: mongodb+srv://tuansoi19127084:tuansoi19127084@cluster0.n8shx9d.mongodb.net/test?retryWrites=true&w=majority
+      GOOGLE_DRIVE_FILE_URL: https://drive.google.com/uc?id=1AQrnIFnqzPQbXXbYRADj5yh1I3_E_YMt
+      JOB_FILE_URL: "https://drive.google.com/uc?id=1kAK11AE9FIsLge78Ih9vzYCrGCxqOkOf"
+      MYSQL_HOST: 35.197.161.176
+      MYSQL_USER: root
+      MYSQL_PASSWORD: jr123456
+      MYSQL_DATABASE: job_recommendation
+    networks:
+      - pool
+
+  cv:
+    container_name: vi-spacy-cv
+    image: ghcr.io/phamanhtuan084/cv-api:latest
+    ports:
+      - 8002:8001
+    environment:
+      API_KEY: "AIzaSyBhuTWJxsqguPJxnh9X8KMu8VFVGDR9iLw"
+      AUTH_DOMAIN: "findev-fde4d.firebaseapp.com"
+      DATABASE_URL: "https://findev-fde4d.firebaseio.com"
+      PROJECT_ID: "findev-fde4d"
+      STORAGE_BUCKET: "findev-fde4d.appspot.com"
+      MESSAGING_SENDER_ID: "893688082864"
+      APP_ID: "1:893688082864:web:9472d0d2f651d951fda675"
+      MEASUREMENT_ID: "G-CSJEECNTQ4"
+      EMAIL: "huyhoang23062001@gmail.com"
+      PASSWORD: "Hh23062001@"
+    networks:
+      - pool
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+    networks:
+      - pool
+
+networks:
+  pool:
+    driver: bridge
+
+volumes:
+  data:
