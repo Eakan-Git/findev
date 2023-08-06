@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: user-recommend-ingress
+  namespace: development
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: development-user-recommend-stripprefix@kubernetescrd
+spec:
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: "/api/user-recommend"
+            backend:
+              service:
+                name: user-recommend-service
+                port:
+                  number: 8001
+
+  tls:
+    - hosts:
+        - "*.nip.io"
+      secretName: domain-ingress-tls

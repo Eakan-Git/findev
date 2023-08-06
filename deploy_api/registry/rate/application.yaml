@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rate-deployment
+  namespace: development
+spec:
+  selector:
+    matchLabels:
+      app: rate-deployment
+  template:
+    metadata:
+      labels:
+        app: rate-deployment
+    spec:
+      containers:
+        - name: rate-deployment
+          image: ghcr.io/phamanhtuan084/rate-api:latest
+          imagePullPolicy: Always
+          command: [
+              "uvicorn",
+              "main:app",
+              "--host",
+              "0.0.0.0",
+              "--port",
+              "8001",
+              # NOTE: Set the root path, so we can reach the OpenAPI docs at
+              # /api/rate/docs
+              "--root-path",
+              "/api/rate",
+            ]
+
+          env:
+            - name: FIREBASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: rate-secret
+                  key: url.firebase
+
+            - name: FINDEV_FILE
+              value: "/opt/rate/config/findev.json"
+
+          ports:
+            - containerPort: 8001
+
+          volumeMounts:
+            - name: rate-config
+              mountPath: /opt/rate/config
+              readOnly: false
+
+      imagePullSecrets:
+        - name: ghcr-token
+      volumes:
+        - name: rate-config
+          secret:
+            secretName: rate-secret

@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-recommend-deployment
+  namespace: development
+spec:
+  selector:
+    matchLabels:
+      app: job-recommend-deployment
+  template:
+    metadata:
+      labels:
+        app: job-recommend-deployment
+    spec:
+      containers:
+        - name: job-recommend-deployment
+          image: ghcr.io/phamanhtuan084/job-recommend:version1
+          imagePullPolicy: Always
+          command: [
+              "uvicorn",
+              "main:app",
+              "--host",
+              "0.0.0.0",
+              "--port",
+              "8001",
+              # NOTE: Set the root path, so we can reach the OpenAPI docs at
+              # /api/job-recommend/docs
+              "--root-path",
+              "/api/job-recommend",
+            ]
+
+          env:
+            - name: ELASTICSEARCH_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: job-recommend-configmap
+                  key: host.elastic
+
+            - name: MONGO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: job-recommend-secret
+                  key: url.mongodb
+
+            - name: GOOGLE_DRIVE_FILE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: job-recommend-configmap
+                  key: url.ggdrive.file
+
+            - name: JOB_FILE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: job-recommend-configmap
+                  key: url.ggdrive.job
+
+            - name: MYSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: job-recommend-secret
+                  key: mysql.host
+
+            - name: MYSQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: job-recommend-secret
+                  key: mysql.port
+
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: job-recommend-secret
+                  key: mysql.user
+
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: job-recommend-secret
+                  key: mysql.password
+
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: job-recommend-secret
+                  key: mysql.database
+
+            - name: SSL_CA
+              value: "/opt/job-recommend/config/ca-certificates.crt"
+
+          ports:
+            - containerPort: 8001
+
+          volumeMounts:
+            - name: job-recommend-config
+              # NOTE: Don't mount the certificate at
+              # /etc/ssl/certs/ca-certificates.crt. This will make other libs
+              # don't work
+              mountPath: /opt/job-recommend/config
+              readOnly: false
+
+      imagePullSecrets:
+        - name: ghcr-token
+      volumes:
+        - name: job-recommend-config
+          secret:
+            secretName: job-recommend-secret

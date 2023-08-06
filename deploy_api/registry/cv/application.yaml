@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cv-deployment
+  namespace: development
+spec:
+  selector:
+    matchLabels:
+      app: cv-deployment
+  template:
+    metadata:
+      labels:
+        app: cv-deployment
+    spec:
+      containers:
+        - name: cv-deployment
+          image: ghcr.io/phamanhtuan084/cv-api:latest
+          imagePullPolicy: Always
+          command: [
+              "uvicorn",
+              "main:app",
+              "--host",
+              "0.0.0.0",
+              "--port",
+              "8001",
+              # NOTE: Set the root path, so we can reach the OpenAPI docs at
+              # /api/cv/docs
+              "--root-path",
+              "/api/cv",
+            ]
+
+          env:
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cv-secret
+                  key: apiKey
+
+            - name: AUTH_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: cv-secret
+                  key: authDomain
+
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: cv-secret
+                  key: databaseURL
+
+            - name: PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cv-secret
+                  key: projectId
+
+            - name: STORAGE_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: cv-secret
+                  key: storageBucket
+
+            - name: MESSAGING_SENDER_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cv-secret
+                  key: messagingSenderId
+
+            - name: APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cv-secret
+                  key: appId
+
+            - name: MEASUREMENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cv-secret
+                  key: measurementId
+
+            - name: EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: cv-secret
+                  key: email
+
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cv-secret
+                  key: password
+
+          ports:
+            - containerPort: 8001
+      imagePullSecrets:
+        - name: ghcr-token

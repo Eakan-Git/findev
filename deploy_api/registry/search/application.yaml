@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search-deployment
+  namespace: development
+spec:
+  selector:
+    matchLabels:
+      app: search-deployment
+  template:
+    metadata:
+      labels:
+        app: search-deployment
+    spec:
+      containers:
+        - name: search-deployment
+          image: ghcr.io/phamanhtuan084/search:latest
+          imagePullPolicy: Always
+          command: [
+              "uvicorn",
+              "main:app",
+              "--host",
+              "0.0.0.0",
+              "--port",
+              "8001",
+              # NOTE: Set the root path, so we can reach the OpenAPI docs at
+              # /api/search/docs
+              "--root-path",
+              "/api/search",
+            ]
+
+          env:
+            - name: ELASTICSEARCH_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: search-configmap
+                  key: host.elastic
+
+            - name: MONGODB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: search-secret
+                  key: url.mongodb
+
+            - name: GOOGLE_DRIVE_FILE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: search-configmap
+                  key: url.ggdrive.file
+
+            - name: JOB_FILE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: search-configmap
+                  key: url.ggdrive.job
+
+            - name: MYSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: search-secret
+                  key: mysql.host
+
+            - name: MYSQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: search-secret
+                  key: mysql.port
+
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: search-secret
+                  key: mysql.user
+
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: search-secret
+                  key: mysql.password
+
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: search-secret
+                  key: mysql.database
+
+            - name: SSL_CA
+              value: "/opt/search/config/ca-certificates.crt"
+
+          ports:
+            - containerPort: 8001
+
+          volumeMounts:
+            - name: search-config
+              # NOTE: Don't mount the certificate at
+              # /etc/ssl/certs/ca-certificates.crt. This will make other libs
+              # don't work
+              mountPath: /opt/search/config
+              readOnly: false
+
+      imagePullSecrets:
+        - name: ghcr-token
+      volumes:
+        - name: search-config
+          secret:
+            secretName: search-secret
