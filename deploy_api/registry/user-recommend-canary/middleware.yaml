@@ -1,0 +1,9 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: user-recommend-canary-stripprefix
+  namespace: development
+spec:
+  stripPrefix:
+    prefixes:
+      - /api/user-recommend-canary

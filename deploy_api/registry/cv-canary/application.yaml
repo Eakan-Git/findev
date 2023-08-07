@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cv-canary-deployment
+  namespace: development
+spec:
+  selector:
+    matchLabels:
+      app: cv-canary-deployment
+  template:
+    metadata:
+      labels:
+        app: cv-canary-deployment
+    spec:
+      containers:
+        - name: cv-canary-deployment
+          image: ghcr.io/phamanhtuan084/cv-api-canary:latest
+          imagePullPolicy: Always
+          command: [
+              "uvicorn",
+              "main:app",
+              "--host",
+              "0.0.0.0",
+              "--port",
+              "8001",
+              # NOTE: Set the root path, so we can reach the OpenAPI docs at
+              # /api/cv-canary/docs
+              "--root-path",
+              "/api/cv-canary",
+            ]
+
+          env:
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cv-canary-secret
+                  key: apiKey
+
+            - name: AUTH_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: cv-canary-secret
+                  key: authDomain
+
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: cv-canary-secret
+                  key: databaseURL
+
+            - name: PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cv-canary-secret
+                  key: projectId
+
+            - name: STORAGE_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: cv-canary-secret
+                  key: storageBucket
+
+            - name: MESSAGING_SENDER_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cv-canary-secret
+                  key: messagingSenderId
+
+            - name: APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cv-canary-secret
+                  key: appId
+
+            - name: MEASUREMENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cv-canary-secret
+                  key: measurementId
+
+            - name: EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: cv-canary-secret
+                  key: email
+
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cv-canary-secret
+                  key: password
+
+          ports:
+            - containerPort: 8001
+      imagePullSecrets:
+        - name: ghcr-token

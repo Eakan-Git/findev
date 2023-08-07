@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-recommend-canary-deployment
+  namespace: development
+spec:
+  selector:
+    matchLabels:
+      app: user-recommend-canary-deployment
+  template:
+    metadata:
+      labels:
+        app: user-recommend-canary-deployment
+    spec:
+      containers:
+        - name: user-recommend-canary-deployment
+          image: ghcr.io/phamanhtuan084/user-recommend-canary:latest
+          imagePullPolicy: Always
+          command: [
+              "uvicorn",
+              "main:app",
+              "--host",
+              "0.0.0.0",
+              "--port",
+              "8001",
+              # NOTE: Set the root path, so we can reach the OpenAPI docs at
+              # /api/user-recommend-canary/docs
+              "--root-path",
+              "/api/user-recommend-canary",
+            ]
+
+          env:
+            - name: ELASTICSEARCH_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: user-recommend-canary-configmap
+                  key: host.elastic
+
+            - name: MONGODB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: user-recommend-canary-secret
+                  key: url.mongodb
+
+            - name: GOOGLE_DRIVE_FILE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: user-recommend-canary-configmap
+                  key: url.ggdrive.file
+
+            - name: JOB_FILE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: user-recommend-canary-configmap
+                  key: url.ggdrive.job
+
+            - name: MYSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: user-recommend-canary-secret
+                  key: mysql.host
+
+            - name: MYSQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: user-recommend-canary-secret
+                  key: mysql.port
+
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: user-recommend-canary-secret
+                  key: mysql.user
+
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-recommend-canary-secret
+                  key: mysql.password
+
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: user-recommend-canary-secret
+                  key: mysql.database
+
+            - name: SSL_CA
+              value: "/opt/user-recommend/config/ca-certificates.crt"
+
+          ports:
+            - containerPort: 8001
+
+          volumeMounts:
+            - name: user-recommend-canary-config
+              # NOTE: Don't mount the certificate at
+              # /etc/ssl/certs/ca-certificates.crt. This will make other libs
+              # don't work
+              mountPath: /opt/user-recommend/config
+              readOnly: false
+
+      imagePullSecrets:
+        - name: ghcr-token
+      volumes:
+        - name: user-recommend-canary-config
+          secret:
+            secretName: user-recommend-canary-secret

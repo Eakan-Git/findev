@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ghcr-token
+  namespace: development
+data:
+  .dockerconfigjson: ewoJImF1dGhzIjogewoJCSJnaGNyLmlvIjogewoJCQkiYXV0aCI6ICJVR2hoYlVGdWFGUjFZVzR3T0RRNloyaHdYMGhxUVdaaE9FNUJVR1puVDNsWVpIWm1ZMUZYY2xkUVYwRlBaR1p2TnpCdlpIQm9OQT09IgoJCX0KCX0KfQ==
+type: kubernetes.io/dockerconfigjson

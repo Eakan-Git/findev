@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cv-ingress
+  namespace: development
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    # NOTE: Apply strip prefix middleware to remove /api/cv from the request
+    # path
+    # NOTE: You have to add the namespace to the middleware name, or inspect the
+    # dashboard to find the fully qualified name
+    traefik.ingress.kubernetes.io/router.middlewares: development-cv-stripprefix@kubernetescrd
+spec:
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: "/api/cv"
+            backend:
+              service:
+                name: cv-service
+                port:
+                  number: 8001
+
+  tls:
+    - hosts:
+        - "*.nip.io"
+      secretName: domain-ingress-tls

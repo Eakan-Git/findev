@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rate-ingress
+  namespace: development
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: development-rate-stripprefix@kubernetescrd
+spec:
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: "/api/rate"
+            backend:
+              service:
+                name: rate-service
+                port:
+                  number: 8001
+
+  tls:
+    - hosts:
+        - "*.nip.io"
+      secretName: domain-ingress-tls

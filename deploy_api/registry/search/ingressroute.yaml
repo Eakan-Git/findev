@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: search-ingress
+  namespace: development
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: development-search-stripprefix@kubernetescrd
+spec:
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: "/api/search"
+            backend:
+              service:
+                name: search-service
+                port:
+                  number: 8001
+
+  tls:
+    - hosts:
+        - "*.nip.io"
+      secretName: domain-ingress-tls
