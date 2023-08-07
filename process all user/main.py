@@ -51,7 +51,7 @@ def connection_mongo():
     client = MongoClient("mongodb+srv://tuansoi19127084:tuansoi19127084@cluster0.n8shx9d.mongodb.net/test?retryWrites=true&w=majority")
     db = client['BaseOnAL']
     #collection = db['user_recommend']
-    collection = db['test_2']
+    collection = db['test_3']
     return collection
 
 
