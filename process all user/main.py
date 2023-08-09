@@ -48,9 +48,12 @@ weights = {
 
 def connection_mongo():
     # Connect to MongoDB
-    client = MongoClient("mongodb+srv://tuansoi19127084:tuansoi19127084@cluster0.n8shx9d.mongodb.net/test?retryWrites=true&w=majority")
+    mongo_url = os.environ.get("MONGO_URL")
+    if not mongo_url:
+        raise ValueError("MONGO_URL environment variable is not set.")
+    
+    client = MongoClient(mongo_url)
     db = client['BaseOnAL']
-    #collection = db['user_recommend']
     collection = db['test_3']
     return collection
 
@@ -79,22 +82,21 @@ def clean_txt(text, stopwords):
 
 # read data from mysql
 def read_data_mysql():
-    config = {
-        'host': 'job-recommendation-do-user-14394464-0.b.db.ondigitalocean.com',
-        'user': 'doadmin',
-        'password': 'AVNS_rB2mXrCKZuExi7p8Em8',
-        'database': 'job_recommendation',
-        'port': 25060,
-        'ssl_ca': 'C:\\Users\\Asus\\Downloads\\ca-certificate.crt'
-    }
+    host = os.environ.get('HOST')
+    user = os.environ.get('USER')
+    password = os.environ.get('PASSWORD')
+    database = os.environ.get('DATABASE')
+    port = os.environ.get('PORT')
+    ssl_ca = os.environ.get('SSL_CA')
 
+    # Establish the connection
     cnx = mysql.connector.connect(
-        host=config['host'],
-        user=config['user'],
-        password=config['password'],
-        database=config['database'],
-        port=config['port'],
-        ssl_ca=config['ssl_ca']
+        host=host,
+        user=user,
+        password=password,
+        database=database,
+        port=port,
+        ssl_ca=ssl_ca
     )
 
     cursor = cnx.cursor()
@@ -204,6 +206,7 @@ def read_data_mysql():
     
     # Create a DataFrame for users
     users = pd.DataFrame(user_results, columns=user_columns)
+    print(users.info())
     
     # Define user_account
     user_account = """
@@ -559,7 +562,10 @@ def check_user(current_jobs, user_id, collection, users, timetable, mongo_user_i
             return pd.DataFrame(recommended_jobs_mongo)
     else:               
         recommended_jobs = recommend_job(user_id, users, timetable, current_jobs)
-        save_recommendations_to_mongodb(user_id, recommended_jobs, datetime.datetime.now(), collection)
+        if datetime_user < datetime_timetable:
+            save_recommendations_to_mongodb(user_id, recommended_jobs, datetime_timetable, collection)
+        else:
+            save_recommendations_to_mongodb(user_id, recommended_jobs, datetime_user, collection)
         print("Lưu user thành công lên MongoDB")
         return recommended_jobs
 
