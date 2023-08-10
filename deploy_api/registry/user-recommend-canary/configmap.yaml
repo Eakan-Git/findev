@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: user-recommend-canary-configmap
-  namespace: development
-data:
-  host.elastic: http://elastic-service.elasticsearch.svc.cluster.local:9200
-  url.ggdrive.file: https://drive.google.com/uc?id=1AQrnIFnqzPQbXXbYRADj5yh1I3_E_YMt
-  url.ggdrive.job: https://drive.google.com/uc?id=1kAK11AE9FIsLge78Ih9vzYCrGCxqOkOf

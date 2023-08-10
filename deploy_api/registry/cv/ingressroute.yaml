@@ -12,7 +12,8 @@ metadata:
     traefik.ingress.kubernetes.io/router.middlewares: development-cv-stripprefix@kubernetescrd
 spec:
   rules:
-    - http:
+    - host: "ethi-team.pw"
+      http:
         paths:
           - pathType: Prefix
             path: "/api/cv"
@@ -24,5 +25,5 @@ spec:
 
   tls:
     - hosts:
-        - "*.nip.io"
+        - "ethi-team.pw"
       secretName: domain-ingress-tls

@@ -8,7 +8,8 @@ metadata:
     traefik.ingress.kubernetes.io/router.middlewares: development-search-stripprefix@kubernetescrd
 spec:
   rules:
-    - http:
+    - host: "ethi-team.pw"
+      http:
         paths:
           - pathType: Prefix
             path: "/api/search"
@@ -20,5 +21,5 @@ spec:
 
   tls:
     - hosts:
-        - "*.nip.io"
+        - "ethi-team.pw"
       secretName: domain-ingress-tls

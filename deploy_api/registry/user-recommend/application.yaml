@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: user-recommend-deployment
-          image: ghcr.io/phamanhtuan084/user-recommend:version4
+          image: ghcr.io/phamanhtuan084/user-recommend:version6
           imagePullPolicy: Always
           command: [
               "uvicorn",
