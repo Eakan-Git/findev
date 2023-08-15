@@ -14,12 +14,15 @@ import string
 from nltk.stem import WordNetLemmatizer
 from nltk import word_tokenize
 import datetime
+import math
+import time
 from fuzzywuzzy import fuzz
 from pytz import timezone
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from typing import List, Optional
+import threading
 import warnings; warnings.simplefilter('ignore')
 
 # Load environment variables from .env file
@@ -137,11 +140,13 @@ def read_data_mysql():
         GROUP_CONCAT(DISTINCT c.description SEPARATOR ', ') AS categories
     FROM
         jobs j
-        JOIN job_skills s ON j.id = s.job_id
-        JOIN employer_profiles ON j.employer_id = employer_profiles.id
-        JOIN company_profiles ON employer_profiles.company_id = company_profiles.id
-        JOIN job_category jc ON j.id = jc.job_id
-        JOIN categories c ON c.id = jc.category_id
+    JOIN job_skills s ON j.id = s.job_id AND s.deleted_at IS NULL
+    JOIN employer_profiles ON j.employer_id = employer_profiles.id
+    JOIN company_profiles ON employer_profiles.company_id = company_profiles.id
+    JOIN job_category jc ON j.id = jc.job_id  AND jc.deleted_at IS NULL
+    JOIN categories c ON c.id = jc.category_id AND c.deleted_at IS NULL
+    WHERE
+        j.deleted_at IS NULL
     GROUP BY
         j.id,
         j.title,
@@ -155,7 +160,17 @@ def read_data_mysql():
         j.max_yoe,
         j.benefit,
         j.deadline,
-        j.requirement
+        j.requirement,
+        j.location,
+        company_profiles.id,
+        company_profiles.name,
+        company_profiles.logo,
+        company_profiles.description,
+        company_profiles.site,
+        company_profiles.address,
+        company_profiles.size,
+        company_profiles.phone,
+        company_profiles.email;
     """
     # Execute the job query and fetch the results
     cursor.execute(query_job)
@@ -177,17 +192,17 @@ def read_data_mysql():
         up.gender,
         up.address,
         up.year_of_experience,
-        GROUP_CONCAT(DISTINCT us.skill) AS skills,
-        GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR ' ; ') AS experiences,
-        GROUP_CONCAT(DISTINCT ue.title ORDER BY ue.user_id SEPARATOR ' ; ') AS experiences_title,
-        GROUP_CONCAT(DISTINCT ua.description ORDER BY ua.user_id SEPARATOR ' ; ') AS achievements,
+        GROUP_CONCAT(DISTINCT us.skill ORDER BY ue.user_id SEPARATOR '; ') AS skills,
+        GROUP_CONCAT(DISTINCT ue.description ORDER BY ue.user_id SEPARATOR '; ') AS experiences,
+        GROUP_CONCAT(DISTINCT ue.title ORDER BY ue.user_id SEPARATOR '; ') AS experiences_title,
+        GROUP_CONCAT(DISTINCT ua.description ORDER BY ua.user_id SEPARATOR '; ') AS achievements,
         up.created_at,
         up.updated_at
     FROM
         user_profiles up
-    LEFT JOIN user_educations ued ON up.id = ued.user_id
-    LEFT JOIN user_achievements ua ON up.id = ua.user_id
-    LEFT JOIN user_skills us ON up.id = us.user_id
+    LEFT JOIN user_educations ued ON up.id = ued.user_id AND ued.deleted_at IS NULL
+    LEFT JOIN user_achievements ua ON up.id = ua.user_id AND ua.deleted_at IS NULL
+    LEFT JOIN user_skills us ON up.id = us.user_id AND us.deleted_at IS NULL
     LEFT JOIN (
         SELECT
             user_id,
@@ -195,6 +210,8 @@ def read_data_mysql():
             GROUP_CONCAT(title ORDER BY user_id SEPARATOR '; ') AS title
         FROM
             user_experiences
+        WHERE
+            deleted_at IS NULL
         GROUP BY
             user_id
     ) ue ON up.id = ue.user_id
@@ -369,17 +386,20 @@ def recommend_job(id: int, users, timetable, current_jobs):
     user_address = users.loc[users['id'] == user_id, 'address'].iloc[0]
     user_address = user_address.strip()
     user_address = user_address.lower()
-    #print("job_g")
-    #print(jobs_g)
+    print("user_address")
+    print(user_address)
+    #print("job_g location")
+    #print(jobs_g['location'].value_counts())
 
-    if user_address in ['tphcm', 'hồ chí minh', 'tp hcm', 'hcm', 'tp.hcm']:
-        jobs_a = jobs_g[jobs_g[['location', 'title']].apply(lambda x: any(keyword in x['location'] or keyword in x['title'] for keyword in ['Hồ Chí Minh']), axis=1)]
-    elif user_address in ['hà nội', 'hn']:
-        jobs_a = jobs_g[jobs_g[['location', 'title']].apply(lambda x: any(keyword in x['location'] or keyword in x['title'] for keyword in ['Hà Nội']), axis=1)]
+    if any(keyword in user_address for keyword in ['tphcm', 'hồ chí minh', 'tp hcm', 'hcm', 'tp.hcm', 'thành phố hồ chí minh']):
+        jobs_a = jobs_g[jobs_g['location'].str.lower().str.contains('hồ chí minh')]
+    elif any(keyword in user_address for keyword in ['hà nội', 'hn']):
+        jobs_a = jobs_g[jobs_g['location'].str.lower().str.contains('hà nội')]
     else:
         jobs_a = jobs_g
-    #print("job_a")
-    #print(jobs_a)
+
+    #print("job_a location")
+    #print(jobs_a['location'].value_counts())
 
     # Lấy YearsExperience của người dùng   
     user_experience = users[users['id'] == user_id]['year_of_experience'].values[0]
@@ -399,13 +419,13 @@ def recommend_job(id: int, users, timetable, current_jobs):
         max_yoe_condition = user_experience
 
     jobs_ex = jobs_a[jobs_a['max_yoe'] <= max_yoe_condition]
-    print("job_ex")
-    print(jobs_ex)
+    #print("job_ex")
+    #print(jobs_ex)
     
     if jobs_ex is None or jobs_ex.empty:
         jobs_ex = jobs_a
-        print("job_ex")
-        print(jobs_ex)
+        #print("job_ex")
+        #print(jobs_ex)
 
     #jobs_ex = jobs_a
     jobs_ex['title'] = jobs_ex['title'].fillna('')
@@ -429,7 +449,7 @@ def recommend_job(id: int, users, timetable, current_jobs):
     
     # Get the user's combined text
     user_combine_text = users.loc[users['id'] == user_id, 'combine'].values[0]
-    
+
     # Calculate similarity between user's combine text and jobs' combine text
     similarity_scores = calculate_sim_with_spacy(nlp, jobs_ex, user_combine_text, weights, n=10)
     
@@ -476,11 +496,11 @@ def recommend_job(id: int, users, timetable, current_jobs):
     recommended_jobs_data_filtered['deadline'] = pd.to_datetime(recommended_jobs_data_filtered['deadline'])
     recommended_jobs_data_filtered['deadline'] = recommended_jobs_data_filtered['deadline'].dt.strftime('%d-%m-%Y')
 
-    if recommended_jobs_data_filtered.empty or len(recommended_jobs_data_filtered) < 5:
+    if recommended_jobs_data_filtered.empty or len(recommended_jobs_data_filtered) < 20:
         recommended_jobs_data_sorted = recommended_jobs_data_sorted.sort_values(by='Similarity Score', ascending=False)
-        return recommended_jobs_data_sorted[:10]    
-    elif len(recommended_jobs_data_filtered) > 10:
-        return recommended_jobs_data_filtered[:10]
+        return recommended_jobs_data_sorted[:30]    
+    elif len(recommended_jobs_data_filtered) > 30:
+        return recommended_jobs_data_filtered[:30]
     else:
         return recommended_jobs_data_filtered
 
@@ -565,8 +585,12 @@ def check_user(current_jobs, user_id, collection, users, timetable, mongo_user_i
             recommended_jobs_mongo = get_recommendations_from_mongodb(collection, user_id)
             print("Đọc data MongoDB thành công")
             return pd.DataFrame(recommended_jobs_mongo)
-    else:               
+    else:
+        start_recommend_job = time.time()               
         recommended_jobs = recommend_job(user_id, users, timetable, current_jobs)
+        end_recommend_job = time.time()
+        print("Time taken for recommend_job:", end_recommend_job - start_recommend_job, "seconds")
+
         if datetime_user < datetime_timetable:
             save_recommendations_to_mongodb(user_id, recommended_jobs, datetime_timetable, collection)
         else:
@@ -578,8 +602,15 @@ def check_user(current_jobs, user_id, collection, users, timetable, mongo_user_i
 def recommend(user_id):
     result = None
     
+    # Thời điểm bắt đầu đọc dữ liệu từ MySQL
+    start = time.time()
+    
     # get data from mysql
     jobs, users, user_acc, timetable = read_data_mysql()
+    
+    # Thời điểm kết thúc đọc dữ liệu từ MySQL
+    end = time.time()
+    print("Time taken to read data from MySQL:", end - start, "seconds")
     print(user_id)
 
     # Kiểm tra xem ID người dùng có tồn tại trong DataFrame users hay không
@@ -631,7 +662,64 @@ def recommend(user_id):
     t = check_user(current_jobs, user_id, collection, users, timetable, mongo_user_ids)
     return t
 
-# Define the recommendation endpoint
+# Calculate pagination information
+def calculate_pagination_info(user_id, page, limit, recommended_jobs_df):
+    total = len(recommended_jobs_df)
+    total_pages = math.ceil(total / limit)
+    base_url = f"https://ethi-team.pw/api/job-recommend/recommend/"
+    user_id_param = f"user_id={user_id}"
+    first_page_url = f"{base_url}?{user_id_param}&page=1&limit={limit}"
+    last_page = total_pages
+    last_page_url = f"{base_url}?{user_id_param}&page={last_page}&limit={limit}"
+    next_page = page + 1 if page < total_pages else None
+    prev_page = page - 1 if page > 1 else None
+
+    links = [
+        {
+            "url": prev_page and f"{base_url}?{user_id_param}&page={prev_page}&limit={limit}",
+            "label": "&laquo; Previous",
+            "active": page > 1
+        },
+        {
+            "url": first_page_url,
+            "label": "1",
+            "active": page == 1
+        }
+    ]
+
+    for i in range(2, total_pages + 1):
+        links.append({
+            "url": f"{base_url}?{user_id_param}&page={i}&limit={limit}",
+            "label": str(i),
+            "active": page == i
+        })
+
+    links.append({
+        "url": next_page and f"{base_url}?{user_id_param}&page={next_page}&limit={limit}",
+        "label": "Next &raquo;",
+        "active": page < total_pages
+    })
+
+    pagination_info = {
+        "first_page_url": first_page_url,
+        "from": (page - 1) * limit + 1,
+        "last_page": last_page,
+        "last_page_url": last_page_url,
+        "links": links,
+        "next_page_url": next_page and f"{base_url}?{user_id_param}&page={next_page}&limit={limit}",
+        "path": f"{base_url}?{user_id_param}",
+        "per_page": limit,
+        "prev_page_url": prev_page and f"{base_url}?{user_id_param}&page={prev_page}&limit={limit}",
+        "to": min(page * limit, total),
+        "total": total
+    }
+
+    return pagination_info
+
+def run_recommendation(user_id):
+    global recommended_jobs_df
+    recommended_jobs_df = recommend(user_id)
+
 @app.get("/recommend/")
 async def get_recommendations(
     user_id: int = Query(..., description="User ID"),
@@ -639,9 +727,26 @@ async def get_recommendations(
     limit: int = Query(10, description="Number of results per page"),
 ):
     try:
-        # Call the recommend function and pass the user_id
-        recommended_jobs_df = recommend(user_id)
+        global recommended_jobs_df
+        
+        # Start the recommendation process in a separate thread
+        recommendation_thread = threading.Thread(target=run_recommendation, args=(user_id,))
+        recommendation_thread.start()
 
+        # Set a timeout of 3 minutes
+        timeout = 180
+        recommendation_thread.join(timeout)
+
+        # Check if the recommendation_thread is still alive (i.e., the function is running)
+        if recommendation_thread.is_alive():
+            return {
+                "error": True,
+                "message": "Recommendation took too long to process.",
+                "data": None,
+                "status_code": 408
+            }
+
+        # Check if recommended_jobs_df is None
         if recommended_jobs_df is None:
             return {
                 "error": True,
@@ -650,7 +755,8 @@ async def get_recommendations(
                 "status_code": 404
             }
 
-        if isinstance(recommended_jobs_df, str):  # Check if recommend() returned an error message
+        # Check if recommended_jobs_df is an error message
+        if isinstance(recommended_jobs_df, str):
             return {
                 "error": True,
                 "message": recommended_jobs_df,
@@ -658,6 +764,7 @@ async def get_recommendations(
                 "status_code": 500
             }
 
+        # Check if recommended_jobs_df is empty
         if recommended_jobs_df.empty:
             return {
                 "error": True,
@@ -673,6 +780,9 @@ async def get_recommendations(
         # Get the paginated data
         paginated_jobs = recommended_jobs_df.iloc[start_index:end_index].to_dict(orient="records")
 
+        # Calculate pagination information
+        pagination_info = calculate_pagination_info(user_id, page, limit, recommended_jobs_df)
+
         # Return the paginated data along with pagination information
         return {
             "error": False,
@@ -681,7 +791,8 @@ async def get_recommendations(
                 "jobs": {
                     "current_page": page,
                     "data": paginated_jobs
-                }
+                },
+                "pagination": pagination_info
             },
             "status_code": 200
         }

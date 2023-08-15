@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: job-recommend-deployment
-          image: ghcr.io/phamanhtuan084/job-recommend:version2
+          image: ghcr.io/phamanhtuan084/job-recommend:version4
           imagePullPolicy: Always
           command: [
               "uvicorn",
