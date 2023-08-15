@@ -45,17 +45,12 @@ const Index = () => {
             <div className="invoice-footer">
               <ul className="bottom-links">
                 <li>
-                  <a
-                    href="https://themeforest.net/user/ib-themes"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="link"
-                  >
-                    www.ibthemespro.com
+                  <a>
+                    www.findev.com
                   </a>
                 </li>
                 <li>
-                  <a href="invoice@superio.com">invoice@superio.com</a>
+                  <a href="invoice@findev.com">invoice@findev.com</a>
                 </li>
                 <li>
                   <a href="tel:123123456">(123) 123-456</a>

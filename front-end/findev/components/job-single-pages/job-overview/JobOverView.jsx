@@ -63,6 +63,13 @@ const JobOverView = ({job}) => {
           </span>
         </li>
         <li>
+          <i className="icon icon-user-2"></i>
+          <h5>Yêu cầu giới tính</h5>
+          <span>
+            {job?.gender}
+          </span>
+        </li>
+        <li>
           <i className="icon icon-calendar"></i>
           <h5>Ngày đăng</h5>
           <span>{(new Date(job?.created_at)).toLocaleDateString('en-GB')}</span>

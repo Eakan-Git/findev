@@ -38,7 +38,7 @@ const AppSection4 = () => {
             >
               <div className="sec-title">
                 <span className="sub-title text-green">DOWNLOAD & ENJOY</span>
-                <h2>Get the Superio Job Search App</h2>
+                <h2>Get the FinDev Job Search App</h2>
               </div>
 
               <div className="content-icons">

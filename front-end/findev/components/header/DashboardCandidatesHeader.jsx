@@ -9,12 +9,20 @@ import { fetchProfile } from "./fetchProfile";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../../app/actions/userActions";
+import { fetchNotification } from "../home-4/fetchNotification";
 const DashboardCandidatesHeader = () => {
     const { user } = useSelector((state) => state.user);
     const [navbar, setNavbar] = useState(false);
     const [profile, setProfile] = useState(null);
     const dispatch = useDispatch();
-
+    const [notifications, setNotifications] = useState(null);
+    // get notifications data
+    const fetchNoti = async () => {
+        const fetchedNotifications = await fetchNotification(user?.token);
+        if (fetchedNotifications?.error === false) {
+            setNotifications(fetchedNotifications.data);
+        }
+    };
     const fetchUser = async () => {
       const fetchedProfile = await fetchProfile(user.userAccount.id, user.token);
       if (fetchedProfile.error === false) {
@@ -39,6 +47,7 @@ const DashboardCandidatesHeader = () => {
     useEffect(() => {
         if(user !== null)
         {
+            fetchNoti();
             fetchUser();
         }
     }, []);
@@ -95,9 +104,15 @@ const DashboardCandidatesHeader = () => {
                         </button> */}
                         {/* wishlisted menu */}
 
-                        {/* <button className="menu-btn">
-                            <span className="icon la la-bell"></span>
-                        </button> */}
+                        <button className="menu-btn">
+                        <span className="icon la la-bell"
+                            onClick={() => router.push("/profile/notifications")}
+                            >
+                            {notifications?.notifications?.total > 0 ? (
+                                <span className="count">{notifications?.notifications?.total}</span>
+                            ) : null}
+                            </span>
+                        </button>
                         {/* End notification-icon */}
 
                         {/* <!-- Dashboard Option --> */}
