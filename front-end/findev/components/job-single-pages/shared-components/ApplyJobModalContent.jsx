@@ -11,7 +11,7 @@ const ApplyJobModalContent = (user) => {
   const [checkBoxTb, setCheckBoxTb] = useState(false);
   const [selectedCVID, setSelectedCVID] = useState("");
   const [isCheckedError, setIsCheckedError] = useState(false);
-  const [isChecked, setIsChecked] = useState(true);
+  const [isChecked, setIsChecked] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleDropdownChange = (event) => {
@@ -43,10 +43,16 @@ const ApplyJobModalContent = (user) => {
     }
   };
 
+  // useEffect(() => {
+  //   fetchCvList();
+  // }, []);
   useEffect(() => {
+    setIsChecked(false);
+    setCheckBoxTb(false);
+    setSelectedCVID("");
+    setIsSubmitted(false);
     fetchCvList();
-  }, []);
-
+  }, [id]);
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!isChecked) {
@@ -55,7 +61,7 @@ const ApplyJobModalContent = (user) => {
     }
     try {
       const formData = new FormData();
-      formData.append("select_timetable", checkBoxTb ? checkBoxTb : null);
+      formData.append("select_timetable", checkBoxTb);
       formData.append("job_id", id);
       formData.append("user_id", user.user.userAccount.id);
       formData.append("cv_id", selectedCVID);
@@ -69,13 +75,6 @@ const ApplyJobModalContent = (user) => {
       });
 
       if (response.ok) {
-        // alert("Đã gửi đơn ứng tuyển thành công");
-        // Reset form khi submit thành công
-        setCvList([]);
-        setCheckBoxTb(false);
-        setSelectedCVID("");
-        setIsCheckedError(false);
-        setIsChecked(true); // Nếu bạn muốn checkbox luôn được tích mặc định sau khi submit thành công
         setIsSubmitted(true);
       } else if (response.status === 403) {
         alert("Bạn đã ứng tuyển vào công việc này rồi");
@@ -85,6 +84,12 @@ const ApplyJobModalContent = (user) => {
     } catch (error) {
       alert("Đã có lỗi xảy ra xin hãy thử lại sau");
       console.log(error);
+    }
+    finally {
+      setCheckBoxTb(false);
+      setSelectedCVID("");
+      setIsCheckedError(false);
+      setIsChecked(false);
     }
   };
 

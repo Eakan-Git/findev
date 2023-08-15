@@ -8,9 +8,25 @@ import { logoutUser } from "/app/actions/userActions";
 const JobListingsTable = ({ user }) => {
   const router = useRouter();
   const dispatch = useDispatch();
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paginationLinks, setPaginationLinks] = useState([]);
+  const [lastPage, setLastPage] = useState(0);
+  const handlePageChange = (page) => {
+    if (typeof page === "number") {
+      setCurrentPage(page);
+    } else if (page === "&laquo; Previous" && currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    } else if (page === "Next &raquo;" && currentPage < lastPage) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    } else {
+      const clickedPage = parseInt(page);
+      if (!isNaN(clickedPage) && clickedPage !== currentPage) {
+        setCurrentPage(clickedPage);
+      }
+    }
+  };
   const fetchApplications = async (id, token) => {
-    const url = `${localUrl}/applications?user_id=${id}`;
+    const url = `${localUrl}/applications?user_id=${id}&page=${currentPage}`;
     const headers = {
       Accept: "application/json",
       Authorization: `Bearer ${token}`,
@@ -41,6 +57,8 @@ const JobListingsTable = ({ user }) => {
         const res = await fetchApplications(user.userAccount.id, user.token);
         if (!res.error) {
           setJobs(res.data.applications.data);
+          setLastPage(res.data.applications.last_page);
+          setPaginationLinks(res.data.applications.links);
         }
       } catch (error) {
         console.error(error);
@@ -50,7 +68,7 @@ const JobListingsTable = ({ user }) => {
     };
 
     fetchJobListings();
-  }, []);
+  }, [currentPage]);
   const handleCVView = (cv_path) => {
     window.open(cv_path, "_blank", "noopener,noreferrer");
   }
@@ -185,6 +203,44 @@ const JobListingsTable = ({ user }) => {
         </div>
       </div>
       {/* End table widget content */}
+      <nav className="ls-pagination"
+        style={{
+          paddingBottom: "20px",
+        }}
+      >
+        <ul>
+          {paginationLinks.map((link, index) => {
+            if (link.active) {
+              return (
+                <li key={index}>
+                  <a
+                    className="current-page"
+                    onClick={() => {
+                      handlePageChange(link.label);
+                    }}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            } else {
+              return (
+                <li key={index}>
+                  <a onClick={() => handlePageChange(link.label)}>
+                    {link.label === "&laquo; Previous" ? (
+                      <i className="fa fa-arrow-left"></i>
+                    ) : link.label === "Next &raquo;" ? (
+                      <i className="fa fa-arrow-right"></i>
+                    ) : (
+                      link.label
+                    )}
+                  </a>
+                </li>
+              );
+            }
+          })}
+        </ul>
+      </nav>
     </div>
   );
 };

@@ -14,27 +14,31 @@ const JobFavouriteTable = () => {
   const [SavedJobs, setSavedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [paginationLinks ,setPaginationLinks ] = useState([]);
+  const [paginationLinks, setPaginationLinks] = useState([]);
   const [lastPage, setLastPage] = useState(0);
   useEffect(() => {
     const fetchJobListings = async () => {
       try {
-        const res = await axios.get(`${localUrl}/saved-jobs?user_id=${user.userAccount.id}&page=${currentPage}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': user.token
+        const res = await axios.get(
+          `${localUrl}/saved-jobs?user_id=${user.userAccount.id}&page=${currentPage}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: user.token,
+            },
           }
-        }
         );
         if (!res.error) {
           setSavedJobs(res.data.data.saved_jobs.data);
-          setPaginationLinks(res.data.data.saved_jobs.links)
+          setPaginationLinks(res.data.data.saved_jobs.links);
           setLastPage(res.data.data.saved_jobs.last_page);
         }
-      // console.log("Dayy: ", res);
+        // console.log("Dayy: ", res);
       } catch (error) {
-        if (error.response && error.response.data.message === "Unauthenticated.") {
+        if (
+          error.response &&
+          error.response.data.message === "Unauthenticated."
+        ) {
           alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
           router.push("/");
           dispatch(logoutUser());
@@ -66,14 +70,17 @@ const JobFavouriteTable = () => {
           const data = await res.json();
           if (!data.error) {
             alert("Xóa thành công");
-            const updatedJobs = SavedJobs.filter(job => job.id !== id);
+            const updatedJobs = SavedJobs.filter((job) => job.id !== id);
             setSavedJobs(updatedJobs);
           } else {
             alert("Đã có lỗi xảy ra, vui lòng thử lại sau");
           }
         }
       } catch (error) {
-        if (error.response && error.response.data.message === "Unauthenticated.") {
+        if (
+          error.response &&
+          error.response.data.message === "Unauthenticated."
+        ) {
           alert("Phiên làm việc đã hết hạn, vui lòng đăng nhập lại");
           router.push("/");
           dispatch(logoutUser());
@@ -97,7 +104,6 @@ const JobFavouriteTable = () => {
       }
     }
   };
-  
 
   return (
     <div className="tabs-box">
@@ -139,7 +145,7 @@ const JobFavouriteTable = () => {
                                   }
                                   alt="logo"
                                 />
-                              </span> 
+                              </span>
                               <h4>
                                 <Link
                                   href={`/job/${item.job.id}`}
@@ -156,14 +162,16 @@ const JobFavouriteTable = () => {
                                   <Link
                                     href={`/employer/${item.job.employer_profile.company_id}`}
                                   >
-                                    {item.job.employer_profile.company_profile.name.length > 40
+                                    {item.job.employer_profile.company_profile
+                                      .name.length > 40
                                       ? item.job.employer_profile.company_profile.name.slice(
                                           0,
                                           40
                                         ) + "..."
-                                      : item.job.employer_profile.company_profile.name}
+                                      : item.job.employer_profile
+                                          .company_profile.name}
                                   </Link>
-                                      </li>
+                                </li>
                                 <li>
                                   <span className="icon flaticon-map-locator"></span>
                                   {/* get substring before ':' of item.job.location 
@@ -183,10 +191,18 @@ const JobFavouriteTable = () => {
                         <div className="option-box">
                           <ul className="option-list">
                             <li>
-                              <button data-text="Xóa công việc" onClick={() => handleDeleteSavedJob(item.id)}>
-                              {isLoading ? 
-                            (<span className="fa fa-spinner fa-spin" style={{color: "blue"}}></span>)
-                            : (<span className="la la-trash"></span>)}
+                              <button
+                                data-text="Xóa công việc"
+                                onClick={() => handleDeleteSavedJob(item.id)}
+                              >
+                                {isLoading ? (
+                                  <span
+                                    className="fa fa-spinner fa-spin"
+                                    style={{ color: "blue" }}
+                                  ></span>
+                                ) : (
+                                  <span className="la la-trash"></span>
+                                )}
                               </button>
                             </li>
                           </ul>
@@ -201,42 +217,44 @@ const JobFavouriteTable = () => {
         </div>
       </div>
       {/* End table widget content */}
-      <nav className="ls-pagination">
-      <ul>
-        {paginationLinks.map((link, index) => {
-          if (link.active) {
-            return (
-              <li key={index}>
-                <a
-                  className="current-page"
-                  onClick={() => {
-                    handlePageChange(link.label)
-                  }}
-                >
-                  {link.label}
-                </a>
-              </li>
-            );
-          } else {
-            return (
-              <li key={index}>
-                <a
-                  onClick={() => handlePageChange(link.label)}
-                >
-                  {link.label === "&laquo; Previous" ? (
-                    <i className="fa fa-arrow-left"></i>
-                  ) : link.label === "Next &raquo;" ? (
-                    <i className="fa fa-arrow-right"></i>
-                  ) : (
-                    link.label
-                  )}
-                </a>
-              </li>
-            );
-          }
-        })}
-      </ul>
-    </nav>
+      <nav className="ls-pagination"
+        style={{
+          paddingBottom: "20px",
+        }}
+      >
+        <ul>
+          {paginationLinks.map((link, index) => {
+            if (link.active) {
+              return (
+                <li key={index}>
+                  <a
+                    className="current-page"
+                    onClick={() => {
+                      handlePageChange(link.label);
+                    }}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            } else {
+              return (
+                <li key={index}>
+                  <a onClick={() => handlePageChange(link.label)}>
+                    {link.label === "&laquo; Previous" ? (
+                      <i className="fa fa-arrow-left"></i>
+                    ) : link.label === "Next &raquo;" ? (
+                      <i className="fa fa-arrow-right"></i>
+                    ) : (
+                      link.label
+                    )}
+                  </a>
+                </li>
+              );
+            }
+          })}
+        </ul>
+      </nav>
     </div>
   );
 };
