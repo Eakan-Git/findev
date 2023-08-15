@@ -9,7 +9,7 @@ const InfoBox = () => {
 
         <div className="info">
           <h4>Supplier</h4>
-          <h5>Superio LLC</h5>
+          <h5>FinDev LLC</h5>
           <p>2301 Ravenswood Rd Madison, WI 53711</p>
         </div>
       </div>

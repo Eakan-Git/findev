@@ -12,7 +12,7 @@ const CallToAction9 = () => {
             <div className="sec-title light text-center">
               <h2>Make Recruiting Your Competitive Advantage</h2>
               <div className="text">
-                Superio offers a way to completely optimize your entire
+                FinDev offers a way to completely optimize your entire
                 recruiting process. Find better candidates, conduct more focused
                 interviews, and make data-driven hiring decisions.
               </div>

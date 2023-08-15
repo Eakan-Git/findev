@@ -14,7 +14,7 @@ const Subscribe2 = () => {
           <div className="col-lg-5 col-md-10" data-aos="fade-right">
             <div className="sec-title light mb-0 pb-20">
               <h2 className="text-white">
-                Get Matched The Most Valuable Jobs, Just Drop Your Cv at Superio
+                Get Matched The Most Valuable Jobs, Just Drop Your Cv at FinDev
               </h2>
               <div className="text text-white">
                 The template is really nice and offers quite a large set of

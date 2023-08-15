@@ -226,14 +226,14 @@ const FilterJobBox = () => {
             style={{marginRight: '5px'}}
             ></span>
                 Đang tải...
-        </h1>;
+        </h1>
         <div className="text"
         style={{ textAlign: 'center', color: 'black' }}
         >Quá trình này có thể mất vài phút.</div>
     </> : <>
-            <div className="ls-switcher">
-                {/* <JobSelect /> */}
-            </div>
+            {/* <div className="ls-switcher">
+                <JobSelect />
+            </div> */}
 
             <div className="row">{content}</div>
             <div className="row">
@@ -243,7 +243,7 @@ const FilterJobBox = () => {
                     </h2>
                 </div>
             </div>
-        </>;
+        </>
     }
 
     // Event Handlers

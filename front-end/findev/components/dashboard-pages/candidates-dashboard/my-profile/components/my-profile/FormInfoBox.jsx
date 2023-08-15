@@ -77,6 +77,22 @@ const FormInfoBox = ({setAvt}) => {
           return;
         }
       }
+      if(modifiedFields.address){
+        // trim leading and trailing spaces and multiple spaces in between
+        modifiedFields.address = modifiedFields.address.replace(/\s+/g, " ").trim();
+      }
+      if(modifiedFields.full_name){
+        // trim leading and trailing spaces and multiple spaces in between
+        modifiedFields.full_name = modifiedFields.full_name.replace(/\s+/g, " ").trim();
+      }
+      if(modifiedFields.good_at_position){
+        // trim leading and trailing spaces and multiple spaces in between
+        modifiedFields.good_at_position = modifiedFields.good_at_position.replace(/\s+/g, " ").trim();
+      }
+      if(modifiedFields.about_me){
+        // trim leading and trailing spaces and multiple spaces in between
+        modifiedFields.about_me = modifiedFields.about_me.replace(/\s+/g, " ").trim();
+      }
       // console.log("Modified fields:", modifiedFields);
       setIsLoading(true);
       const msg = await putProfile(user, modifiedFields);
@@ -88,7 +104,7 @@ const FormInfoBox = ({setAvt}) => {
         setDefaultProfile(profile);
       } else {
         alert("Cập nhật thông tin thất bại");
-        // console.log(msg);
+        // console.log(msg.msg);
         // alert(msg.message);
       }
       setIsLoading(false);

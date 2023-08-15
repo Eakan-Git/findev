@@ -8,6 +8,10 @@ export default [
                 routePath: "/profile/my-profile",
             },
             {
+                name: "Thông báo",
+                routePath: "/profile/notifications",
+            },
+            {
                 name: "Công việc đã lưu",
                 routePath: "/profile/saved-jobs",
             },

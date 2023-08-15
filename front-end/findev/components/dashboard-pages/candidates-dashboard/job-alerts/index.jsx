@@ -11,7 +11,6 @@ import { useRouter } from "next/router";
 const Index = () => {
   const { user } = useSelector((state) => state.user);
   const router = useRouter();
-
   if (!user) {
     // show notification that user must login first
     alert("Bạn cần đăng nhập để xem thông tin cá nhân");
@@ -38,7 +37,7 @@ const Index = () => {
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
-          <BreadCrumb title="Job Alerts!" />
+          <BreadCrumb title="Thông Báo Mời Ứng Tuyển" />
           {/* breadCrumb */}
 
           <MenuToggler />
