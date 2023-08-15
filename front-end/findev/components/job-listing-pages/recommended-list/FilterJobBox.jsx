@@ -13,7 +13,7 @@ import {
     addSalary,
     addSort,
 } from "../../../features/filter/filterSlice";
-// import Pagination from "../components/Pagination2";
+//import Pagination from "../components/PaginationRCM";
 // import JobSelect from "../components/JobSelect";
 import {recommendUrl} from "../../../utils/path";
 // import { AlignHorizontalCenter } from "@mui/icons-material";
@@ -31,8 +31,9 @@ const FilterJobBox = () => {
           const recommendJobsData = localStorage.getItem(recommendJobsDataKey);
     
           if (!recommendJobsData) {
-            const queryUrl = `${recommendUrl}${user.userAccount.id}`;
+            const queryUrl = `${recommendUrl}${user.userAccount.id}&limit=30`;
             // console.log(queryUrl);
+            
             const getJobs = async () => {
               try {
                 const res = await fetch(queryUrl);
@@ -46,7 +47,7 @@ const FilterJobBox = () => {
             getJobs();
           }
         }
-      }, [user]);
+      }, [user,currentPage]);
       
     const handlePageChange = (page) => {
         // check page is a number
@@ -324,7 +325,7 @@ const FilterJobBox = () => {
 
             <div className="row">{content}</div>
 
-            {/* <Pagination jobs={jobs} handlePageChange={handlePageChange}/> */}
+            {/*<Pagination jobs={jobs} handlePageChange={handlePageChange}/>*/}
         </>
     );
 };
