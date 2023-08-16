@@ -42,8 +42,13 @@ const FilterJobBox = () => {
           try {
             const res = await fetch(queryUrl);
             const data = await res.json();
-            // console.log(data);
-            setJobs(data);
+            console.log(data);
+            if(data.error === false) {
+              setJobs(data);
+            }
+            else if (data.status_code === 524){
+                alert("Quá thời gian tìm kiếm công việc, vui lòng thử lại sau");
+            }
           } catch (error) {
             console.error("Error fetching jobs:", error);
           }
