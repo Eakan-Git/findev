@@ -1,5 +1,5 @@
 const Pagination = ({ jobs, handlePageChange }) => {
-  console.log("jobs", jobs);
+  // console.log("jobs", jobs);
   // Check if jobs is null or undefined
   if (!jobs?.data?.jobs?.pagination_info?.links) {
     return (
