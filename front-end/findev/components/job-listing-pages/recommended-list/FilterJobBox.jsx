@@ -25,11 +25,7 @@ const FilterJobBox = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [jobsPerPage, setJobsPerPage] = useState(10);
   const { jobList, jobSort } = useSelector((state) => state.filter);
-  const [paginationLinks, setPaginationLinks] = useState([
-    { label: "1", active: true },
-    { label: "2", active: false },
-    { label: "3", active: false },
-  ]);
+  const [paginationLinks, setPaginationLinks] = useState([]);
   useEffect(() => {
     if (user) {
       const recommendJobsDataKey = "recommendJobsData";
@@ -45,6 +41,20 @@ const FilterJobBox = () => {
             console.log(data);
             if(data.error === false) {
               setJobs(data);
+              // check if data.data.jobs.data has lenght > 10 then append pagination links
+                if (data.data.jobs.data.length > 10) {
+                    // console.log(data.data.jobs.data.length);
+                    let totalPage = Math.ceil(data.data.jobs.data.length / 10);
+                    // console.log(totalPage);
+                    let links = [];
+                    for (let i = 1; i <= totalPage; i++) {
+                        if(i === 1){
+                            links.push({ label: i, active: true });
+                        }
+                        else links.push({ label: i, active: false });
+                    }
+                    setPaginationLinks(links);
+                }
             }
             else if (data.status_code === 524){
                 alert("Quá thời gian tìm kiếm công việc, vui lòng thử lại sau");
